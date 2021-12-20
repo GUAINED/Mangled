@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="tiwxtU" name="Mangled" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              pluginManufacturer="Mangled" pluginFormats="buildAAX,buildAU,buildAUv3,buildStandalone,buildVST3"
+              pluginVST3Category="Distortion,Fx" pluginAAXCategory="8192" pluginAUIsSandboxSafe="1">
+  <MAINGROUP id="d9GTZU" name="Mangled">
+    <GROUP id="{7E81A842-43CF-64B6-2F22-ABF8A7D180CA}" name="Source">
+      <GROUP id="{B4924EAF-7D26-9B9A-7462-C163FC89D9BD}" name="DataStructure">
+        <FILE id="NhUpg6" name="Conversion.cpp" compile="1" resource="0" file="Source/DataStructure/Conversion.cpp"/>
+        <FILE id="I0ZjnM" name="Conversion.h" compile="0" resource="0" file="Source/DataStructure/Conversion.h"/>
+        <FILE id="ksCw54" name="MangledIdentifiers.cpp" compile="1" resource="0"
+              file="Source/DataStructure/MangledIdentifiers.cpp"/>
+        <FILE id="yhAu4N" name="MangledIdentifiers.h" compile="0" resource="0"
+              file="Source/DataStructure/MangledIdentifiers.h"/>
+        <FILE id="MVLNQp" name="AudioSampleFifo.cpp" compile="1" resource="0"
+              file="Source/DataStructure/AudioSampleFifo.cpp"/>
+        <FILE id="Qeyjl1" name="AudioSampleFifo.h" compile="0" resource="0"
+              file="Source/DataStructure/AudioSampleFifo.h"/>
+        <FILE id="CjDm6l" name="hostInformation.cpp" compile="1" resource="0"
+              file="Source/DataStructure/hostInformation.cpp"/>
+        <FILE id="SDLijX" name="hostInformation.h" compile="0" resource="0"
+              file="Source/DataStructure/hostInformation.h"/>
+        <FILE id="WsMebb" name="UnitProcessorAttachmentStructure.h" compile="0"
+              resource="0" file="Source/DataStructure/UnitProcessorAttachmentStructure.h"/>
+        <FILE id="JmiHtL" name="MainLayerDataStruct.cpp" compile="1" resource="0"
+              file="Source/DataStructure/MainLayerDataStruct.cpp"/>
+        <FILE id="crF3R4" name="MainLayerDataStruct.h" compile="0" resource="0"
+              file="Source/DataStructure/MainLayerDataStruct.h"/>
+      </GROUP>
+      <GROUP id="{0AF7B7A6-D539-0B39-63A9-4F16C29B94D6}" name="Operation">
+        <FILE id="xhyhrh" name="Operation.cpp" compile="1" resource="0" file="Source/Operation/Operation.cpp"/>
+        <FILE id="pLfvgv" name="Operation.h" compile="0" resource="0" file="Source/Operation/Operation.h"/>
+      </GROUP>
+      <GROUP id="{5494102F-577D-5F60-76BD-0C7B36230B63}" name="Processor">
+        <GROUP id="{8AE434D8-4407-D855-4AE7-7FD69D228B71}" name="StageProcessor">
+          <FILE id="K5IIHK" name="StageProcessorBase.cpp" compile="1" resource="0"
+                file="Source/Processor/StageProcessor/StageProcessorBase.cpp"/>
+          <FILE id="BrBN0a" name="StageProcessorBase.h" compile="0" resource="0"
+                file="Source/Processor/StageProcessor/StageProcessorBase.h"/>
+        </GROUP>
+        <GROUP id="{AF059E72-1C91-F0CB-5CD2-605CE59628BF}" name="UnitProcessor">
+          <FILE id="xm06mC" name="RMSProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/RMSProcessor.cpp"/>
+          <FILE id="xLS7Cr" name="RMSProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/RMSProcessor.h"/>
+          <FILE id="tsedzw" name="GainProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/GainProcessor.cpp"/>
+          <FILE id="G4sBKt" name="GainProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/GainProcessor.h"/>
+          <FILE id="DSlPWy" name="PhaseShifterFilter.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/PhaseShifterFilter.cpp"/>
+          <FILE id="fZYXdT" name="PhaseShifterFilter.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/PhaseShifterFilter.h"/>
+          <FILE id="rOhxbQ" name="CurveEquation.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/CurveEquation.cpp"/>
+          <FILE id="So48YD" name="CurveEquation.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/CurveEquation.h"/>
+          <FILE id="SCFZNB" name="IIRBiquadFilter.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/IIRBiquadFilter.cpp"/>
+          <FILE id="IxxD5i" name="IIRBiquadFilter.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/IIRBiquadFilter.h"/>
+          <FILE id="eRoYWc" name="AllUnitProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/AllUnitProcessor.cpp"/>
+          <FILE id="fjiuGJ" name="AllUnitProcessor.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/AllUnitProcessor.h"/>
+          <FILE id="pSWOTa" name="DCFilter.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/DCFilter.cpp"/>
+          <FILE id="X9J0KX" name="DCFilter.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/DCFilter.h"/>
+          <FILE id="ZBZeWV" name="DistortionCircuit.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionCircuit.cpp"/>
+          <FILE id="mVt4TR" name="DistortionCircuit.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionCircuit.h"/>
+          <FILE id="o99c69" name="DistortionEquation.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionEquation.cpp"/>
+          <FILE id="LVy9k5" name="DistortionEquation.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionEquation.h"/>
+          <FILE id="pwgrkL" name="DistortionProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionProcessor.cpp"/>
+          <FILE id="TK2zLg" name="DistortionProcessor.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionProcessor.h"/>
+          <FILE id="JDT8ym" name="EQProcessor.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.cpp"/>
+          <FILE id="mRMYm7" name="EQProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.h"/>
+          <FILE id="a63Akl" name="PhaserProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/PhaserProcessor.cpp"/>
+          <FILE id="ezNHnx" name="PhaserProcessor.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/PhaserProcessor.h"/>
+          <FILE id="e883ET" name="ProcessorBase.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/ProcessorBase.cpp"/>
+          <FILE id="Z5Uxjr" name="ProcessorBase.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/ProcessorBase.h"/>
+          <FILE id="Og0Qq5" name="SampleRemapper.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/SampleRemapper.cpp"/>
+          <FILE id="Rhg5nQ" name="SampleRemapper.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/SampleRemapper.h"/>
+          <FILE id="YPyK57" name="ScopeProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/ScopeProcessor.cpp"/>
+          <FILE id="blbTxp" name="ScopeProcessor.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/ScopeProcessor.h"/>
+          <FILE id="JEciGJ" name="SampleRemapperBin.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/SampleRemapperBin.cpp"/>
+          <FILE id="lq34oE" name="SampleRemapperBin.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/SampleRemapperBin.h"/>
+          <FILE id="Ok3dLh" name="DistortionUnitProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionUnitProcessor.cpp"/>
+          <FILE id="TwBkkp" name="DistortionUnitProcessor.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/DistortionUnitProcessor.h"/>
+        </GROUP>
+        <GROUP id="{1A7DDF9E-A5E8-CC9A-5689-0DAD87B22533}" name="LayerProcessor">
+          <FILE id="FffxyJ" name="AllLayerProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/LayerProcessor/AllLayerProcessor.cpp"/>
+          <FILE id="RAQ3uw" name="AllLayerProcessor.h" compile="0" resource="0"
+                file="Source/Processor/LayerProcessor/AllLayerProcessor.h"/>
+          <FILE id="cJeiz9" name="MainLayerProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/LayerProcessor/MainLayerProcessor.cpp"/>
+          <FILE id="VKEgfS" name="MainLayerProcessor.h" compile="0" resource="0"
+                file="Source/Processor/LayerProcessor/MainLayerProcessor.h"/>
+        </GROUP>
+        <FILE id="pAWArr" name="AudioEngine.cpp" compile="1" resource="0" file="Source/Processor/AudioEngine.cpp"/>
+        <FILE id="d7XR8j" name="AudioEngine.h" compile="0" resource="0" file="Source/Processor/AudioEngine.h"/>
+      </GROUP>
+      <GROUP id="{2CEFF278-EA93-5E55-03FB-E96A2C77B09A}" name="UIComponent">
+        <GROUP id="{95A4E816-65C8-4079-C0EE-74C2E83BA93B}" name="DistortionUIComponent">
+          <FILE id="vcYRc3" name="DistortionComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/DistortionComponent.cpp"/>
+          <FILE id="aCp5SF" name="DistortionComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/DistortionComponent.h"/>
+          <FILE id="y9Zkc8" name="DistortionSliderComponent.cpp" compile="1"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/DistortionSliderComponent.cpp"/>
+          <FILE id="rz27ui" name="DistortionSliderComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/DistortionSliderComponent.h"/>
+          <FILE id="J27bE2" name="DistortionUnitMenuTabComponent.cpp" compile="1"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/DistortionUnitMenuTabComponent.cpp"/>
+          <FILE id="cRmIzN" name="DistortionUnitMenuTabComponent.h" compile="0"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/DistortionUnitMenuTabComponent.h"/>
+          <FILE id="vydfk4" name="WaveShaperPointDragger.cpp" compile="1" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/WaveShaperPointDragger.cpp"/>
+          <FILE id="MVJPJM" name="WaveShaperPointDragger.h" compile="0" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/WaveShaperPointDragger.h"/>
+          <FILE id="CvAv6d" name="WaveShaperScope.cpp" compile="1" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/WaveShaperScope.cpp"/>
+          <FILE id="CB2AyV" name="WaveShaperScope.h" compile="0" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/WaveShaperScope.h"/>
+          <FILE id="rVNl9r" name="WaveShaperTensionDragger.cpp" compile="1" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/WaveShaperTensionDragger.cpp"/>
+          <FILE id="KusfkH" name="WaveShaperTensionDragger.h" compile="0" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/WaveShaperTensionDragger.h"/>
+        </GROUP>
+        <GROUP id="{A7591438-523B-5D63-B2EB-D5794502E5C8}" name="StageUIComponent">
+          <FILE id="NCwm2F" name="RMSMeter.cpp" compile="1" resource="0" file="Source/UIComponent/StageUIComponent/RMSMeter.cpp"/>
+          <FILE id="wzGUtA" name="RMSMeter.h" compile="0" resource="0" file="Source/UIComponent/StageUIComponent/RMSMeter.h"/>
+          <FILE id="UlXIgm" name="StageComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/StageUIComponent/StageComponent.cpp"/>
+          <FILE id="QLjAP8" name="StageComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/StageUIComponent/StageComponent.h"/>
+          <FILE id="zWC6Ln" name="StereoRMSMeterComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/StageUIComponent/StereoRMSMeterComponent.cpp"/>
+          <FILE id="smUsmf" name="StereoRMSMeterComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/StageUIComponent/StereoRMSMeterComponent.h"/>
+        </GROUP>
+        <GROUP id="{AB2458F2-09C1-B5AB-F8BD-37F172F9C95C}" name="GeneralUIComponent">
+          <FILE id="XfOzmr" name="DiStateButton.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/DiStateButton.cpp"/>
+          <FILE id="z1aIlA" name="DiStateButton.h" compile="0" resource="0" file="Source/UIComponent/GeneralUIComponent/DiStateButton.h"/>
+          <FILE id="BFsbi8" name="LookAndFeel_V4_ComboBox.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_ComboBox.cpp"/>
+          <FILE id="GwXpWf" name="LookAndFeel_V4_ComboBox.h" compile="0" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_ComboBox.h"/>
+          <FILE id="hFcudP" name="LookAndFeel_V4_Gradient.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_Gradient.cpp"/>
+          <FILE id="UFnyDc" name="LookAndFeel_V4_Gradient.h" compile="0" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_Gradient.h"/>
+          <FILE id="vyK8xR" name="SelectablePointDragger.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/SelectablePointDragger.cpp"/>
+          <FILE id="rfJggX" name="SelectablePointDragger.h" compile="0" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/SelectablePointDragger.h"/>
+          <FILE id="ffwwPD" name="OnOffButton.cpp" compile="1" resource="0" file="Source/UIComponent/GeneralUIComponent/OnOffButton.cpp"/>
+          <FILE id="qOEWBz" name="OnOffButton.h" compile="0" resource="0" file="Source/UIComponent/GeneralUIComponent/OnOffButton.h"/>
+          <FILE id="ZvsMXe" name="MainLayerMenuComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/MainLayerMenuComponent.cpp"/>
+          <FILE id="PVzRu2" name="MainLayerMenuComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/MainLayerMenuComponent.h"/>
+          <FILE id="TOw8Ay" name="MainMenuComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/MainMenuComponent.cpp"/>
+          <FILE id="SigUBn" name="MainMenuComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/MainMenuComponent.h"/>
+          <FILE id="OI94Pn" name="MainMenuTabComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/MainMenuTabComponent.cpp"/>
+          <FILE id="aaJsMV" name="MainMenuTabComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/GeneralUIComponent/MainMenuTabComponent.h"/>
+        </GROUP>
+        <GROUP id="{D1120323-389C-5BAC-1D04-DB164C6FF6FF}" name="EQUIComponent">
+          <FILE id="vA6D3C" name="EQComponent.cpp" compile="1" resource="0" file="Source/UIComponent/EQUIComponent/EQComponent.cpp"/>
+          <FILE id="Q4xGkX" name="EQComponent.h" compile="0" resource="0" file="Source/UIComponent/EQUIComponent/EQComponent.h"/>
+          <FILE id="RjajFi" name="EQSliderComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/EQUIComponent/EQSliderComponent.cpp"/>
+          <FILE id="EeW5ch" name="EQSliderComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/EQUIComponent/EQSliderComponent.h"/>
+        </GROUP>
+        <GROUP id="{C575E388-4D24-5D62-8317-378F6A900B7E}" name="PhaserUIComponent">
+          <FILE id="UpKKHW" name="PhaserComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/PhaserUIComponent/PhaserComponent.cpp"/>
+          <FILE id="WtGUjS" name="PhaserComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/PhaserUIComponent/PhaserComponent.h"/>
+        </GROUP>
+        <GROUP id="{390A7F7A-CBC7-065D-70B0-E3DA840C69F0}" name="ScopeUIComponent">
+          <FILE id="xvAkXo" name="FilterDragger.cpp" compile="1" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/FilterDragger.cpp"/>
+          <FILE id="tyFOxB" name="FilterDragger.h" compile="0" resource="0" file="Source/UIComponent/ScopeUIComponent/FilterDragger.h"/>
+          <FILE id="ETCbGI" name="ScopeComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/ScopeComponent.cpp"/>
+          <FILE id="no2ipJ" name="ScopeComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/ScopeComponent.h"/>
+          <FILE id="DwjUBG" name="ScopeDisplay.cpp" compile="1" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/ScopeDisplay.cpp"/>
+          <FILE id="dGZs5A" name="ScopeDisplay.h" compile="0" resource="0" file="Source/UIComponent/ScopeUIComponent/ScopeDisplay.h"/>
+          <FILE id="hq00If" name="TemporalScope.cpp" compile="1" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/TemporalScope.cpp"/>
+          <FILE id="neXgdi" name="TemporalScope.h" compile="0" resource="0" file="Source/UIComponent/ScopeUIComponent/TemporalScope.h"/>
+          <FILE id="iJiXPj" name="TemporalScopeDisplay.cpp" compile="1" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/TemporalScopeDisplay.cpp"/>
+          <FILE id="G40J3M" name="TemporalScopeDisplay.h" compile="0" resource="0"
+                file="Source/UIComponent/ScopeUIComponent/TemporalScopeDisplay.h"/>
+        </GROUP>
+      </GROUP>
+      <FILE id="PvzsR9" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="TIJml6" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="cwdRCR" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="qit45J" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Mangled"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Mangled"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
