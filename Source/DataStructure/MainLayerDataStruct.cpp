@@ -193,11 +193,11 @@ void MainLayerDataStruct::setSelectedStageID(int stageID)
     getMainLayerVT().setProperty(StageConstants::ParamStringID::selectedStageID, stageID, &undoManager);
 }
 
-void MainLayerDataStruct::setIsEQ(int stageID, bool newIsEQ)
+void MainLayerDataStruct::setStageProcessorID(int stageID, int processorID)
 {
     juce::ValueTree vtStage = getStageVT(stageID);
 
-    vtStage.setPropertyExcludingListener(this, StageConstants::ParamStringID::isEQ, newIsEQ, &undoManager);
+    vtStage.setPropertyExcludingListener(this, StageConstants::ParamStringID::displayedProcessor, processorID, &undoManager);
 }
 
 //Scope======================================================================================================================================
@@ -1393,7 +1393,7 @@ juce::ValueTree MainLayerDataStruct::getSampleRemapperPointsVT(int stageID, int 
 }
 
 //Get Function Audio Engine
-int MainLayerDataStruct::getSelectedState()
+int MainLayerDataStruct::getSelectedStateID()
 {
     return rootAudioEngine.getProperty(AudioEngineConstants::ParamStringID::selectedState);
 }
@@ -1404,6 +1404,16 @@ int MainLayerDataStruct::getSelectedState()
 int MainLayerDataStruct::getSelectedStageID()
 {
     return getMainLayerVT().getProperty(StageConstants::ParamStringID::selectedStageID);
+}
+
+int MainLayerDataStruct::getStageProcessorID(int stageID)
+{
+    return getStageVT(stageID).getProperty(StageConstants::ParamStringID::displayedProcessor);
+}
+
+int MainLayerDataStruct::getSelectedStageProcessorID()
+{
+    return getSelectedStageVT().getProperty(StageConstants::ParamStringID::displayedProcessor);
 }
 
 //Get Function Scope
@@ -1508,16 +1518,6 @@ int MainLayerDataStruct::getDistortionUnitID(int stageID)
     return vtDistortion.getProperty(DistoUnitConstants::ParamStringID::selectedDistoUnitID);
 }
 
-bool MainLayerDataStruct::getIsEQ(int stageID)
-{
-    return getStageVT(stageID).getProperty(StageConstants::ParamStringID::isEQ);
-}
-
-bool MainLayerDataStruct::getSelectedIsEQ()
-{
-    return getSelectedStageVT().getProperty(StageConstants::ParamStringID::isEQ);
-}
-
 int MainLayerDataStruct::getNbOfPoints(int stageID, int distortionUnitID)
 {
     return getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren();
@@ -1585,12 +1585,12 @@ bool MainLayerDataStruct::getIsBipolar(int stageID, int distortionUnitID)
     return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::isBipolar);
 }
 
-int MainLayerDataStruct::getDistortionCircuitEquationType(int stageID, int distortionUnitID)
-{
-    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionCircuitConstants::ParamsID::equationType);
-}
-
-int MainLayerDataStruct::getDistortionCircuitEquationID(int stageID, int distortionUnitID)
-{
-    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionCircuitConstants::ParamsID::equationID);
-}
+//int MainLayerDataStruct::getDistortionCircuitEquationType(int stageID, int distortionUnitID)
+//{
+//    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionCircuitConstants::ParamsID::equationType);
+//}
+//
+//int MainLayerDataStruct::getDistortionCircuitEquationID(int stageID, int distortionUnitID)
+//{
+//    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionCircuitConstants::ParamsID::equationID);
+//}

@@ -38,17 +38,16 @@ StageComponent::StageComponent(MainLayerDataStruct& mlDataStruct)
 
     addAndMakeVisible(dataToDisplayComboBox);
 
-    displayEQButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
+    displayEQButton.setRadioGroupId(ProcessorButtons, juce::dontSendNotification);
     displayEQButton.addListener(this);
     addAndMakeVisible(displayEQButton);
 
-    displayDistoButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
+    displayDistoButton.setRadioGroupId(ProcessorButtons, juce::dontSendNotification);
     displayDistoButton.setToggleState(true, juce::dontSendNotification);
     displayDistoButton.addListener(this);
     addAndMakeVisible(displayDistoButton);
 
-    displayEnvButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
-
+    displayEnvButton.setRadioGroupId(ProcessorButtons, juce::dontSendNotification);
     displayEnvButton.addListener(this);
     addAndMakeVisible(displayEnvButton);
 
@@ -155,13 +154,17 @@ void StageComponent::buttonClicked(juce::Button* button)
 
     if (button == getDisplayEQButton())
     {
-        dataStruct.setIsEQ(stageID, true);
+        dataStruct.setStageProcessorID(stageID, StageConstants::Processor<float>::ProcessorID::eq);
         switchWaveShaperToEQ();
     }
     else if (button == getDisplayDistoButton())
     {
-        dataStruct.setIsEQ(stageID, false);
+        dataStruct.setStageProcessorID(stageID, StageConstants::Processor<float>::ProcessorID::distortion);
         switchEQToWaveShaper();
+    }
+    else if (button == &displayEnvButton)
+    {
+
     }
 }
 

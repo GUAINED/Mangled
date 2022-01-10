@@ -122,23 +122,35 @@ void MainLayerMenuComponent::buttonClicked(juce::Button* button)
 {
     if (button == getStageIDButton(0))
     {
-        switchToStageMenu(0);
-        dataStruct.setSelectedStageID(0);
+        if (button->getToggleState())
+        {
+            switchToStageMenu(0);
+            dataStruct.setSelectedStageID(0);
+        }
     }
     else if (button == getStageIDButton(1))
     {
-        switchToStageMenu(1);
-        dataStruct.setSelectedStageID(1);
+        if (button->getToggleState())
+        {
+            switchToStageMenu(1);
+            dataStruct.setSelectedStageID(1);
+        }
     }
     else if (button == getStageIDButton(2))
     {
-        switchToStageMenu(2);
-        dataStruct.setSelectedStageID(2);
+        if (button->getToggleState())
+        {
+            switchToStageMenu(2);
+            dataStruct.setSelectedStageID(2);
+        }
     }
     else if (button == getStageIDButton(3))
     {
-        switchToStageMenu(3);
-        dataStruct.setSelectedStageID(3);
+        if (button->getToggleState())
+        {
+            switchToStageMenu(3);
+            dataStruct.setSelectedStageID(3);
+        }
     }
 }
 

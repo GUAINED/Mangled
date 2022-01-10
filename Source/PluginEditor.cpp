@@ -175,14 +175,16 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
     {
         if (button->getToggleState())
         {
-            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::A);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::A);
+
+            switchToSelectedID();
         }
         else
         {
-            stateButton[0]->setToggleState(true, juce::dontSendNotification);
+            stateButton[AudioEngineConstants::Processor<float>::A]->setToggleState(true, juce::dontSendNotification);
         }
 
         stateButton[AudioEngineConstants::Processor<float>::B]->setToggleState(false, juce::dontSendNotification);
@@ -193,14 +195,16 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
     {
         if (button->getToggleState())
         {
-            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::B);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::B);
+
+            switchToSelectedID();
         }
         else
         {
-            stateButton[1]->setToggleState(true, juce::dontSendNotification);
+            stateButton[AudioEngineConstants::Processor<float>::B]->setToggleState(true, juce::dontSendNotification);
         }
         stateButton[AudioEngineConstants::Processor<float>::A]->setToggleState(false, juce::dontSendNotification);
         stateButton[AudioEngineConstants::Processor<float>::C]->setToggleState(false, juce::dontSendNotification);
@@ -210,10 +214,12 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
     {
         if (button->getToggleState())
         {
-            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::C);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::C);
+
+            switchToSelectedID();
         }
         else
         {
@@ -227,10 +233,12 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
     {
         if (button->getToggleState())
         {
-            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::D);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::D);
+
+            switchToSelectedID();
         }
         else
         {
@@ -603,11 +611,40 @@ void MangledAudioProcessorEditor::timerCallback()
 
 void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
 {
+    //MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
+    //StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
+    //StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
-    //setUI();
-    //int stageID = 0;
+    //Scope================================================
+    updateScope(stageID);
+
+    //Distortion===========================================
+    updateDistortion(stageID, distortionUnitID);
+
+    //RMS==================================================
+
+    //srLabel.setText("SR: " + (juce::String)sr, juce::dontSendNotification);
+    //pScopeDisplay->ppq = ppq;
+    //juce::AudioBuffer<float>* pRMSBuffer = pScopeDisplay->getTemporalBuffer();
+    //int nbSampleToPull = 1470;
+    //pStageProcessor->getInputRMSProcessor()->pushRMSFifo(pRMSBuffer);
+    //pStageProcessor->getOutputRMSProcessor()->pushRMSFifo(pRMSBuffer);
+    //float rms = juce::Decibels::gainToDecibels(pRMSBuffer->getRMSLevel(0, 0, nbSampleToPull));
+    //pStageComponent->getInputRMSMeter()->setLeftRMSValue(rms);
+    //rms = juce::Decibels::gainToDecibels(pRMSBuffer->getRMSLevel(1, 0, nbSampleToPull));
+    //pStageComponent->getInputRMSMeter()->setRightRMSValue(rms);
+
+    //pStageComponent->getOutputRMSMeter()->setLeftRMSValue(rms);
+    //pStageComponent->getOutputRMSMeter()->setRightRMSValue(rms);
+
+    updateRMSMeter(stageID);
+
+    editorLoadingDone = true;
+}
+
+void MangledAudioProcessorEditor::updateScope(int stageID)
+{
     MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
-    //mainMenu.getMainLayerMenu()->switchToStageMenu(stageID);
 
     StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
 
@@ -630,7 +667,7 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
 
         //pScopeDisplay->computeFFTPath();
 
-        //Draw Filter Response.============================================================================================================================================================================
+        //Draw Filter Response.====================================================================================================================
         int currentFilterID = audioProcessor.getMainLayerDataStruct().getSelectedFilterID(stageID);
 
         //Param from processor.
@@ -706,8 +743,14 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
 
 
     }
-    //Draw WaveShaperEquation.============================================================================================================================================================================
-    //int distortionUnitID = audioProcessor.getMainLayerDataStruct().getSelectedDistoUnitID();
+}
+
+void MangledAudioProcessorEditor::updateDistortion(int stageID, int distortionUnitID)
+{
+    MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
+    StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
+    StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
+
     SampleRemapper<float>* pSM = pStageProcessor->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper();
     WaveShaperScope* pWaveShaperScope = pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getScope();
     pWaveShaperScope->updateUI(mainLayerDataStruct, distortionUnitID, pSM);
@@ -718,22 +761,15 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
     pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getDeleteWSPointButton()->setEnabled(deleteEnable);
 
     pWaveShaperScope->repaint();
+}
 
-    //RMS==================================================
+void MangledAudioProcessorEditor::updateRMSMeter(int stageID)
+{
+    //MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
+    StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
 
-    //srLabel.setText("SR: " + (juce::String)sr, juce::dontSendNotification);
-    //pScopeDisplay->ppq = ppq;
-    //juce::AudioBuffer<float>* pRMSBuffer = pScopeDisplay->getTemporalBuffer();
-    //int nbSampleToPull = 1470;
-    //pStageProcessor->getInputRMSProcessor()->pushRMSFifo(pRMSBuffer);
-    //pStageProcessor->getOutputRMSProcessor()->pushRMSFifo(pRMSBuffer);
-    //float rms = juce::Decibels::gainToDecibels(pRMSBuffer->getRMSLevel(0, 0, nbSampleToPull));
-    //pStageComponent->getInputRMSMeter()->setLeftRMSValue(rms);
-    //rms = juce::Decibels::gainToDecibels(pRMSBuffer->getRMSLevel(1, 0, nbSampleToPull));
-    //pStageComponent->getInputRMSMeter()->setRightRMSValue(rms);
+    StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
-    //pStageComponent->getOutputRMSMeter()->setLeftRMSValue(rms);
-    //pStageComponent->getOutputRMSMeter()->setRightRMSValue(rms);
     RMSProcessor<float>* pInputProc = pStageProcessor->getInputRMSProcessor();
     RMSProcessor<float>* pOutputProc = pStageProcessor->getOutputRMSProcessor();
 
@@ -750,20 +786,26 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
 
     pStageComponent->getInputRMSMeter()->repaint();
     pStageComponent->getOutputRMSMeter()->repaint();
-
-    editorLoadingDone = true;
 }
 
 void MangledAudioProcessorEditor::setUI()
 {
+    int selectedStateID = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
     int selectedStageID = audioProcessor.getMainLayerDataStruct().getSelectedStageID();
     StageComponent* pStageComponent = nullptr;
     int distortionUnitID = audioProcessor.getMainLayerDataStruct().getSelectedDistoUnitID();
     int curveID = 0;
-    bool isEQ = false;
+    int processorID = 0;
 
     int circuitType = 0;
     int circuitID = 0;
+
+    for (int stateID = 0; stateID < AudioEngineConstants::Processor<float>::StateID::maxStateID; ++stateID)
+    {
+        stateButton[stateID]->setToggleState(false, juce::dontSendNotification);
+    }
+
+    stateButton[selectedStateID]->setToggleState(true, juce::dontSendNotification);
 
     mainMenu.getMainLayerMenu()->switchToStageMenu(selectedStageID);
     mainMenu.getMainLayerMenu()->setButtonOn(selectedStageID, juce::dontSendNotification);
@@ -777,10 +819,29 @@ void MangledAudioProcessorEditor::setUI()
 
        pStageComponent->getScope()->switchScope(dataToDisplay);
        
-       //isEQ = audioProcessor.getMainLayerDataStruct().getIsEQ(stageID);
-       //pStageComponent->getDisplayEQButton()->setToggleState(isEQ, juce::dontSendNotification);
-       //pStageComponent->getDisplayDistoButton()->setToggleState(! isEQ, juce::dontSendNotification);
-       //isEQ ? pStageComponent->switchWaveShaperToEQ() : pStageComponent->switchEQToWaveShaper();
+       processorID = audioProcessor.getMainLayerDataStruct().getStageProcessorID(stageID);
+       switch (processorID)
+       {
+       case StageConstants::Processor<float>::ProcessorID::eq:
+           pStageComponent->getDisplayEQButton()->setToggleState(true, juce::dontSendNotification);
+           pStageComponent->getDisplayDistoButton()->setToggleState(false, juce::dontSendNotification);
+           pStageComponent->getEnvButton()->setToggleState(false, juce::dontSendNotification);
+           pStageComponent->switchWaveShaperToEQ();
+           break;
+       case StageConstants::Processor<float>::ProcessorID::distortion:
+           pStageComponent->getDisplayEQButton()->setToggleState(false, juce::dontSendNotification);
+           pStageComponent->getDisplayDistoButton()->setToggleState(true, juce::dontSendNotification);
+           pStageComponent->getEnvButton()->setToggleState(false, juce::dontSendNotification);
+           pStageComponent->switchEQToWaveShaper();
+           break;
+       case StageConstants::Processor<float>::ProcessorID::enveloppe:
+           pStageComponent->getDisplayEQButton()->setToggleState(false, juce::dontSendNotification);
+           pStageComponent->getDisplayDistoButton()->setToggleState(false, juce::dontSendNotification);
+           pStageComponent->getEnvButton()->setToggleState(true, juce::dontSendNotification);
+           break;
+       default :
+           break;
+       }
 
        //int filterID = audioProcessor.getMainLayerDataStruct().getSelectedFilterID(stageID);
        //pStageComponent->getEQComponent()->switchToEQSliderMenu(filterID);
@@ -802,10 +863,95 @@ void MangledAudioProcessorEditor::setUI()
            int curveType = audioProcessor.getMainLayerDataStruct().getPointCurveType(stageID, distoUID, curveID);
            pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->getCurveTypeComboBox()->setSelectedId(curveType + 1, juce::dontSendNotification);
 
-           circuitType = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationType(stageID, distoUID);
-           circuitID = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationID(stageID, distoUID);
-           pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType);
+           //circuitType = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationType(stageID, distoUID);
+           //circuitID = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationID(stageID, distoUID);
+           pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(0,0);// circuitID, circuitType);
        }
+    }
+}
+
+void MangledAudioProcessorEditor::switchToSelectedID()
+{
+    int stageID = audioProcessor.getMainLayerDataStruct().getSelectedStageID();
+    int processorID = audioProcessor.getMainLayerDataStruct().getSelectedStageProcessorID();
+    int distoUID = audioProcessor.getMainLayerDataStruct().getSelectedDistoUnitID();
+    switchUI(stageID, processorID, distoUID);
+}
+
+void MangledAudioProcessorEditor::switchUI(int stageID, int processorID,int distortionUnitID)
+{
+    StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
+
+    mainMenu.getMainLayerMenu()->switchToStageMenu(stageID);
+    mainMenu.getMainLayerMenu()->setButtonOn(stageID, juce::dontSendNotification);
+
+    //processorID = audioProcessor.getMainLayerDataStruct().getStageProcessorID(stageID);
+    switch (processorID)
+    {
+    case StageConstants::Processor<float>::ProcessorID::eq:
+        pStageComponent->getDisplayEQButton()->setToggleState(true, juce::dontSendNotification);
+        pStageComponent->getDisplayDistoButton()->setToggleState(false, juce::dontSendNotification);
+        pStageComponent->getEnvButton()->setToggleState(false, juce::dontSendNotification);
+        pStageComponent->switchWaveShaperToEQ();
+        break;
+    case StageConstants::Processor<float>::ProcessorID::distortion:
+        pStageComponent->getDisplayEQButton()->setToggleState(false, juce::dontSendNotification);
+        pStageComponent->getDisplayDistoButton()->setToggleState(true, juce::dontSendNotification);
+        pStageComponent->getEnvButton()->setToggleState(false, juce::dontSendNotification);
+        pStageComponent->switchEQToWaveShaper();
+        break;
+    case StageConstants::Processor<float>::ProcessorID::enveloppe:
+        pStageComponent->getDisplayEQButton()->setToggleState(false, juce::dontSendNotification);
+        pStageComponent->getDisplayDistoButton()->setToggleState(false, juce::dontSendNotification);
+        pStageComponent->getEnvButton()->setToggleState(true, juce::dontSendNotification);
+        break;
+    default:
+        break;
+    }
+
+    bool firstDUDisplayed = distortionUnitID == 0 ? true : false;
+    pStageComponent->getDistortionComponent()->getDistortionUnitMenuTab()->getDistoUnitIDButton(0)->setToggleState(firstDUDisplayed, juce::dontSendNotification);
+    pStageComponent->getDistortionComponent()->getDistortionUnitMenuTab()->getDistoUnitIDButton(1)->setToggleState(!firstDUDisplayed, juce::dontSendNotification);
+    pStageComponent->getDistortionComponent()->switchDistortionUnit(distortionUnitID);
+
+    for (int distoUID = 0; distoUID < DistortionConstants::Processor<float>::nbOfDUMax; ++distoUID)
+    {
+        int curveID = audioProcessor.getMainLayerDataStruct().getSelectedCurveID(stageID, distoUID);
+        int curveType = audioProcessor.getMainLayerDataStruct().getPointCurveType(stageID, distoUID, curveID);
+        pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->getCurveTypeComboBox()->setSelectedId(curveType + 1, juce::dontSendNotification);
+
+        //int circuitType = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationType(stageID, distoUID);
+        //int circuitID = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationID(stageID, distoUID);
+
+        juce::AudioProcessorValueTreeState& apvts = audioProcessor.getMainLayerDataStruct().getAPVTSMainLayer();
+        juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distoUID);
+        int circuitType = *apvts.getRawParameterValue(paramString);
+        int circuitID = 0;
+        switch (circuitType)
+        {
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::sigmoid):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::sigmoidEQA(stageID, distoUID);
+            circuitID = *apvts.getRawParameterValue(paramString);
+            break;
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::symetric):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::symetricEQA(stageID, distoUID);
+            circuitID = *apvts.getRawParameterValue(paramString);
+            break;
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::asymetric):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::asymetricEQA(stageID, distoUID);
+            circuitID = *apvts.getRawParameterValue(paramString);
+            break;
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::special):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distoUID);
+            circuitID = *apvts.getRawParameterValue(paramString);
+            break;
+        default:
+            //paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distortionUnitID);
+            circuitID = 0;
+            break;
+        }
+
+        pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType);
     }
 }
 

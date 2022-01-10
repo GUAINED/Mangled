@@ -185,6 +185,14 @@ namespace StageConstants
         static constexpr SampleType gainMax = static_cast<SampleType>(12.0);
         static constexpr SampleType gaindBIncrement = static_cast<SampleType>(0.1);
         static constexpr bool isBypassedStartValue = false;
+
+        enum ProcessorID
+        {
+            eq,
+            distortion,
+            enveloppe,
+            maxprocessorID
+        };
     };
 
     class UI
@@ -203,7 +211,7 @@ namespace StageConstants
         static const juce::String isBypassed{ "ISBYPASSED" };
 
         static const juce::Identifier selectedStageID("SelectedStageID");
-        static const juce::Identifier isEQ("IsEQ");
+        static const juce::Identifier displayedProcessor("DisplayedProcessor");
 
         class GetParamStringID
         {

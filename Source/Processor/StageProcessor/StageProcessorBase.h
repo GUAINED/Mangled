@@ -229,7 +229,7 @@ public:
         juce::ValueTree vtStage(id);
         vt.addChild(vtStage, -1, nullptr);
 
-        vtStage.setProperty(StageConstants::ParamStringID::isEQ, false, nullptr);
+        vtStage.setProperty(StageConstants::ParamStringID::displayedProcessor, StageConstants::Processor<SampleType>::ProcessorID::distortion, nullptr);
 
         ScopeProcessor<SampleType>::createValueTree(vtStage);
         EQProcessor<SampleType>::createValueTree(vtStage);

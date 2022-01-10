@@ -75,7 +75,7 @@ public:
     //Stage function=========================================================================================================
     void resetStageParam(int stageID);
     void setSelectedStageID(int stageID);
-    void setIsEQ(int stageID, bool newIsEQ);
+    void setStageProcessorID(int stageID, int processorID);
 
     //Scope function=========================================================================================================
     void resetScopeParam(int stageID);
@@ -170,12 +170,14 @@ public:
     juce::ValueTree getSampleRemapperPointsVT(int stageID, int distortionUnitID);
     
     //Audio Engine
-    int getSelectedState();
+    int getSelectedStateID();
 
     //MainLayer
     
     //Stage
     int getSelectedStageID();
+    int getStageProcessorID(int stageID);
+    int getSelectedStageProcessorID();
 
     //Scope
     int getScopeZoom(int stageID);
@@ -196,8 +198,6 @@ public:
     //Sample Remapper
     int getSelectedDistoUnitID();
     int getDistortionUnitID(int stageID);
-    bool getIsEQ(int stageID);
-    bool getSelectedIsEQ();
     int getNbOfPoints(int stageID, int distortionUnitID);
     float getPointX(int stageID, int distortionUnitID, int pointID);
     float getPointY(int stageID, int distortionUnitID, int pointID);
@@ -211,8 +211,8 @@ public:
     int getPointCurveType(int stageID, int distortionUnitID, int pointID);
     bool getIsBipolar(int stageID, int distortionUnitID);
     
-    int getDistortionCircuitEquationType(int stageID, int distortionUnitID);
-    int getDistortionCircuitEquationID(int stageID, int distortionUnitID);
+    //int getDistortionCircuitEquationType(int stageID, int distortionUnitID);
+    //int getDistortionCircuitEquationID(int stageID, int distortionUnitID);
     //Should update
     void setShouldUpdate(bool newValue) { shouldUpdate = newValue; };
     bool getShouldUpdate() { return shouldUpdate; };

@@ -74,6 +74,13 @@ private:
     void linkPhaserParametersAttachment(juce::AudioProcessorValueTreeState& apvts, StageComponent* pStageComponent, int stageID);
     void linkDistortionParametersAttachment(juce::AudioProcessorValueTreeState& apvts, StageComponent* pStageComponent, int stageID);
 
+    void switchToSelectedID();
+    void switchUI(int stageID, int processorID, int distortionUnitID);
+
+    void updateScope(int stageID);
+    void updateDistortion(int stageID, int distortionUnitID);
+    void updateRMSMeter(int stageID);
+
     MainMenuTabComponent mainMenuTab;
 
     juce::TextButton undoButton;

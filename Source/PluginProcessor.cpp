@@ -217,10 +217,15 @@ juce::AudioProcessorEditor* MangledAudioProcessor::createEditor()
 {
     MangledAudioProcessorEditor* editor = new MangledAudioProcessorEditor(*this);
 
-    setParams();
+    //setParams();
     //editor->timerCallback2(3);
     //editor->timerCallback2(2);
     //editor->timerCallback2(1);
+
+    int selectedStateID = mainLayerDataStruct.getSelectedStateID();
+    int selectedStageID = mainLayerDataStruct.getSelectedStageID();
+    int distortionUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
+
     editor->updateUI(0, 0);
 
 
@@ -243,17 +248,34 @@ void MangledAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     //    return;
     //}
 
-    mainLayerDataStruct.setSelectedStageID(0);
-    mainLayerDataStruct.setDistoUnitID(0, 0);
-    mainLayerDataStruct.setDistoUnitID(1, 0);
-    mainLayerDataStruct.setDistoUnitID(2, 0);
-    mainLayerDataStruct.setDistoUnitID(3, 0);
-    auto state = mainLayerDataStruct.getAPVTSMainLayer().copyState();
+
+    int selectedState = mainLayerDataStruct.getSelectedStateID();
+
+    saveState(selectedState);
 
     juce::ValueTree vtData("ALLDATA");
+    vtData.setProperty(AudioEngineConstants::ParamStringID::selectedState, selectedState, nullptr);
+    for (int stateID = 0; stateID < AudioEngineConstants::Processor<float>::StateID::maxStateID; ++stateID)
+    {
+        //juce::ValueTree vtState(AudioEngineConstants::UI::stateString[stateID]);
+        juce::ValueTree vtState = state[stateID]->getRoot();
+        //vtState.copyPropertiesAndChildrenFrom(vtState, nullptr);
+        vtData.addChild(vtState, stateID, nullptr);
+    }
 
-    vtData.addChild(state, 0, nullptr);
-    vtData.addChild(mainLayerDataStruct.getRoot(), 1, nullptr);
+
+    //mainLayerDataStruct.setSelectedStageID(0);
+    //mainLayerDataStruct.setDistoUnitID(0, 0);
+    //mainLayerDataStruct.setDistoUnitID(1, 0);
+    //mainLayerDataStruct.setDistoUnitID(2, 0);
+    //mainLayerDataStruct.setDistoUnitID(3, 0);
+
+    //auto state = mainLayerDataStruct.getAPVTSMainLayer().copyState();
+
+    //juce::ValueTree vtData("ALLDATA");
+
+    //vtData.addChild(state, 0, nullptr);
+    //vtData.addChild(mainLayerDataStruct.getRoot(), 1, nullptr);
 
     std::unique_ptr<juce::XmlElement> xml(vtData.createXml());
 
@@ -265,38 +287,82 @@ void MangledAudioProcessor::setStateInformation (const void* data, int sizeInByt
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
      
-    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    //std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
-    if (xmlState.get() != nullptr)
+    //if (xmlState.get() != nullptr)
+    //{
+    //    if (xmlState->hasTagName("ALLDATA"))
+    //    {
+    //        juce::XmlElement* xmlAPVTS = xmlState.get()->getChildByName(mainLayerDataStruct.getAPVTSMainLayer().state.getType());
+
+    //        if (xmlAPVTS != nullptr)
+    //        {
+    //            mainLayerDataStruct.getAPVTSMainLayer().replaceState(juce::ValueTree::fromXml(*xmlAPVTS));
+    //        }
+
+    //        juce::XmlElement* xmlWS = xmlState.get()->getChildByName(mainLayerDataStruct.getRoot().getType());
+    //        if (xmlWS != nullptr)
+    //        {
+    //            juce::ValueTree vtTest = juce::ValueTree::fromXml(*xmlWS);
+    //            
+    //            mainLayerDataStruct.getRoot().copyPropertiesAndChildrenFrom(vtTest, nullptr);
+
+    //            //juce::ValueTree vtMainLayer = vtTest.getChildWithName(MainLayerApvtsIDString::stage + "0");
+    //            //juce::ValueTree vtDisto = vtMainLayer.getChildWithName(MainLayerValueTreeID::distortion);
+    //            //juce::ValueTree vtDU = vtDisto.getChildWithName(MainLayerValueTreeID::distoUnit + "0");
+    //            //juce::ValueTree vtCircuit = vtDU.getChildWithName(MainLayerValueTreeID::distortionCircuit);
+    //            //int vtType = vtCircuit.getProperty(MainLayerValueTreeID::equationType);
+    //            //int vtID = vtCircuit.getProperty(MainLayerValueTreeID::equationID);
+
+    //        }
+    //    }
+    //}
+
+    std::unique_ptr<juce::XmlElement> xmlWholeState(getXmlFromBinary(data, sizeInBytes));
+    int selectedState = -1;
+    if (xmlWholeState.get() != nullptr)
     {
-        if (xmlState->hasTagName("ALLDATA"))
+        if (xmlWholeState->hasTagName("ALLDATA"))
         {
-            //mainLayerDataStruct.getAPVTSMainLayer().replaceState(juce::ValueTree::fromXml(*xmlState));
-            //mainLayerDataStruct.getRoot().readFromData(data, sizeInBytes);
-            //setParams();
-            juce::XmlElement* xmlAPVTS = xmlState.get()->getChildByName(mainLayerDataStruct.getAPVTSMainLayer().state.getType());
-
-            if (xmlAPVTS != nullptr)
+            juce::ValueTree vtData = juce::ValueTree::fromXml(*xmlWholeState);
+            selectedState = vtData.getProperty(AudioEngineConstants::ParamStringID::selectedState);
+            for (int stateID = 0; stateID < AudioEngineConstants::Processor<float>::StateID::maxStateID; ++stateID)
             {
-                mainLayerDataStruct.getAPVTSMainLayer().replaceState(juce::ValueTree::fromXml(*xmlAPVTS));
-            }
+                state[stateID]->removeAllChildren(nullptr);
+                //juce::XmlElement* xmlState = xmlWholeState.get()->getChildByName(AudioEngineConstants::UI::stateString[stateID]);
+                juce::ValueTree vtState = vtData.getChildWithName(AudioEngineConstants::UI::stateString[stateID]);
+                //if (xmlState != nullptr)
+                if(vtState.isValid())
+                {
+                    //juce::XmlElement* xmlAPVTS = xmlState->getChildByName(mainLayerDataStruct.getAPVTSMainLayer().state.getType());
+                    juce::ValueTree vtAPVTS = vtState.getChildWithName(mainLayerDataStruct.getAPVTSMainLayer().state.getType());
+                    //if (xmlAPVTS != nullptr)
+                    if(vtAPVTS.isValid())
+                    {
+                        //juce::ValueTree vtAPVTS = juce::ValueTree::fromXml(*xmlAPVTS);
+                        vtState.removeChild(vtAPVTS, nullptr);
+                        state[stateID]->addChild(vtAPVTS, 0, nullptr);
+                    }
 
-            juce::XmlElement* xmlWS = xmlState.get()->getChildByName(mainLayerDataStruct.getRoot().getType());
-            if (xmlWS != nullptr)
-            {
-                juce::ValueTree vtTest = juce::ValueTree::fromXml(*xmlWS);
-
-                //juce::ValueTree vtMainLayer = vtTest.getChildWithName(MainLayerApvtsIDString::stage + "0");
-                //juce::ValueTree vtDisto = vtMainLayer.getChildWithName(MainLayerValueTreeID::distortion);
-                //juce::ValueTree vtDU = vtDisto.getChildWithName(MainLayerValueTreeID::distoUnit + "0");
-                //juce::ValueTree vtCircuit = vtDU.getChildWithName(MainLayerValueTreeID::distortionCircuit);
-                //int vtType = vtCircuit.getProperty(MainLayerValueTreeID::equationType);
-                //int vtID = vtCircuit.getProperty(MainLayerValueTreeID::equationID);
-                
-                mainLayerDataStruct.getRoot().copyPropertiesAndChildrenFrom(vtTest, nullptr);
-
+                    //juce::XmlElement* xmlVT = xmlState->getChildByName(mainLayerDataStruct.getRoot().getType());
+                    //if (xmlVT != nullptr)
+                    juce::ValueTree vtTest = vtState.getChildWithName(mainLayerDataStruct.getRoot().getType());
+                    if(vtTest.isValid())
+                    {
+                        //juce::ValueTree vtTest = juce::ValueTree::fromXml(*xmlVT);
+                        vtState.removeChild(vtTest, nullptr);
+                        state[stateID]->addChild(vtTest, 1, nullptr);
+                        //mainLayerDataStruct.getRoot().copyPropertiesAndChildrenFrom(vtTest, nullptr);
+                    }
+                }
             }
         }
+    }
+
+    if (selectedState >= AudioEngineConstants::Processor<float>::StateID::A
+        && selectedState <= AudioEngineConstants::Processor<float>::StateID::D)
+    {
+        loadState(selectedState);
     }
 
     setParams();
@@ -579,27 +645,6 @@ void MangledAudioProcessor::setDistortionParams(juce::AudioProcessorValueTreeSta
             break;
         }
 
-        //paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distortionUnitID);
-        //newDistortionUnitProcessorParams.circuit.equationType = mainLayerDataStruct.getDistortionCircuitEquationType(stageID, distortionUnitID);
-
-        ////paramString = getDistortionDUEquationParamString(stageID, distortionUnitID);
-        //newDistortionUnitProcessorParams.circuit.equationID = mainLayerDataStruct.getDistortionCircuitEquationID(stageID, distortionUnitID);
-
-        //paramString = (juce::String)("Sigmoid") + (juce::String)(stageID)+juce::String(distortionUnitID);
-        //auto& sigmoidEQA = *apvts.getRawParameterValue(paramString);
-        //
-        //if (sigmoidEQA == 0)
-        //{
-        //    int yolo = 1;
-        //}
-        //
-        //paramString = (juce::String)("Symetric") + (juce::String)(stageID)+juce::String(distortionUnitID);
-        //auto& symetricEQA = *apvts.getRawParameterValue(paramString);
-
-        //if (symetricEQA == 1)
-        //{
-        //    int yolo = 2;
-        //}
         //Distortion Routing
         paramString = DistoUnitConstants::ParamStringID::GetParamStringID::routing(stageID, distortionUnitID);
         newDistortionUnitProcessorParams.routing = *apvts.getRawParameterValue(paramString);

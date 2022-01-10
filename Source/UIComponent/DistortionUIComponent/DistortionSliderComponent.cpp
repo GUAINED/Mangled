@@ -378,7 +378,7 @@ void DistortionSliderComponent::switchComboBox()
 {
     switch (eqaTypeComboBox.getSelectedId() - 1)
     {
-    case DistortionCircuitConstants::Processor<float>::EquationType::sigmoid:
+    case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::sigmoid):
         getSigmoidEquationComboBox()->setVisible(true);
         getSymetricEquationComboBox()->setVisible(false);
         getAsymetricEquationComboBox()->setVisible(false);
@@ -389,7 +389,7 @@ void DistortionSliderComponent::switchComboBox()
         asymEquationLabel.setVisible(false);
         specialEquationLabel.setVisible(false);
         break;
-    case DistortionCircuitConstants::Processor<float>::EquationType::symetric:
+    case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::symetric):
         getSigmoidEquationComboBox()->setVisible(false);
         getSymetricEquationComboBox()->setVisible(true);
         getAsymetricEquationComboBox()->setVisible(false);
@@ -400,7 +400,7 @@ void DistortionSliderComponent::switchComboBox()
         asymEquationLabel.setVisible(false);
         specialEquationLabel.setVisible(false);
         break;
-    case DistortionCircuitConstants::Processor<float>::EquationType::asymetric:
+    case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::asymetric):
         getSigmoidEquationComboBox()->setVisible(false);
         getSymetricEquationComboBox()->setVisible(false);
         getAsymetricEquationComboBox()->setVisible(true);
@@ -411,7 +411,7 @@ void DistortionSliderComponent::switchComboBox()
         asymEquationLabel.setVisible(true);
         specialEquationLabel.setVisible(false);
         break;
-    case DistortionCircuitConstants::Processor<float>::EquationType::special:
+    case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::special):
         getSigmoidEquationComboBox()->setVisible(false);
         getSymetricEquationComboBox()->setVisible(false);
         getAsymetricEquationComboBox()->setVisible(false);

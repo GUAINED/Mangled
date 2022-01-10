@@ -34,7 +34,7 @@ public:
 
     enum RadioButtonIds
     {
-        EQOrDistortionButtons = 1001
+        ProcessorButtons = 1001
     };
 
 
@@ -138,6 +138,7 @@ public:
     juce::ComboBox* getDataToDisplayComboBox() { return &dataToDisplayComboBox; };
     MangledDualStateButton* getDisplayEQButton() { return &displayEQButton; };
     MangledDualStateButton* getDisplayDistoButton() { return &displayDistoButton; };
+    MangledDualStateButton* getEnvButton() { return &displayEnvButton; };
 
     ScopeComponent*      getScope()               { return &scope; };
     EQComponent*         getEQComponent()         { return &eqComponent; };
