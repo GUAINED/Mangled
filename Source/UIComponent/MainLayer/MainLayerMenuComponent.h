@@ -19,6 +19,8 @@
 #include "../../UIComponent/PhaserUIComponent/PhaserComponent.h"
 #include "../../UIComponent/DistortionUIComponent/DistortionComponent.h"
 
+#include "../../UIComponent/Controls/MangledDualStateButton.h"
+
 #include "../../Processor/LayerProcessor/MainLayerProcessor.h"
 #include "../../Processor/UnitProcessor/EQProcessor.h"
 
@@ -49,7 +51,7 @@ public:
     StageComponent*   getStageComponent(int stageID)   { return stageComponentVector[stageID]; };
 private:
     juce::OwnedArray<OnOffButton> stageOnOffButtonVector;
-    juce::OwnedArray<juce::TextButton> stageIDButtonVector;
+    juce::OwnedArray<MangledDualStateButton> stageIDButtonVector;
     juce::OwnedArray<StageComponent> stageComponentVector;
 
     MainLayerDataStruct& dataStruct;

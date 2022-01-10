@@ -16,7 +16,7 @@
 #include "../../DataStructure/Conversion.h"
 #include "../../Processor/UnitProcessor/EQProcessor.h"
 #include "../GeneralUIComponent/SelectablePointDragger.h"
-#include "../GeneralUIComponent/LookAndFeel_V4_ComboBox.h"
+#include "../LookAndFeel/LookAndFeel_V4_ComboBox.h"
 
 //==============================================================================
 /*
@@ -46,8 +46,8 @@ public:
     //Compute the filter response from the coefficient at the freqForFilterMagnitude.
     void computeFrequencyAndXAxisValueForFilterMagnitude();
     
-    void computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLayerDataStruct, const float* filterMagnitudeValue, int filterID);
-    void computeEQFilterSumFrequencyResponse(const float* filterSumMagnitudeValue, bool isAnyActiveFilter);
+    void computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLayerDataStruct, int filterID); //, const float* filterMagnitudeValue
+    void computeEQFilterSumFrequencyResponse(bool isAnyActiveFilter); //const float* filterSumMagnitudeValue, 
     void closeFilterAreaOfEffectPath(int filterType, int filterID);
     
     //Draw all the filter response.
@@ -58,32 +58,34 @@ public:
 
     struct FilterDrawing
     {
-        int filterID;
-        juce::Path filterPath;
+        int filterID = 0;
+        juce::Path filterPath = juce::Path();
         float opacity = 0.0f;
-        juce::Colour colour;
-        int type;
-        bool isBypassed;
-        bool isActive;
+        juce::Colour colour = juce::Colours::black;
+        int type = 0;
+        bool isBypassed = true;
+        bool isActive = false;
     };
 
     void setMonoToStereo(bool newIsStereo) { isStereo = newIsStereo; };
 
     void setSelectedFilterDragger(int selectedFilter);
 
-    void setIsDisplayed(bool newIsDisplayed) { isDisplayed = newIsDisplayed; };
+    //void setIsDisplayed(bool newIsDisplayed) { isDisplayed = newIsDisplayed; };
     int  findFilterDragger(const juce::MouseEvent& e);
     bool isMouseOnScope(const juce::MouseEvent& e);
 
     void setGainLim(int zoomID);
 
-    int updateUI(MainLayerDataStruct& mainLayerDataStruct, juce::AudioBuffer<float>* pFilterMagnitude, juce::AudioBuffer<float>* pFilterMagnitudeSum);
+    int updateUI(MainLayerDataStruct& mainLayerDataStruct);
 
     //Get function
     juce::AudioBuffer<float>* getPreEQFFTBuffer() { return &preEQFFTBuffer; };
     juce::AudioBuffer<float>* getPostEQFFTBuffer() { return &postEQFFTBuffer; };
     juce::AudioBuffer<float>* getPostDistoFFTBuffer() { return &postDistoFFTBuffer; };
+    juce::AudioBuffer<float>& getFilterMagBuffer() { return filterMagBuffer; };
 
+    juce::AudioBuffer<float>& getFilterMagSumBuffer() { return filterSumMagBuffer; };
     juce::ComboBox* getZoomComboBox() { return &zoomComboBox; };
 
 private:
@@ -99,23 +101,25 @@ private:
 
     juce::Path fftPreEQPath;     //FFT Pre EQ Effect.
     juce::Path fftPostEQPath;    //FFT Post EQ Effect.
-    juce::Path fftPostDistoPath;    //FFT Post EQ Effect.
+    juce::Path fftPostDistoPath; //FFT Post EQ Effect.
 
-    juce::Path filterAreaOfEffectPath;      //Fill for the area effect Of the filter.
+    juce::Path filterAreaOfEffectPath; //Fill for the area effect Of the filter.
 
     FilterDrawing filterDrawingBank[EQConstants::Processor<float>::nbOfFilterMax]; //Path for every filter.
-    FilterDrawing filterSumDrawing;                              //Neat trick to get the path sum all the filter.
+    FilterDrawing filterSumDrawing;
 
     //Flag====================================================================================================================
-    bool isDisplayed = false;     //Bypass the Paint.
+    //bool isDisplayed = false;     //Bypass the Paint.
     int currentFilterDragger = 0; //Keep current filter Dragger.
-     bool isStereo;
+    bool isStereo;
 
     //FFT Buffer===========================================================
     juce::AudioBuffer<float> preEQFFTBuffer;
     juce::AudioBuffer<float> postEQFFTBuffer;
     juce::AudioBuffer<float> postDistoFFTBuffer;
 
+    juce::AudioBuffer<float> filterMagBuffer;
+    juce::AudioBuffer<float> filterSumMagBuffer;
     //Filter Interface========================================================================================================================================
     juce::OwnedArray<SelectablePointDragger> filterDraggerVector; //Point to drag the filter.
 

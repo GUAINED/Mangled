@@ -12,8 +12,7 @@
 #include <JuceHeader.h>
 #include "MangledIdentifiers.h"
 #include "Conversion.h"
-//#include "../Processor/UnitProcessor/SampleRemapperBin.h"
-
+#include "../Processor/AudioEngine.h"
 class MainLayerDataStruct: juce::ValueTree::Listener
 {
     //=================================================================================================================
@@ -31,17 +30,24 @@ public:
         int nbOfFiltersPerEQ,
         int nbOfDistoUnitPerDisto)
         : apvtsMainLayer(processorToConnectTo, &undoManager, valueTreeType, createParametersLayout(nbOfStages, nbOfFiltersPerEQ, nbOfDistoUnitPerDisto))
+        , shouldUpdate(true)
+        , rootAudioEngine(AudioEngineConstants::ParamStringID::audioEngine)
+        //, phaserState(apvtsMainLayer)
     {
         //apvtsMainLayer.state.addListener(processorToConnectTo);
         //root = new ValueTreeWsBloc(createRootTree());
-        juce::Identifier id(MainLayerConstants::ParamStringID::mainLayer);
-        juce::ValueTree vt(id);
-        rootMainLayer = vt;
+        //juce::Identifier id(MainLayerConstants::ParamStringID::mainLayer);
+        //juce::ValueTree vt(id);
+        //rootMainLayer = vt;
         //apvtsMainLayer.state.addChild(rootMainLayer, 1, nullptr);
-        createValueTreeMainLayer();
+        rootAudioEngine.setProperty(AudioEngineConstants::ParamStringID::selectedState,
+                                    AudioEngineConstants::Processor<float>::StateID::A,
+                                    nullptr);
+        MainLayerProcessor<float>::createValueTree(rootAudioEngine, &undoManager);
 
+        //apvtsMainLayer.state.addChild(rootMainLayer, 0, nullptr);
         apvtsMainLayer.state.addListener(this);
-        rootMainLayer.addListener(this);
+        rootAudioEngine.addListener(this);
         undoManager.clearUndoHistory();
         undoManager.beginNewTransaction();
     };
@@ -56,21 +62,10 @@ public:
     void valueTreeRedirected(juce::ValueTree& treeWhichHasBeenChanged) override;
 
     //Create ValueTree=====================================================================================================
-    void createValueTreeMainLayer();
-    void createValueTreeStage(juce::ValueTree& vt, int stageID);
-    void createValueTreeScope(juce::ValueTree& vt);
-    void createValueTreeEQ(juce::ValueTree& vt);
-    void createValueTreeDistortion(juce::ValueTree& vt);
-    void createValueTreeDistortionUnit(juce::ValueTree& vt, int distortionUnitID);
-    void createValueTreeSampleRemapper(juce::ValueTree& vt);
-    //void createValueTreeWaveShaperDragPointSave(juce::ValueTree& vt);
-    void createValueTreeSampleRemapperPointUnipolar(juce::ValueTree& vt);
-    void createValueTreeSampleRemapperPointBipolar(juce::ValueTree& vt);
-    juce::ValueTree createPoint(float pointX, float pointY, float tension, int curveID, bool horizontalDragOn);
     juce::ValueTree createPointNoListener(float pointX, float pointY, float tension, int curveID, bool horizontalDragOn);
 
-    void createValueTreeDistortionCircuit(juce::ValueTree& vt);
     //Audio Engine function=================================================================================================
+    void setSelectedState(int stateID);
     void resetAudioEngineParam();
     float getMasterGainValue();
 
@@ -109,6 +104,8 @@ public:
     int findNextAvailableFilterIDEQ(int stageID);
     int findNextActiveFilterDown(int stageID);
     int findNextActiveFilterUp(int stageID);
+    void addActiveFilterCount(int stageID);
+    void remodeActiveFilterCount(int stageID);
 
     //Phaser==================================================================================================================
     void resetPhaserParam(int stageID);
@@ -150,15 +147,17 @@ public:
     void setSelectedIDCurve(int stageID, int distortionUnitID, int curveID);
     void setPointAndTensionID(int stageID, int distortionUnitID, int pointID, int tensionID);
     void setPointAndTensionIDNoTransaction(int stageID, int distortionUnitID, int pointID, int tensionID);
-    
+
+
     //Distortion Circuit
-    void setDistortionCircuitEquation(int stageID, int distortionUnitID, int equationType, int equationID);
+    //void setDistortionCircuitEquation(int stageID, int distortionUnitID, int equationType, int equationID);
     
     //Get Function=========================================================================================================
     juce::AudioProcessorValueTreeState& getAPVTSMainLayer() { return apvtsMainLayer; };
     juce::UndoManager& getUndoManager() { return undoManager; };
 
-    juce::ValueTree getRoot() { return rootMainLayer; };
+    juce::ValueTree getRoot() { return rootAudioEngine; };
+    juce::ValueTree getMainLayerVT();
     juce::ValueTree getStageVT(int stageID);
     juce::ValueTree getSelectedStageVT();
     juce::ValueTree getScopeVT(int stageID);
@@ -170,7 +169,12 @@ public:
     juce::ValueTree getDistortionCircuitVT(int stageID, int distortionUnitID);
     juce::ValueTree getSampleRemapperPointsVT(int stageID, int distortionUnitID);
     
-    //MainLayer=============================================================================================================
+    //Audio Engine
+    int getSelectedState();
+
+    //MainLayer
+    
+    //Stage
     int getSelectedStageID();
 
     //Scope
@@ -184,6 +188,7 @@ public:
     float getEQFilterGain(int stageID, int filterID);
     bool getEQFilterIsBypassed(int stageID, int filterID);
     bool getEQFilterIsActive(int stageID, int filterID);
+    int getNbOfActiveFilters(int stageID);
 
     //Distortion
     bool getDistoUnitRouting(int stageID, int distortionUnitID);
@@ -218,22 +223,11 @@ private:
                                                                                 int nbOfFiltersPerEQ, 
                                                                                 int nbOfDistoUnitPerDisto);
 
-    void createMainParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters);
-
-    void createMainLayerParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int nbOfStages, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto);
-
-    void createStageParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters,
-                                        int stageID, 
-                                        int nbOfFiltersPerEQ, 
-                                        int nbOfDistoUnitPerDisto);
-
-    void createScopeParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID);
-    void createEQParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>> *plugInParameters, int stageID, int nbOfFiltersPerEQ);
-    void createPhaserParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID);
-    void createDistortionParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfDistoUnitPerDisto);
     juce::AudioProcessorValueTreeState apvtsMainLayer;
-    juce::ValueTree rootMainLayer;
+    juce::ValueTree rootAudioEngine;
     juce::UndoManager undoManager;
-
+    
     std::atomic<bool> shouldUpdate;
+
+    //CustomPhaser<float>::State phaserState;
 };

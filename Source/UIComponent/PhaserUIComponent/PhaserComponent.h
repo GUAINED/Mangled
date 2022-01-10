@@ -13,7 +13,9 @@
 #include <JuceHeader.h>
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../DataStructure/MangledIdentifiers.h"
-#include "../GeneralUIComponent/OnOffButton.h"
+#include "../Controls/OnOffButton.h"
+#include "../Controls/MangledSlider.h"
+#include "../Controls/MangledComboBox.h"
 
 //==============================================================================
 /*
@@ -32,33 +34,33 @@ public:
     void buttonClicked(juce::Button* button) override;
 
     //Get function
-    juce::Slider*   getCentreFrequencyPhaserSlider() { return &centreFrequencyPhaserSlider; };
-    juce::Slider*   getFeedbackPhaserSlider()        { return &feedbackPhaserSlider; };
-    juce::Slider*   getRatePhaserSlider()            { return &ratePhaserSlider; };
-    juce::Slider*   getDepthPhaserSlider()           { return &depthPhaserSlider; };
-    juce::Slider*   getMixPhaserSlider()             { return &mixPhaserSlider; };
-    juce::ComboBox* getNumStagesPhaserComboBox()     { return &numStagesPhaserComboBox; };
+    MangledSlider*  getCentreFrequencyPhaserSlider() { return &centreFrequencyPhaserSlider; };
+    MangledSlider*  getFeedbackPhaserSlider()        { return &feedbackPhaserSlider; };
+    MangledSlider*  getRatePhaserSlider()            { return &ratePhaserSlider; };
+    MangledSlider*  getDepthPhaserSlider()           { return &depthPhaserSlider; };
+    MangledSlider*  getMixPhaserSlider()             { return &mixPhaserSlider; };
+    MangledComboBox* getNumStagesPhaserComboBox()     { return &numStagesPhaserComboBox; };
     OnOffButton*    getPhaserOnOffButton()           { return &phaserOnOffButton; };
     juce::TextButton* getResetButton() { return &resetButton; };
 
 private:
 
-    juce::Slider centreFrequencyPhaserSlider;
+    MangledSlider centreFrequencyPhaserSlider;
     juce::Label centreFrequencyPhaserLabel;
 
-    juce::Slider feedbackPhaserSlider;
+    MangledSlider feedbackPhaserSlider;
     juce::Label feedbackPhaserLabel;
 
-    juce::Slider ratePhaserSlider;
+    MangledSlider ratePhaserSlider;
     juce::Label ratePhaserLabel;
 
-    juce::Slider depthPhaserSlider;
+    MangledSlider depthPhaserSlider;
     juce::Label depthPhaserLabel;
 
-    juce::Slider mixPhaserSlider;
+    MangledSlider mixPhaserSlider;
     juce::Label mixPhaserLabel;
 
-    juce::ComboBox numStagesPhaserComboBox;
+    MangledComboBox numStagesPhaserComboBox;
     juce::Label numStagesPhaserLabel;
 
     OnOffButton phaserOnOffButton;

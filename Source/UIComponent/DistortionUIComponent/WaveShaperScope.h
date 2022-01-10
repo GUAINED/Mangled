@@ -33,15 +33,15 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void updateUI(MainLayerDataStruct& mainLayerDataStruct, SampleRemapper<float>* pSM);
+    void updateUI(MainLayerDataStruct& mainLayerDataStruct, int distortionUnitID, SampleRemapper<float>* pSM);
 
     //Set function================================================================================================================================================================
     void setWaveShaperPointIsSelected(int selectedPointID);
     void setWaveShaperTensionIsSelected(int selectedCurveID);
-    void drawSampleRemapperPath(juce::Path* path, float* binXData, float* binYData);// , float* eqBinYData);
-    void drawUnipolarPath(float* binXData, float* binYData);
-    void drawBipolarPath(float* binXData, float* binYData);
-    void drawSelectedCurvePath(float* binXData, float* binYData);
+    void drawSampleRemapperPath(juce::Path* path, const float* binXData, const float* binYData);// , float* eqBinYData);
+    void drawUnipolarPath(const float* binXData, const float* binYData);
+    void drawBipolarPath(const float* binXData, const float* binYData);
+    void drawSelectedCurvePath(const float* binXData, const float* binYData);
     void drawInnerGrid();
     void drawOuterGrid();
     void drawIsBipolarRectangle();
@@ -56,6 +56,8 @@ private:
     juce::OwnedArray<SelectablePointDragger> pointDraggerVector;
     juce::OwnedArray<WaveShaperTensionDragger> tensionDraggerVector;
 
+    juce::OwnedArray<juce::AudioBuffer<float>> binPathData;
+    
     //Path
     juce::Path innerGridPath;
     juce::Path outerGridPath;

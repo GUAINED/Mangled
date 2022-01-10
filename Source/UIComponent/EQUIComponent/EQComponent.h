@@ -14,7 +14,8 @@
 #include "EQSliderComponent.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../Processor/UnitProcessor/EQProcessor.h"
-#include "../GeneralUIComponent/OnOffButton.h"
+#include "../Controls/OnOffButton.h"
+#include "../Controls/MangledSlider.h"
 //==============================================================================
 /*
 */
@@ -33,14 +34,14 @@ public:
     void switchToWaveshaper();
     void switchFromWaveshaper();
     void updateFilterLabelForNoFilter();
-    void addFilter();
-    void removeFilter();
+    //void addFilter();
+    //void removeFilter();
 
     void buttonClicked(juce::Button* button);
     void updateOnOffButton(juce::Button* button, juce::String addedString);
 
     //Set Function
-    void setNbOfActiveFilter(int newNbOfActiveFilter) { nbOfActiveFilter = newNbOfActiveFilter; };
+    //void setNbOfActiveFilter(int newNbOfActiveFilter) { nbOfActiveFilter = newNbOfActiveFilter; };
     
     //Get Function
     juce::Button*      getResetButton()                     { return &resetButton; };
@@ -48,9 +49,8 @@ public:
     OnOffButton*       getOnOffButton()                     { return &onOffButton; };
     juce::TextButton*  getFilterIdDownEQTextButton()        { return &filterIdDownEQButton; };
     juce::TextButton*  getFilterIdUpEQTextButton()          { return &filterIdUpEQButton; };
-    juce::Slider*      getMixEQSlider()                     { return &mixSlider; };
+    MangledSlider*      getMixEQSlider()                     { return &mixSlider; };
     EQSliderComponent* getEQSliderComponent(int eqSliderID) { return eqSlider[eqSliderID]; };
-    int                getNbOfActiveFilter()                { return nbOfActiveFilter; };
 
 private:
     juce::TextButton resetButton;
@@ -61,12 +61,10 @@ private:
     //juce::Label isBypassedEQLabel;
     OnOffButton onOffButton;
 
-    juce::Slider mixSlider;
+    MangledSlider mixSlider;
     juce::Label mixLabel;
 
     juce::OwnedArray<EQSliderComponent> eqSlider;
-
-    int nbOfActiveFilter = 0;
 
     MainLayerDataStruct& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQComponent)

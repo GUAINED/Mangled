@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 #include "ScopeDisplay.h"
 #include "TemporalScope.h"
-#include "../GeneralUIComponent/OnOffButton.h"
+#include "../Controls/OnOffButton.h"
 
 //==============================================================================
 /*

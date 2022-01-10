@@ -68,6 +68,9 @@ public:
 
         jassert(inputBlock.getNumChannels() == nbOfChannels);
 
+        int yolo = inputBlock.getNumSamples();
+        int yolo2 = abstractFifo.getFreeSpace();
+
         if (inputBlock.getNumSamples() > abstractFifo.getFreeSpace())
         {
             returnValue = 0;
@@ -147,6 +150,108 @@ public:
             returnValue = size1 + size2;
         }
 
+
+        return returnValue;
+    }
+
+    int readSamplesFromFifo(SampleType* destination, int channel, int nbOfSamplesToRead)
+    {
+        //jassert(numberOfItems < buffer.getNumSamples());
+        //jassert(channel >= 0 && channel < buffer.getNumChannels());
+
+        int start1, size1, start2, size2;
+        //fifo.setReadSize(numberOfItems);
+        //fifo.prepareToRead(start1, size1, start2, size2);
+
+        abstractFifo.prepareToRead(nbOfSamplesToRead, start1, size1, start2, size2);
+
+        const auto* source = fifoBuffer.getReadPointer(channel);
+        if (size1 > 0)
+            std::copy_n(source + start1, size1, destination);
+        if (size2 > 0)
+            std::copy_n(source + start2, size2, destination + size1);
+        //jassert(buffer->getNumChannels() == nbOfChannels);
+
+        //int returnValue;
+
+        //if (abstractFifo.getNumReady() < buffer->getNumSamples())
+        //{
+        //    returnValue = 0;
+        //}
+        //else
+        //{
+        //    int start1;
+        //    int size1;
+        //    int start2;
+        //    int size2;
+
+        //    abstractFifo.prepareToRead(buffer->getNumSamples(), start1, size1, start2, size2);
+
+        //    if (size1 > 0)
+        //    {
+        //        //for (int channelID = 0; channelID < nbOfChannels; ++channelID)
+        //        {
+        //            buffer->copyFrom(channel, 0, fifoBuffer, channel, start1, size1);
+        //        }
+        //    }
+
+        //    if (size2 > 0)
+        //    {
+        //        //for (int channelID = 0; channelID < nbOfChannels; ++channelID)
+        //        {
+        //            buffer->copyFrom(channel, size1, fifoBuffer, channel, start2, size2);
+        //        }
+        //    }
+
+        //    abstractFifo.finishedRead(size1 + size2);
+
+        //    returnValue = size1 + size2;
+        //}
+
+        //return returnValue;
+        return 0;
+    }
+
+    int readSamplesFromFifo(juce::AudioBuffer<SampleType>* buffer)
+    {
+        jassert(buffer->getNumChannels() == nbOfChannels);
+
+        int returnValue;
+
+        if (abstractFifo.getNumReady() < buffer->getNumSamples())
+        {
+            returnValue = 0;
+        }
+        else
+        {
+            int start1;
+            int size1;
+            int start2;
+            int size2;
+
+            abstractFifo.prepareToRead(buffer->getNumSamples(), start1, size1, start2, size2);
+
+            if (size1 > 0)
+            {
+                for (int channelID = 0; channelID < nbOfChannels; ++channelID)
+                {
+                    buffer->copyFrom(channelID, 0, fifoBuffer, channelID, start1, size1);
+                }
+            }
+
+
+            if (size2 > 0)
+            {
+                for (int channelID = 0; channelID < nbOfChannels; ++channelID)
+                {
+                    buffer->copyFrom(channelID, size1, fifoBuffer, channelID, start2, size2);
+                }
+            }
+
+            abstractFifo.finishedRead(size1 + size2);
+
+            returnValue = size1 + size2;
+        }
 
         return returnValue;
     }

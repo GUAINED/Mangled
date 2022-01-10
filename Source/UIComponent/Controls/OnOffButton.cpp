@@ -16,7 +16,7 @@ OnOffButton::OnOffButton(juce::String initButtonString = "", juce::String onOffS
 {
     setClickingTogglesState(true);
     setLookAndFeel(&lafGradient);
-    setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::lawngreen.brighter(0.2f)); 
+    setColour(juce::TextButton::ColourIds::buttonColourId, AudioEngineConstants::UI::neonGreen);//.brighter(0.2f) 
     setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
     setToggleState(startingToogleState, juce::dontSendNotification);
     onClick = [this] {updateOnOffButton(); };

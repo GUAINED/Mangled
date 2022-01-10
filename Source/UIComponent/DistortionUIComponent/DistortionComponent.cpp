@@ -18,7 +18,7 @@ DistortionComponent::DistortionComponent(MainLayerDataStruct& mlDataStruct)
 
     setInterceptsMouseClicks(false, true);
 
-    for (int distortionUnit = 0; distortionUnit < static_cast<int>(DistortionProcessor<float>::DistortionUnitID::maxDistortionUnitID); ++distortionUnit)
+    for (int distortionUnit = 0; distortionUnit < DistortionConstants::Processor<float>::nbOfDUMax; ++distortionUnit)
     {
         distortionSliderComponent.add(new DistortionSliderComponent(mlDataStruct));
         addChildComponent(distortionSliderComponent[distortionUnit]);
@@ -36,7 +36,7 @@ DistortionComponent::DistortionComponent(MainLayerDataStruct& mlDataStruct)
     }
         
 
-    distortionSliderComponent[static_cast<int>(DistortionProcessor<float>::DistortionUnitID::firstDistortionUnitID)]->setVisible(true);
+    distortionSliderComponent[0]->setVisible(true);
 }
 
 DistortionComponent::~DistortionComponent()
@@ -65,7 +65,7 @@ void DistortionComponent::resized()
 
     distortionUnitMenuTab.setBounds(0,0,getLocalBounds().getWidth(), labelHeight);
 
-    for (int distortionUnit = 0; distortionUnit < static_cast<int>(DistortionProcessor<float>::DistortionUnitID::maxDistortionUnitID); ++distortionUnit)
+    for (int distortionUnit = 0; distortionUnit < DistortionConstants::Processor<float>::nbOfDUMax; ++distortionUnit)
     {
         distortionSliderComponent[distortionUnit]->setBounds(distortionUnitMenuTab.getX(), distortionUnitMenuTab.getBottom(), getLocalBounds().getWidth(), getLocalBounds().getHeight() - labelHeight);
     }

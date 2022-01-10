@@ -83,7 +83,7 @@ EQSliderComponent::EQSliderComponent(MainLayerDataStruct& mlDataStruct, juce::Co
     filterIsActiveEQButton.setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::yellow);
     filterIsActiveEQButton.setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::yellow);
     filterIsActiveEQButton.setClickingTogglesState(true);
-    filterIsActiveEQButton.setToggleState(false, juce::sendNotification);
+    filterIsActiveEQButton.setToggleState(! EQConstants::BiquadConstants<float>::isActiveStartValue, juce::sendNotification);
     //filterIsActiveEQButton.addListener(this);
     addAndMakeVisible(filterIsActiveEQButton);
 }
@@ -161,11 +161,11 @@ void EQSliderComponent::setSmallGradient()
 }
 void EQSliderComponent::buttonClicked(juce::Button* button)
 {
-    int stageID = dataStruct.getSelectedStageID();
+    //int stageID = dataStruct.getSelectedStageID();
 
     if (button == &filterIsActiveEQButton)
     {
-        setVisible(false);
+        setVisible(!filterIsActiveEQButton.getToggleState());
 
         //int filterID = dataStruct.findNextActiveFilterDown(stageID);
         //dataStruct.setSelectedFilterID(stageID, filterID);

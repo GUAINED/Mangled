@@ -99,6 +99,30 @@ public:
 
     juce::dsp::Gain<SampleType>* getMasterGain() { return &masterGain; };
 
+    static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int nbOfStages, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto)
+    {
+        juce::NormalisableRange<SampleType> normalisableMasterGainRange{ AudioEngineConstants::Processor<SampleType>::masterGainMin,
+                                                          AudioEngineConstants::Processor<SampleType>::masterGainMax,
+                                                           AudioEngineConstants::Processor<SampleType>::masterGaindBIncrement };
+
+        juce::String paramString = AudioEngineConstants::ParamStringID::GetParamStringID::masterGain();
+        juce::String automationParamString = AudioEngineConstants::AutomationString::GetString::masterGain();
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            normalisableMasterGainRange,
+            AudioEngineConstants::Processor<SampleType>::masterGainStartValue));
+
+        paramString = AudioEngineConstants::ParamStringID::GetParamStringID::masterLimiterOnOff();
+        automationParamString = AudioEngineConstants::AutomationString::GetString::masterLimiterOnOff();
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+            automationParamString,
+            AudioEngineConstants::Processor<SampleType>::masterLimiterIsBypassedStartValue));
+
+        MainLayerProcessor<SampleType>::createParametersLayout(plugInParameters, nbOfStages, nbOfFiltersPerEQ, nbOfDistoUnitPerDisto);
+    }
+
 private:
 
     //enum

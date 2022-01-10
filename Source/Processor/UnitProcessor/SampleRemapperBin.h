@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 #include "../../DataStructure/MangledIdentifiers.h"
+#include "../../DataStructure/SampleFifo.h"
+#include "../../DataStructure/AudioSampleFifo.h"
 #include "CurveEquation.h"
 
 template <typename SampleType>
@@ -28,16 +30,17 @@ public:
         , tension(static_cast<SampleType>(0.0))
         , smoothedTension(tension)
         , curveID(0)
+        , binPathData(3, DistortionConstants::UI::nbOfPointsPerBin + 1)
+        , binPathFifo(3, DistortionConstants::UI::nbOfPointsPerBin + 1)
     {
-        //setCurveEquation(curveID, tension);
         curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::identity(sample, tension, leftX, leftY, rightX, rightY); };
     
-        for (int index = 0; index < DistortionConstants::UI::nbOfPointsPerBin; ++index)
-        {
-            binPathXData[index] = (SampleType) 0.0;
-            binPathYData[index] = (SampleType)0.0;
-            eqBinPathYData[index] = (SampleType)0.0;
-        }
+        binPathData.clear();
+        //binPathFifo.reset(3, 5 * DistortionConstants::UI::nbOfPointsPerBin + 1);
+        binPathFifo.setFifoSize(5 * DistortionConstants::UI::nbOfPointsPerBin + 1);
+
+        computePathData();
+
     }
 
     SampleRemapperBin(SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY, SampleType tensionInit = static_cast<SampleType>(1.0), int curveTypeInit = 1)
@@ -50,7 +53,8 @@ public:
         , tension(tensionInit)
         , smoothedTension(tensionInit)
         , curveType(curveTypeInit)
-        
+        , binPathData(3, DistortionConstants::UI::nbOfPointsPerBin + 1)
+        , binPathFifo(3, DistortionConstants::UI::nbOfPointsPerBin + 1)
     {
         curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::identity(sample, tension, leftX, leftY, rightX, rightY); };
         smoothedLeftX.setTargetValue(leftX);
@@ -58,21 +62,50 @@ public:
         smoothedRightX.setTargetValue(rightX);
         smoothedRightY.setTargetValue(rightY);
 
-        for (int index = 0; index < DistortionConstants::UI::nbOfPointsPerBin; ++index)
-        {
-            binPathXData[index] = (SampleType)0.0;
-            binPathYData[index] = (SampleType)0.0;
-            eqBinPathYData[index] = (SampleType)0.0;
-        }
+        binPathData.clear();
+        //binPathFifo.reset(3, 5 * DistortionConstants::UI::nbOfPointsPerBin + 1);
+        binPathFifo.setFifoSize(5 * DistortionConstants::UI::nbOfPointsPerBin + 1);
 
-        //computePathData();
+        computePathData();
+
+        //pushSampleIntoFifo();
     }
 
-    struct WaveShaperPointParam
+    struct BinParams
     {
-        juce::Point<SampleType> leftPoint;
-        juce::Point<SampleType> rightPoint;
+        juce::Point<SampleType> leftPoint{ static_cast<SampleType>(0.0), static_cast<SampleType>(0.0) };
+        juce::Point<SampleType> rightPoint{ static_cast<SampleType>(1.0), static_cast<SampleType>(1.0) };
         SampleType tension = static_cast<SampleType>(1.0);
+        int curveID = 0;
+
+        BinParams& operator=(const BinParams& other)
+        {
+            // Guard self assignment
+            if (this == &other)
+                return *this;
+
+            this->leftPoint = other.leftPoint;
+            this->rightPoint = other.rightPoint;
+            this->tension = other.tension;
+            this->curveID = other.curveID;
+
+            return *this;
+        };
+
+        bool operator==(const BinParams& rhs)
+        {
+            return (
+                (leftPoint == rhs.leftPoint) &&
+                (rightPoint == rhs.rightPoint) &&
+                (tension == rhs.tension) &&
+                (curveID == rhs.curveID)
+                );
+        };
+
+        bool operator!=(const BinParams& rhs)
+        {
+            return !(*this == rhs);
+        };
     };
 
     void prepare(const juce::dsp::ProcessSpec& spec) noexcept
@@ -80,6 +113,8 @@ public:
         sampleRate = spec.sampleRate;
         rampDurationSeconds = spec.maximumBlockSize / sampleRate;
 
+        //binPathFifo.reset(3, 5*DistortionConstants::UI::nbOfPointsPerBin + 1);
+        binPathFifo.setFifoSize(5 * DistortionConstants::UI::nbOfPointsPerBin + 1);
         reset();
     }
 
@@ -149,8 +184,8 @@ public:
 
             for (int pointID = 0; pointID < nbOfPoints; ++pointID)
             {
-                binPathXData[pointID] = xValue;
-                binPathYData[pointID] = yValue;
+                binPathData.getWritePointer(0)[pointID] = xValue;
+                binPathData.getWritePointer(1)[pointID] = yValue;
 
                 yValue += yInc;
             }
@@ -167,9 +202,8 @@ public:
                 smoothedRightX.getTargetValue(),
                 smoothedRightY.getTargetValue());
 
-            binPathXData[0] = xValue;
-            binPathYData[0] = yValue;
-
+            binPathData.getWritePointer(0)[0] = xValue;
+            binPathData.getWritePointer(1)[0] = yValue;
             for (int pointID = 1; pointID < nbOfPoints - 1; ++pointID)
             {
 
@@ -181,8 +215,8 @@ public:
                     smoothedRightX.getTargetValue(),
                     smoothedRightY.getTargetValue());
 
-                binPathXData[pointID] = xValue;
-                binPathYData[pointID] = yValue;
+                binPathData.getWritePointer(0)[pointID] = xValue;
+                binPathData.getWritePointer(1)[pointID] = yValue;
             }
 
             xValue = smoothedLeftX.getTargetValue();
@@ -193,23 +227,23 @@ public:
                 smoothedRightX.getTargetValue(),
                 smoothedRightY.getTargetValue());
 
-            binPathXData[100] = xValue;
-            binPathYData[100] = yValue;
+            binPathData.getWritePointer(0)[100] = xValue;
+            binPathData.getWritePointer(1)[100] = yValue;
         }
 
         switch (curveID)
         {
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::polynomial:  //Tension
-            xValue = binPathXData[50];
-            yValue = binPathYData[50];
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::polynomial :
+            xValue = binPathData.getReadPointer(0)[50];
+            yValue = binPathData.getReadPointer(1)[50];
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::asinh:  //Tension
-            xValue = binPathXData[50];
-            yValue = binPathYData[50];
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::asinh :
+            xValue = binPathData.getReadPointer(0)[50];
+            yValue = binPathData.getReadPointer(1)[50];
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::doubleCurve: //Sin
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::doubleCurve :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(-0.5),
@@ -218,7 +252,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::triangle:
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::triangle :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -227,7 +261,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::square:
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::square :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -236,7 +270,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::stair:
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::stair :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -245,7 +279,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::sin:
+        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::sin :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -255,14 +289,14 @@ public:
             break;
 
         default:
-            xValue = binPathXData[50];
-            yValue = binPathYData[50];
+            xValue = binPathData.getReadPointer(0)[50];
+            yValue = binPathData.getReadPointer(1)[50];
             break;
 
         }
 
-        binPathXData[101] = xValue;
-        binPathYData[101] = yValue;
+        binPathData.getWritePointer(0)[101] = xValue;
+        binPathData.getWritePointer(1)[101] = yValue;
         
     }
 
@@ -439,17 +473,40 @@ public:
 
     }
 
-    void setBinParam(juce::Point<SampleType> newLeftPoint, juce::Point<SampleType> newRightPoint, SampleType newTension, int newCurveID)
+    void setBinParam(const BinParams newBinParams)// juce::Point<SampleType> newLeftPoint, juce::Point<SampleType> newRightPoint, SampleType newTension, int newCurveID)
     {
-        setLeftPoint(newLeftPoint);
-        setRightPoint(newRightPoint);
-        setCurveID(newCurveID);
-        setTension(newTension);
-        setCurveEQA();
-        computePathData();
+        if (binParams != newBinParams)
+        {
+            binParams = newBinParams;
+
+            setLeftPoint(binParams.leftPoint);
+            setRightPoint(binParams.rightPoint);
+            setCurveID(binParams.curveID);
+            setTension(binParams.tension);
+            setCurveEQA();
+            computePathData();
+        }
     };
 
-    void setEQBinData(int index, SampleType eqData) { eqBinPathYData[index] = eqData; };
+    void setEQBinData(int index, SampleType eqData) { binPathData.getWritePointer(2)[index] = eqData; };
+    
+    void pushSampleIntoFifo()
+    {
+        //binPathFifo.push(binPathData);
+        binPathFifo.writeSamplesToFifo(binPathData);
+    }
+
+    void pullSampleFromFifo(juce::AudioBuffer<SampleType>* buffer)
+    {
+        //binPathFifo.pull(buffer, buffer->getNumSamples());
+        binPathFifo.readSamplesFromFifo(buffer);
+    }
+
+    void pullSampleFromFifo(juce::AudioBuffer<SampleType>& buffer)
+    {
+        //binPathFifo.pull(buffer, buffer.getNumSamples());
+        binPathFifo.readSamplesFromFifo(buffer);
+    }
 
     //Get Function
     SampleType getTargetLeftX() { return smoothedLeftX.getTargetValue(); };
@@ -460,11 +517,11 @@ public:
     juce::Point<SampleType>& getRightPoint() { return rightPoint; };
     SampleType getTension() { return tension; };
 
-    SampleType* getBinPathXData() { return binPathXData; };
-    SampleType* getBinPathYData() { return binPathYData; };
-    SampleType* getEQBinPathYData() { return eqBinPathYData; };
+    BinParams& getBinParams() { return binParams; };
+    juce::AudioBuffer< SampleType >&  getBinPathData() { return binPathData; };
 
 private:
+    BinParams binParams;
     juce::Point<SampleType> leftPoint;
     juce::Point<SampleType> rightPoint;
     SampleType tension = static_cast<SampleType>(0.0);
@@ -482,8 +539,15 @@ private:
     double sampleRate = 44100.0;
     double rampDurationSeconds = 0.0;
 
-    SampleType binPathXData[101 + 1];
-    SampleType binPathYData[101 + 1];
+    //SampleType binPathXData[101 + 1];
+    //SampleType binPathYData[101 + 1];
 
-    SampleType eqBinPathYData[101 + 1];
+    //SampleType eqBinPathYData[101 + 1];
+
+    juce::AudioBuffer < SampleType > binPathData;
+
+    AudioSampleFifo<SampleType> binPathFifo;
+    //SampleFifo<SampleType> binPathFifo;
+    //juce::AudioBuffer < SampleType > binPathYData;
+    //juce::AudioBuffer < SampleType > eqBinPathYData;
 };

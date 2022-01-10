@@ -22,6 +22,7 @@ StageComponent::StageComponent(MainLayerDataStruct& mlDataStruct)
     , outputRMSMeter("Ouput")
     , displayEQButton("EQ")
     , displayDistoButton("Distortion")
+    , displayEnvButton("Enveloppe")
 {
     //setInterceptsMouseClicks(false, true);
 
@@ -37,20 +38,19 @@ StageComponent::StageComponent(MainLayerDataStruct& mlDataStruct)
 
     addAndMakeVisible(dataToDisplayComboBox);
 
-    displayEQButton.setClickingTogglesState(true);
-    displayEQButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-    displayEQButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
     displayEQButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
     displayEQButton.addListener(this);
-    
-    displayDistoButton.setClickingTogglesState(true);
-    displayDistoButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-    displayDistoButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
-    displayDistoButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
-    displayDistoButton.addListener(this);
-
     addAndMakeVisible(displayEQButton);
+
+    displayDistoButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
+    displayDistoButton.setToggleState(true, juce::dontSendNotification);
+    displayDistoButton.addListener(this);
     addAndMakeVisible(displayDistoButton);
+
+    displayEnvButton.setRadioGroupId(EQOrDistortionButtons, juce::dontSendNotification);
+
+    displayEnvButton.addListener(this);
+    addAndMakeVisible(displayEnvButton);
 
     addAndMakeVisible(scope);
     addAndMakeVisible(eqComponent);
@@ -88,9 +88,10 @@ void StageComponent::resized()
 
     dataLabel.setBounds(0, 0, labelWidth + 20, labelHeight);
     dataToDisplayComboBox.setBounds(dataLabel.getRight(), 0, labelWidth + 40, labelHeight);
-    int displayButtonWidth = (getWidth() - dataToDisplayComboBox.getRight()) / 2;
-    displayEQButton.setBounds(dataToDisplayComboBox.getRight(), dataToDisplayComboBox.getY(), displayButtonWidth, labelHeight);
-    displayDistoButton.setBounds(displayEQButton.getRight(), displayEQButton.getY(), displayButtonWidth, labelHeight);
+    int displayButtonWidth = (getWidth() - dataToDisplayComboBox.getRight()) / 3 - 3;
+    displayEQButton.setBounds(dataToDisplayComboBox.getRight() + 1, dataToDisplayComboBox.getY(), displayButtonWidth, labelHeight);
+    displayDistoButton.setBounds(displayEQButton.getRight() + 1, displayEQButton.getY(), displayButtonWidth, labelHeight);
+    displayEnvButton.setBounds(displayDistoButton.getRight() + 1, displayDistoButton.getY(), displayButtonWidth, labelHeight);
 
     scope.setBounds(dataToDisplayComboBox.getX(), dataToDisplayComboBox.getBottom(), getWidth(), scopeHeight);
 

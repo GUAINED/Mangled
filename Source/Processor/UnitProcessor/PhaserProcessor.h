@@ -22,19 +22,57 @@ public:
     /** Constructor. */
     CustomPhaser();
 
-    struct CustomPhaserParams
+    struct Parameters
     {
         //SampleType rateHz;
         //SampleType depth;
         //SampleType centreHz;
         //SampleType feedback;
         //SampleType mix;
-        float rateHz;
-        float depth;
-        float centreHz;
-        float feedback;
-        //SampleType mix;
-        int numStages;
+        float rateHz = PhaserConstants::Processor<SampleType>::rateStartValue;
+        float depth = PhaserConstants::Processor<SampleType>::depthStartValue;
+        float centreHz = PhaserConstants::Processor<SampleType>::cfreqStartValue;
+        float feedback = PhaserConstants::Processor<SampleType>::feedbackStartValue;
+        int numStages = PhaserConstants::Processor<SampleType>::nbOfStgStartValue;
+        SampleType mix = PhaserConstants::Processor<SampleType>::mixStartValue;
+        bool isBypassed = PhaserConstants::Processor<SampleType>::isBypassedStartValue;;
+        int id = 0;
+
+        inline Parameters& operator=(const Parameters& other)
+        {
+            // Guard self assignment
+            if (this == &other)
+                return *this;
+
+            this->rateHz = other.rateHz;
+            this->depth = other.depth;
+            this->centreHz = other.centreHz;
+            this->feedback = other.feedback;
+            this->numStages = other.numStages;
+            this->mix = other.mix;
+            this->isBypassed = other.isBypassed;
+            this->id = other.id;
+
+            return *this;
+        };
+
+        inline bool operator==(const Parameters& rhs)
+        {
+            return ((rateHz == rhs.rateHz) &&
+                (depth == rhs.depth) &&
+                (centreHz == rhs.centreHz) &&
+                (feedback == rhs.feedback) &&
+                (numStages == rhs.numStages) &&
+                (mix == rhs.mix) &&
+                (isBypassed == rhs.isBypassed) &&
+                (id == rhs.id)
+                );
+        };
+
+        inline bool operator!=(const Parameters& rhs)
+        {
+            return !(*this == rhs);
+        };
     };
 
     //==============================================================================
@@ -72,7 +110,7 @@ public:
 
     /** Sets the Bypass of the phaser.
     */
-    void setPhaserParams(CustomPhaser<SampleType>::CustomPhaserParams& newPhaserParams);
+    void setPhaserParams(CustomPhaser<SampleType>::Parameters& newPhaserParams);
 
 
     /** Update the state of the Phaser to avoid calling update() each param. This is
@@ -89,7 +127,7 @@ public:
     void reset();
 
     //Get Function
-    CustomPhaserParams& getPhaserParams() { return customPhaserParams; };
+    Parameters& getPhaserParams() { return params; };
     //void getPhaserParams();
     //==============================================================================
     /** Processes the input and output samples supplied in the processing context. */
@@ -156,12 +194,12 @@ public:
         //auto currentFrequency = allPassFilters[0]->getCutoffFrequency();
         dryWet.pushDrySamples(inputBlock);
 
-        for (size_t channel = 0; channel < numChannels; ++channel)
+        for (int channel = 0; channel < numChannels; ++channel)
         {
             //counter = updateCounter;
             //int k = 0;
 
-            auto* inputSamples = inputBlock.getChannelPointer(channel);
+            //auto* inputSamples = inputBlock.getChannelPointer(channel);
             auto* outputSamples = outputBlock.getChannelPointer(channel);
 
             //for (int n = 0; n < nbOfPhaseShifter; ++n)
@@ -169,7 +207,7 @@ public:
             //    phaseShifterFilters[n]->setNextFrequency();
             //}
 
-            for (size_t i = 0; i < numSamples; ++i)
+            for (int i = 0; i < numSamples; ++i)
             {
                 //auto input = inputSamples[i];
                 auto input = inputBlock.getSample(channel, i);
@@ -205,7 +243,7 @@ public:
 
         dryWet.mixWetSamples(outputBlock);
         //updateCounter = (updateCounter + (int)numSamples) % maxUpdateCounter;
-    }
+    };
     
     void smoothedValuesSkip(int numSamplesToSkip)
     {
@@ -213,8 +251,124 @@ public:
         {
             phaseShifterFilters[n]->smoothedValuesSkip(numSamplesToSkip);
         }
-    }
+    };
 
+    static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID)
+    {
+        juce::NormalisableRange<SampleType> normalisableMixRange{ PhaserConstants::Processor<SampleType>::mixMin,
+                                                                    PhaserConstants::Processor<SampleType>::mixMax,
+                                                                    PhaserConstants::Processor<SampleType>::mixStartValue };
+        //juce::NormalisableRange<SampleType> normalisableMixRange{ 0.0f,
+        //                                                    100.0f,
+        //                                                    0.3f };
+        juce::String paramString = PhaserConstants::ParamStringID::GetParamStringID::centerFrequency(stageID);
+        juce::String automationParamString = PhaserConstants::AutomationString::GetString::centerFrequency(stageID);
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            PhaserConstants::Processor<SampleType>::cfreqMin,
+            PhaserConstants::Processor<SampleType>::cfreqMax,
+            PhaserConstants::Processor<SampleType>::cfreqStartValue));
+
+        paramString = PhaserConstants::ParamStringID::GetParamStringID::feedback(stageID);
+        automationParamString = PhaserConstants::AutomationString::GetString::feedback(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            PhaserConstants::Processor<SampleType>::feedbackMin,
+            PhaserConstants::Processor<SampleType>::feedbackMax,
+            PhaserConstants::Processor<SampleType>::feedbackStartValue));
+
+        paramString = PhaserConstants::ParamStringID::GetParamStringID::rate(stageID);
+        automationParamString = PhaserConstants::AutomationString::GetString::rate(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            PhaserConstants::Processor<SampleType>::rateMin,
+            PhaserConstants::Processor<SampleType>::rateMax,
+            PhaserConstants::Processor<SampleType>::rateStartValue));
+
+        paramString = PhaserConstants::ParamStringID::GetParamStringID::depth(stageID);
+        automationParamString = PhaserConstants::AutomationString::GetString::depth(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            PhaserConstants::Processor<SampleType>::depthMin,
+            PhaserConstants::Processor<SampleType>::depthMax,
+            PhaserConstants::Processor<SampleType>::depthStartValue));
+
+        paramString = PhaserConstants::ParamStringID::GetParamStringID::mix(stageID);
+        automationParamString = PhaserConstants::AutomationString::GetString::mix(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            PhaserConstants::Processor<SampleType>::mixMin,
+            PhaserConstants::Processor<SampleType>::mixMax,
+            PhaserConstants::Processor<SampleType>::mixStartValue));
+
+        paramString = PhaserConstants::ParamStringID::GetParamStringID::nbOfStages(stageID);
+        automationParamString = PhaserConstants::AutomationString::GetString::nbOfStages(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
+            automationParamString,
+            PhaserConstants::UI::nbOfStgStringArray,
+            PhaserConstants::Processor<SampleType>::nbOfStgStartValue));
+
+        paramString = PhaserConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
+        automationParamString = PhaserConstants::AutomationString::GetString::isBypassed(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+            automationParamString,
+            PhaserConstants::Processor<SampleType>::isBypassedStartValue));
+
+    };
+
+
+   /** class State
+    {
+    public:
+        State(juce::AudioProcessorValueTreeState& state)//, CustomPhaser<SampleType>& proc)
+        : apvts(state)
+        //, processor(proc)
+        {
+
+        };
+
+        ~State() {};
+
+        void setPhaserParams(int stageID)// juce::AudioProcessorValueTreeState& apvts, int stageID)
+        {
+            //juce::AudioProcessorValueTreeState& apvts = mainLayerDataStruct.getAPVTSMainLayer();
+
+            CustomPhaser<float>* pPhaserProcessor = audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPhaserProcessor();
+
+            CustomPhaser<float>::Parameters newPhaserProcessorParams;
+
+            juce::String paramString = PhaserConstants::ParamStringID::GetParamStringID::centerFrequency(stageID);
+            newPhaserProcessorParams.centreHz = *apvts.getRawParameterValue(paramString);
+
+            paramString = PhaserConstants::ParamStringID::GetParamStringID::feedback(stageID);
+            newPhaserProcessorParams.feedback = *apvts.getRawParameterValue(paramString);
+
+            paramString = PhaserConstants::ParamStringID::GetParamStringID::rate(stageID);
+            newPhaserProcessorParams.rateHz = *apvts.getRawParameterValue(paramString);
+
+            paramString = PhaserConstants::ParamStringID::GetParamStringID::depth(stageID);
+            newPhaserProcessorParams.depth = *apvts.getRawParameterValue(paramString);
+
+            paramString = PhaserConstants::ParamStringID::GetParamStringID::nbOfStages(stageID);
+            newPhaserProcessorParams.numStages = (int)*apvts.getRawParameterValue(paramString);
+
+            paramString = PhaserConstants::ParamStringID::GetParamStringID::mix(stageID);
+            newPhaserProcessorParams.mix = *apvts.getRawParameterValue(paramString);
+
+            paramString = PhaserConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
+            newPhaserProcessorParams.isBypassed = *apvts.getRawParameterValue(paramString);
+
+            pPhaserProcessor->setPhaserParams(newPhaserProcessorParams);
+
+        }
+
+
+    private:
+        juce::AudioProcessorValueTreeState& apvts;
+        //CustomPhaser<SampleType>& processor;
+    };
+    */
 private:
     //==============================================================================
     void update();
@@ -245,7 +399,7 @@ private:
     SampleType mix = 0.5;
     SampleType centreFrequency = 1300.0;
 
-    CustomPhaserParams customPhaserParams;
+    Parameters params;
 
     int numStages = 4;
     static constexpr int maxNumStages = 8;

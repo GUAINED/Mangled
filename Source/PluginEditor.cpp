@@ -6,75 +6,9 @@
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
+//#include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-bool operator==(const IIRBiquadFilter<float>::IIRBiquadParams& lhs, const IIRBiquadFilter<float>::IIRBiquadParams& rhs)
-{
-    return (
-        (lhs.cutoff == rhs.cutoff) &&
-        (lhs.q == rhs.q) &&
-        (lhs.gain == rhs.gain) &&
-        (lhs.type == rhs.type)
-        );
-}
-
-bool operator!=(const IIRBiquadFilter<float>::IIRBiquadParams& lhs, const IIRBiquadFilter<float>::IIRBiquadParams& rhs)
-{
-    return !(lhs == rhs);
-}
-
-bool operator==(const IIRBiquadFilter<float>::FilterParams& lhs, const IIRBiquadFilter<float>::FilterParams& rhs)
-{
-    return (
-            (lhs.nbOfBiquads == rhs.nbOfBiquads) &&
-            (lhs.isBypassed == rhs.isBypassed) &&
-            (lhs.isActive == rhs.isActive) &&
-            (lhs.id == rhs.id)
-           );
-}
-
-bool operator!=(const IIRBiquadFilter<float>::FilterParams& lhs, const IIRBiquadFilter<float>::FilterParams& rhs)
-{
-    return !(lhs == rhs);
-}
-
-bool operator==(const EQProcessor<float>::FilterParamsForUpdate& lhs, const EQProcessor<float>::FilterParamsForUpdate& rhs)
-{
-    return (
-        (lhs.cutoff == rhs.cutoff) &&
-        (lhs.q == rhs.q) &&
-        (lhs.gain == rhs.gain) &&
-        (lhs.type == rhs.type) &&
-        (lhs.nbOfBiquads == rhs.nbOfBiquads) &&
-        (lhs.isBypassed == rhs.isBypassed) &&
-        (lhs.isActive == rhs.isActive) &&
-        (lhs.id == rhs.id)
-        );
-}
-
-bool operator!=(const EQProcessor<float>::FilterParamsForUpdate& lhs, const EQProcessor<float>::FilterParamsForUpdate& rhs)
-{
-    return !(lhs == rhs);
-}
-
-bool operator==(const DistortionUnitProcessor<float>::DistortionUnitParams& lhs, const DistortionUnitProcessor<float>::DistortionUnitParams& rhs)
-{
-    return ((lhs.distortionEquationType == rhs.distortionEquationType) &&
-        (lhs.preGain == rhs.preGain) &&
-        (lhs.drive == rhs.drive) &&
-        (lhs.postGain == rhs.postGain) &&
-        (lhs.mix == rhs.mix) &&
-        (lhs.isBipolar == rhs.isBipolar) &&
-        (lhs.isBypassed == rhs.isBypassed) &&
-        (lhs.distortionUnitID == rhs.distortionUnitID)
-        );
-}
-
-bool operator!=(const DistortionUnitProcessor<float>::DistortionUnitParams& lhs, const DistortionUnitProcessor<float>::DistortionUnitParams& rhs)
-{
-    return !(lhs == rhs);
-}
 
 //==============================================================================
 MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor& p)
@@ -82,6 +16,8 @@ MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor&
     , audioProcessor (p)
     , undoButton("Undo")
     , redoButton("Redo")
+    //, mangledLabel("MANGLED")
+    , masterGainLabel("Master Gain")
     , masterLimiterOnOffButton("Limiter", "On", AudioEngineConstants::Processor<float>::masterLimiterIsBypassedStartValue)
     , masterResetButton("Global Reset")
     , mainMenu(p.getMainLayerDataStruct())
@@ -90,10 +26,8 @@ MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor&
     , ppqSample(p.ppqSample)
     , bufferSize(p.bufferSize)
 {
-    setSize(AudioEngineConstants::UI::uiWidth, AudioEngineConstants::UI::uiHeight);
-
     //setInterceptsMouseClicks(true, false);
-    setResizable(false, false);
+
 
     //Undo Redo
     undoButton.onClick = [this] {audioProcessor.getMainLayerDataStruct().getUndoManager().undo(); };
@@ -103,9 +37,32 @@ MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor&
     addAndMakeVisible(undoButton);
     addAndMakeVisible(redoButton);
 
-    //Test BPM SR
+    //Label
     mangledLabel.setText("MANGLED", juce::dontSendNotification);
+    juce::Font boldFont{20, juce::Font::FontStyleFlags::bold };
+    boldFont.setStyleFlags(juce::Font::FontStyleFlags::bold);
+    mangledLabel.setFont(boldFont);
+    mangledLabel.setColour(juce::Label::ColourIds::textColourId, AudioEngineConstants::UI::neonGreen);
+    mangledLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(mangledLabel);
+
+    masterGainLabel.setText("Master Gain", juce::dontSendNotification);
+    masterGainLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(masterGainLabel);
+
+    for (int i = 0; i < AudioEngineConstants::UI::stateString.size(); ++i)
+    {
+        //stateButton.add(new juce::TextButton(AudioEngineConstants::UI::stateString[i]));
+        stateButton.add(new MangledDualStateButton(AudioEngineConstants::UI::stateString[i]));
+        stateButton[i]->setClickingTogglesState(true);
+        //stateButton[i]->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
+        //stateButton[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
+        //stateButton[i]->setRadioGroupId(StateButtons, juce::dontSendNotification);
+        stateButton[i]->addListener(this);
+        addAndMakeVisible(stateButton[i]);
+    }
+
+    stateButton[0]->setToggleState(true, juce::dontSendNotification);
 
     //Scope==============================================================================================================
     startTimerHz(AudioEngineConstants::UI::refreshRateHz);
@@ -119,20 +76,6 @@ MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor&
     //mainMenuTab.getOptionsTextButton()->addListener(this);
 
     addAndMakeVisible(mainMenuTab);
-
-    //MainLayer Stage Attachement And Listener=====================================================================================
-    //for (int stageID = 0; stageID < MainLayerConstants::nbOfStageMax; ++stageID)
-    //{
-    //    StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
-
-    //    //Distortion============================================================================================
-    //    DistortionComponent* pDistortionComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID)->getDistortionComponent();
-
-    //    for (int distortionUnitID = 0; distortionUnitID < static_cast<int>(DistortionProcessor<float>::DistortionUnitID::maxDistortionUnitID); ++distortionUnitID)
-    //    {
-
-    //    }
-    //}
 
     //Menu==============================================================================================================
     addAndMakeVisible(mainMenu);
@@ -150,11 +93,19 @@ MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor&
     masterResetButton.onClick = [this] {audioProcessor.getMainLayerDataStruct().resetAudioEngineParam(); };
     addAndMakeVisible(masterResetButton);
 
-    setUI();
+    //setUI();
+
+    //mainMenu.getMainLayerMenu()->getStageIDButton(1)->setToggleState(false, juce::sendNotificationAsync);
+    //mainMenu.getMainLayerMenu()->getStageIDButton(0)->setToggleState(true, juce::sendNotificationAsync);
+    //mainMenu.getMainLayerMenu()->switchToStageMenu(0);
+
+    setSize(AudioEngineConstants::UI::uiWidth, AudioEngineConstants::UI::uiHeight);
+    setResizable(false, false);
 }
 
 MangledAudioProcessorEditor::~MangledAudioProcessorEditor()
 {
+    //audioProcessor.getMainLayerDataStruct().setSelectedStageID(0);
     stopTimer();
 }
 
@@ -164,8 +115,8 @@ void MangledAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     //
 
-    const auto bounds = getLocalBounds().toFloat();
-    juce::Point<float> top = bounds.getTopLeft();
+    //const auto bounds = getLocalBounds().toFloat();
+    //juce::Point<float> top = bounds.getTopLeft();
 
     //Violet -> Orange grad
     //juce::ColourGradient grad = juce::ColourGradient{ juce::Colours::darkorange.withMultipliedAlpha(0.6f),
@@ -198,11 +149,17 @@ void MangledAudioProcessorEditor::resized()
 
     //Test Label================================================================================================================================
     mangledLabel.setBounds(redoButton.getRight() + offset, mainMenuTab.getY(), labelWidth, labelHeight);
+    stateButton[0]->setBounds(mangledLabel.getRight() + offset, mangledLabel.getY(), labelHeight, labelHeight);
+    stateButton[1]->setBounds(stateButton[0]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
+    stateButton[2]->setBounds(stateButton[1]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
+    stateButton[3]->setBounds(stateButton[2]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
     
-    auto length = (getWidth() - mangledLabel.getRight() - 2*labelWidth);
-    masterGainSlider.setBounds(mangledLabel.getRight(), 0, length, labelHeight);
+    masterGainLabel.setBounds(stateButton.getLast()->getRight() + offset, mangledLabel.getY(), labelWidth, labelHeight);
+    auto length = (getWidth() - masterGainLabel.getRight() - 2*labelWidth - 3);
+    masterGainSlider.setBounds(masterGainLabel.getRight(), 0, length, labelHeight);
     masterLimiterOnOffButton.setBounds(masterGainSlider.getRight(), mainMenuTab.getY(), labelWidth, labelHeight);
     masterResetButton.setBounds(masterLimiterOnOffButton.getRight(), 0, labelWidth, labelHeight);
+
 }
 
 void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
@@ -213,6 +170,75 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
     {
         //audioProcessor.getAudioEngine()->setCurrentLayerProcessorID(AudioEngine::LayerProcessorID::mainLayer);
         mainMenu.switchToMainLayerMenu();
+    }
+    else if (button == stateButton[AudioEngineConstants::Processor<float>::A])
+    {
+        if (button->getToggleState())
+        {
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            audioProcessor.saveState(selectedState);
+            audioProcessor.loadState(AudioEngineConstants::Processor<float>::A);
+            audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::A);
+        }
+        else
+        {
+            stateButton[0]->setToggleState(true, juce::dontSendNotification);
+        }
+
+        stateButton[AudioEngineConstants::Processor<float>::B]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::C]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::D]->setToggleState(false, juce::dontSendNotification);
+    }
+    else if (button == stateButton[AudioEngineConstants::Processor<float>::B])
+    {
+        if (button->getToggleState())
+        {
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            audioProcessor.saveState(selectedState);
+            audioProcessor.loadState(AudioEngineConstants::Processor<float>::B);
+            audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::B);
+        }
+        else
+        {
+            stateButton[1]->setToggleState(true, juce::dontSendNotification);
+        }
+        stateButton[AudioEngineConstants::Processor<float>::A]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::C]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::D]->setToggleState(false, juce::dontSendNotification);
+    }
+    else if (button == stateButton[AudioEngineConstants::Processor<float>::C])
+    {
+        if (button->getToggleState())
+        {
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            audioProcessor.saveState(selectedState);
+            audioProcessor.loadState(AudioEngineConstants::Processor<float>::C);
+            audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::C);
+        }
+        else
+        {
+            stateButton[AudioEngineConstants::Processor<float>::C]->setToggleState(true, juce::dontSendNotification);
+        }
+        stateButton[AudioEngineConstants::Processor<float>::A]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::B]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::D]->setToggleState(false, juce::dontSendNotification);
+    }
+    else if (button == stateButton[AudioEngineConstants::Processor<float>::D])
+    {
+        if (button->getToggleState())
+        {
+            int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedState();
+            audioProcessor.saveState(selectedState);
+            audioProcessor.loadState(AudioEngineConstants::Processor<float>::D);
+            audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::D);
+        }
+        else
+        {
+            stateButton[AudioEngineConstants::Processor<float>::D]->setToggleState(true, juce::dontSendNotification);
+        }
+        stateButton[AudioEngineConstants::Processor<float>::A]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::B]->setToggleState(false, juce::dontSendNotification);
+        stateButton[AudioEngineConstants::Processor<float>::C]->setToggleState(false, juce::dontSendNotification);
     }
     //else if (button == mainMenuTab.getPunchTextButton()) //Display Punch Layer Menu
     //{
@@ -326,23 +352,23 @@ void MangledAudioProcessorEditor::linkScopeParametersAttachment(juce::AudioProce
         paramString,
         *pStageComponent->getScope()->getPostDistoOnOffButton());
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
     mainLayerAttachment.stage[stageID].scope.isNormalized = std::make_unique<ButtonAttachment>(apvts,
         paramString,
         *pStageComponent->getScope()->getIsNormalizedOnOffButton());
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
     mainLayerAttachment.stage[stageID].scope.monoViewIsBypassed = std::make_unique<ButtonAttachment>(apvts,
         paramString,
         *pStageComponent->getScope()->getMonoViewOnOffButton());
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::subViewIsBypassed(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::subViewIsBypassed(stageID);
     mainLayerAttachment.stage[stageID].scope.subViewIsBypassed = std::make_unique<ButtonAttachment>(apvts,
         paramString,
         *pStageComponent->getScope()->getSubViewOnOffButton());
 
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::subViewCutoff(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::subViewCutoff(stageID);
     mainLayerAttachment.stage[stageID].scope.subViewCutoff = std::make_unique<SliderAttachment>(apvts,
         paramString,
         *pStageComponent->getScope()->getSubViewSlider());
@@ -462,42 +488,67 @@ void MangledAudioProcessorEditor::linkDistortionParametersAttachment(juce::Audio
     DistortionComponent* pDistortionComponent = pStageComponent->getDistortionComponent();
 
     //OverSampling Distortion
-    juce::String paramString = getDistortionOverSamplingParamString(stageID);
+    juce::String paramString = DistortionConstants::ParamStringID::GetParamStringID::overSampling(stageID);
     mainLayerAttachment.stage[stageID].distortion.oversampling = std::make_unique<ButtonAttachment>(apvts,
         paramString,
         *pDistortionComponent->getDistortionUnitMenuTab()->getOverSamplerOnOffButton());
 
     //Mix Distortion
-    paramString = getDistortionMixParamString(stageID);
+    paramString = DistortionConstants::ParamStringID::GetParamStringID::mix(stageID);
     mainLayerAttachment.stage[stageID].distortion.mix = std::make_unique<SliderAttachment>(apvts,
         paramString,
         *pDistortionComponent->getDistortionUnitMenuTab()->getMixDistortionSlider());
 
     //Bypass Distortion
-    paramString = getDistortionIsBypassedParamString(stageID);
+    paramString = DistortionConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
     mainLayerAttachment.stage[stageID].distortion.onOff = std::make_unique<ButtonAttachment>(apvts,
         paramString,
         *pDistortionComponent->getDistortionUnitMenuTab()->getOnOffButton());
 
-    for (int distortionUnitID = 0; distortionUnitID < static_cast<int>(DistortionProcessor<float>::DistortionUnitID::maxDistortionUnitID); ++distortionUnitID)
+    for (int distortionUnitID = 0; distortionUnitID < DistortionConstants::Processor<float>::nbOfDUMax; ++distortionUnitID)
     {
         DistortionSliderComponent* pDistoUnitComponent = pDistortionComponent->getDistortionSlider(distortionUnitID);
 
-        paramString = getDistortionDUIsBypassedParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::isBypassed(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].onOff = std::make_unique<ButtonAttachment>(apvts,
             paramString,
             *pDistortionComponent->getDistortionUnitMenuTab()->getDistoUnitOnOffButton(distortionUnitID));
 
-        //Distortion Equation WaveShaper
-        paramString = getDistortionDURoutingParamString(stageID, distortionUnitID);
+        //Equation Type
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distortionUnitID);
+        mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].eqaType = std::make_unique<ComboBoxAttachment>(apvts,
+            paramString,
+            *pDistoUnitComponent->getEquationTypeComboBox());
+
+        //Sigmoid Equation
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::sigmoidEQA(stageID, distortionUnitID);
+        mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].sigmoidEQA = std::make_unique<ComboBoxAttachment>(apvts,
+            paramString,
+            *pDistoUnitComponent->getSigmoidEquationComboBox());
+
+        //Symetric Equation
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::symetricEQA(stageID, distortionUnitID);
+        mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].symetricEQA = std::make_unique<ComboBoxAttachment>(apvts,
+            paramString,
+            *pDistoUnitComponent->getSymetricEquationComboBox());
+
+        //Asymetric Equation
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::asymetricEQA(stageID, distortionUnitID);
+        mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].asymetricEQA = std::make_unique<ComboBoxAttachment>(apvts,
+            paramString,
+            *pDistoUnitComponent->getAsymetricEquationComboBox());
+
+        //Special Equation
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distortionUnitID);
+        mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].specialEQA = std::make_unique<ComboBoxAttachment>(apvts,
+            paramString,
+            *pDistoUnitComponent->getSpecialEquationComboBox());
+
+        //Distortion Routing
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::routing(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].distortionProcessorFirst = std::make_unique<ButtonAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getDistoProcFirstButton());
-
-        //paramString = "Sigmoid" + (juce::String)(stageID)+ (juce::String)(distortionUnitID);
-        //mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].sigmoidEQA = std::make_unique<ComboBoxAttachment>(apvts,
-        //    paramString,
-        //    *pDistoUnitComponent->getSigmoidEquationComboBox());
 
         //paramString = "Symetric" + (juce::String)(stageID)+ (juce::String)(distortionUnitID);
         //mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].symetricEQA = std::make_unique<ComboBoxAttachment>(apvts,
@@ -505,37 +556,37 @@ void MangledAudioProcessorEditor::linkDistortionParametersAttachment(juce::Audio
         //    *pDistoUnitComponent->getSymetricEquationComboBox());
 
         //DC Filter
-        paramString = getDistortionDUDCFilterIsBypassedParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::dcFilterIsBypassed(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].dcFilterOnOff = std::make_unique<ButtonAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getDCFilterOnOffButton());
 
         //PreGain WaveShaper
-        paramString = getDistortionDUPreGainParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::preGain(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].preGain = std::make_unique<SliderAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getPreGainWaveShaperSlider());
 
         //Drive WaveShaper
-        paramString = getDistortionDUDriveParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::drive(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].drive = std::make_unique<SliderAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getDriveWaveShaperSlider());
 
         //Warp
-        paramString = getDistortionDUWarpParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::warp(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].warp = std::make_unique<SliderAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getWarpWaveShaperSlider());
 
         //PostGain WaveShaper
-        paramString = getDistortionDUPostGainParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::postGain(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].postGain = std::make_unique<SliderAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getPostGainWaveShaperSlider());
 
         //Mix WaveShaper
-        paramString = getDistortionDUMixParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::mix(stageID, distortionUnitID);
         mainLayerAttachment.stage[stageID].distortion.distortionUnit[distortionUnitID].mix = std::make_unique<SliderAttachment>(apvts,
             paramString,
             *pDistoUnitComponent->getMixWaveShaperSlider());
@@ -544,16 +595,25 @@ void MangledAudioProcessorEditor::linkDistortionParametersAttachment(juce::Audio
 
 void MangledAudioProcessorEditor::timerCallback()
 {
-    //setUI();
     int stageID = audioProcessor.getMainLayerDataStruct().getSelectedStageID();
+    int distortionUnitID = audioProcessor.getMainLayerDataStruct().getSelectedDistoUnitID();
+
+    updateUI(stageID, distortionUnitID);
+}
+
+void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
+{
+
+    //setUI();
+    //int stageID = 0;
     MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
     //mainMenu.getMainLayerMenu()->switchToStageMenu(stageID);
 
     StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
-    
+
     StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
     ScopeDisplay* pScopeDisplay = pStageComponent->getScope()->getScopeDisplay();
-    
+
     ScopeProcessor<float>* scopeProcessorPreEQ = pStageProcessor->getPreEQScopeProcessor();
     ScopeProcessor<float>* scopeProcessorPostEQ = pStageProcessor->getPostEQScopeProcessor();
     ScopeProcessor<float>* scopeProcessorPostDisto = pStageProcessor->getPostDistoScopeProcessor();
@@ -575,13 +635,15 @@ void MangledAudioProcessorEditor::timerCallback()
 
         //Param from processor.
         EQProcessor<float>* pEQProcessor = pStageProcessor->getEQProcessor();
-        //pEQProcessor->getEQFifo()->readBufferFromResult(*());
-        //pScopeDisplay->getMagSumBuffer()->copyFrom(0, 0, pEQProcessor->getFilterSumMagnitudeBuffer()->getReadPointer(0), pEQProcessor->getFilterSumMagnitudeBuffer()->getNumSamples());
-        juce::AudioBuffer<float>* pFilterMagnitudeSum = pEQProcessor->getFilterSumMagnitudeBuffer(); //pScopeDisplay->getMagSumBuffer();
-        juce::AudioBuffer<float>* pFilterMagnitude = pEQProcessor->getFilterMagnitudeBuffer();
-        int nbOfActiveFilter = pScopeDisplay->updateUI(mainLayerDataStruct, pFilterMagnitude, pFilterMagnitudeSum);
 
-        pStageComponent->getEQComponent()->setNbOfActiveFilter(nbOfActiveFilter);
+        juce::AudioBuffer<float>& filterMag = pScopeDisplay->getFilterMagBuffer();
+        //juce::AudioBuffer<float>* filterSumMag = pScopeDisplay->getFilterMagSumBuffer();
+        juce::AudioBuffer<float>& filterSumMag = pScopeDisplay->getFilterMagSumBuffer();
+        pEQProcessor->pullFilterMagFifo(filterMag);
+        pEQProcessor->pullFilterSumMagFifo(filterSumMag);
+        int nbOfActiveFilter = pScopeDisplay->updateUI(mainLayerDataStruct);
+
+        //pStageComponent->getEQComponent()->setNbOfActiveFilter(nbOfActiveFilter);
 
         if (nbOfActiveFilter == 0)
         {
@@ -593,18 +655,18 @@ void MangledAudioProcessorEditor::timerCallback()
     else
     {
         TemporalScope* pTempScope = pStageComponent->getScope()->getTemporalScope();
-        
-        paramString = ScopeConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
+
+        paramString = RMSConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
         auto& isNormalized = *mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString);
 
-        pTempScope->setIsNormalized(! isNormalized);
+        pTempScope->setIsNormalized(!isNormalized);
         juce::int64 previousPPQ = pTempScope->getLeftScope()->ppqSample;
         pTempScope->setBPM(bpm.load());
         pTempScope->setPPQ(ppq.load());
         pTempScope->setPPQSample(ppqSample.load());
         pTempScope->setBufferSize(bufferSize.load());
 
-        int nbSampleToPull = (int) 60.0 / bpm * audioProcessor.getSampleRate();
+        int nbSampleToPull = static_cast<int>((60.0 / bpm.load() * audioProcessor.getSampleRate()));
         pTempScope->setNbOfSamplesPerBeat(nbSampleToPull);
         juce::AudioBuffer<float>* pInputBuffer = pTempScope->getInputTemporalBuffer();
         juce::AudioBuffer<float>* pOutputBuffer = pTempScope->getOutputTemporalBuffer();
@@ -612,22 +674,22 @@ void MangledAudioProcessorEditor::timerCallback()
         pStageProcessor->getInputRMSProcessor()->pushRMSFifo(pInputBuffer, nbSampleToPull);
         pStageProcessor->getOutputRMSProcessor()->pushRMSFifo(pOutputBuffer, nbSampleToPull);
 
-        paramString = ScopeConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
+        paramString = RMSConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
         auto& monoView = *mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString);
 
         juce::int64 ppqSampleMod = (ppqSample.load() + (juce::int64)bufferSize) % (juce::int64)nbSampleToPull - 1;
         if (ppqSampleMod < 0)
             return;
 
-        float pos = juce::jmap((float)ppqSampleMod, 0.0f, (float)(nbSampleToPull - 1), 0.0f, (float) pTempScope->getLeftScope()->getWidth());
+        //float pos = juce::jmap((float)ppqSampleMod, 0.0f, (float)(nbSampleToPull - 1), 0.0f, (float) pTempScope->getLeftScope()->getWidth());
         ppqSampleMod = (previousPPQ + (juce::int64)bufferSize) % (juce::int64)nbSampleToPull - 1;
         if (ppqSampleMod < 0)
             return;
-        float pos2 = juce::jmap((float)ppqSampleMod, 0.0f, (float)(nbSampleToPull - 1), 0.0f, (float)pTempScope->getLeftScope()->getWidth());
+        //float pos2 = juce::jmap((float)ppqSampleMod, 0.0f, (float)(nbSampleToPull - 1), 0.0f, (float)pTempScope->getLeftScope()->getWidth());
         //pTempScope->setPPQ(ppq.load());
         //pTempScope->setPreviousPPQSample(previousPPQ);
         //pTempScope->setPPQSample(ppqSample.load());
-        
+
         if (monoView)
         {
             pTempScope->computeStereoPath();
@@ -645,14 +707,14 @@ void MangledAudioProcessorEditor::timerCallback()
 
     }
     //Draw WaveShaperEquation.============================================================================================================================================================================
-    int distortionUnitID = audioProcessor.getMainLayerDataStruct().getSelectedDistoUnitID();
+    //int distortionUnitID = audioProcessor.getMainLayerDataStruct().getSelectedDistoUnitID();
     SampleRemapper<float>* pSM = pStageProcessor->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper();
     WaveShaperScope* pWaveShaperScope = pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getScope();
-    pWaveShaperScope->updateUI(mainLayerDataStruct, pSM);
+    pWaveShaperScope->updateUI(mainLayerDataStruct, distortionUnitID, pSM);
 
     int pointID = audioProcessor.getMainLayerDataStruct().getSelectedCurveID(stageID, distortionUnitID);
     bool deleteEnable = audioProcessor.getMainLayerDataStruct().getHorizontalDragOn(stageID, distortionUnitID, pointID);
-    
+
     pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getDeleteWSPointButton()->setEnabled(deleteEnable);
 
     pWaveShaperScope->repaint();
@@ -689,6 +751,7 @@ void MangledAudioProcessorEditor::timerCallback()
     pStageComponent->getInputRMSMeter()->repaint();
     pStageComponent->getOutputRMSMeter()->repaint();
 
+    editorLoadingDone = true;
 }
 
 void MangledAudioProcessorEditor::setUI()
@@ -705,7 +768,7 @@ void MangledAudioProcessorEditor::setUI()
     mainMenu.getMainLayerMenu()->switchToStageMenu(selectedStageID);
     mainMenu.getMainLayerMenu()->setButtonOn(selectedStageID, juce::dontSendNotification);
     
-    for (int stageID = 0; stageID < 4; ++stageID)
+    for (int stageID = 0; stageID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stageID)
     {
        pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
@@ -713,24 +776,21 @@ void MangledAudioProcessorEditor::setUI()
        int dataToDisplay = (int)*(audioProcessor.getMainLayerDataStruct().getAPVTSMainLayer().getRawParameterValue(paramString));
 
        pStageComponent->getScope()->switchScope(dataToDisplay);
-       int zoomID = audioProcessor.getMainLayerDataStruct().getScopeZoom(stageID);
-       pStageComponent->getScope()->getScopeDisplay()->getZoomComboBox()->setSelectedId(zoomID + 1, juce::dontSendNotification);
-       pStageComponent->getScope()->getScopeDisplay()->setGainLim(zoomID);
        
-       isEQ = audioProcessor.getMainLayerDataStruct().getIsEQ(stageID);
-       pStageComponent->getDisplayEQButton()->setToggleState(isEQ, juce::dontSendNotification);
-       pStageComponent->getDisplayDistoButton()->setToggleState(! isEQ, juce::dontSendNotification);
-       isEQ ? pStageComponent->switchWaveShaperToEQ() : pStageComponent->switchEQToWaveShaper();
+       //isEQ = audioProcessor.getMainLayerDataStruct().getIsEQ(stageID);
+       //pStageComponent->getDisplayEQButton()->setToggleState(isEQ, juce::dontSendNotification);
+       //pStageComponent->getDisplayDistoButton()->setToggleState(! isEQ, juce::dontSendNotification);
+       //isEQ ? pStageComponent->switchWaveShaperToEQ() : pStageComponent->switchEQToWaveShaper();
 
-       int filterID = audioProcessor.getMainLayerDataStruct().getSelectedFilterID(stageID);
-       pStageComponent->getEQComponent()->switchToEQSliderMenu(filterID);
+       //int filterID = audioProcessor.getMainLayerDataStruct().getSelectedFilterID(stageID);
+       //pStageComponent->getEQComponent()->switchToEQSliderMenu(filterID);
 
-       distortionUnitID = audioProcessor.getMainLayerDataStruct().getDistortionUnitID(stageID);
-       bool firstDUDisplayed = distortionUnitID == 0 ? true : false;
-       pStageComponent->getDistortionComponent()->getDistortionUnitMenuTab()->getDistoUnitIDButton(0)->setToggleState(firstDUDisplayed, juce::dontSendNotification);
-       pStageComponent->getDistortionComponent()->getDistortionUnitMenuTab()->getDistoUnitIDButton(1)->setToggleState(!firstDUDisplayed, juce::dontSendNotification);
+       //distortionUnitID = audioProcessor.getMainLayerDataStruct().getDistortionUnitID(stageID);
+       //bool firstDUDisplayed = distortionUnitID == 0 ? true : false;
+       //pStageComponent->getDistortionComponent()->getDistortionUnitMenuTab()->getDistoUnitIDButton(0)->setToggleState(firstDUDisplayed, juce::dontSendNotification);
+       //pStageComponent->getDistortionComponent()->getDistortionUnitMenuTab()->getDistoUnitIDButton(1)->setToggleState(!firstDUDisplayed, juce::dontSendNotification);
 
-       pStageComponent->getDistortionComponent()->switchDistortionUnit(distortionUnitID);
+       //pStageComponent->getDistortionComponent()->switchDistortionUnit(distortionUnitID);
 
        //curveID = audioProcessor.getMainLayerDataStruct().getSelectedCurveID(stageID, distortionUnitID);
        //int curveType = audioProcessor.getMainLayerDataStruct().getPointCurveType(stageID, distortionUnitID, curveID);
@@ -747,10 +807,6 @@ void MangledAudioProcessorEditor::setUI()
            pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType);
        }
     }
-
-
-
-
 }
 
 //void MangledAudioProcessorEditor::buttonStateChanged(juce::Button* button)

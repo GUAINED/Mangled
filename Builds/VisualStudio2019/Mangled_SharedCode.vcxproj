@@ -137,6 +137,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\DataStructure\SampleFifo.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\Conversion.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\MangledIdentifiers.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\AudioSampleFifo.cpp"/>
@@ -144,6 +145,7 @@
     <ClCompile Include="..\..\Source\DataStructure\MainLayerDataStruct.cpp"/>
     <ClCompile Include="..\..\Source\Operation\Operation.cpp"/>
     <ClCompile Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.cpp"/>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\GainProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaseShifterFilter.cpp"/>
@@ -154,7 +156,6 @@
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionCircuit.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionEquation.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionProcessor.cpp"/>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\ProcessorBase.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\SampleRemapper.cpp"/>
@@ -173,12 +174,16 @@
     <ClCompile Include="..\..\Source\UIComponent\StageUIComponent\RMSMeter.cpp"/>
     <ClCompile Include="..\..\Source\UIComponent\StageUIComponent\StageComponent.cpp"/>
     <ClCompile Include="..\..\Source\UIComponent\StageUIComponent\StereoRMSMeterComponent.cpp"/>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\DiStateButton.cpp"/>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_ComboBox.cpp"/>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_Gradient.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\MainLayer\MainLayerMenuComponent.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\DiStateButton.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledComboBox.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledDualStateButton.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledSlider.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\OnOffButton.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_ComboBox.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_Gradient.cpp"/>
+    <ClCompile Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_NeonGreen.cpp"/>
     <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\SelectablePointDragger.cpp"/>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\OnOffButton.cpp"/>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\MainLayerMenuComponent.cpp"/>
     <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\MainMenuComponent.cpp"/>
     <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\MainMenuTabComponent.cpp"/>
     <ClCompile Include="..\..\Source\UIComponent\EQUIComponent\EQComponent.cpp"/>
@@ -2254,6 +2259,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\DataStructure\SampleFifo.h"/>
     <ClInclude Include="..\..\Source\DataStructure\Conversion.h"/>
     <ClInclude Include="..\..\Source\DataStructure\MangledIdentifiers.h"/>
     <ClInclude Include="..\..\Source\DataStructure\AudioSampleFifo.h"/>
@@ -2262,6 +2268,7 @@
     <ClInclude Include="..\..\Source\DataStructure\MainLayerDataStruct.h"/>
     <ClInclude Include="..\..\Source\Operation\Operation.h"/>
     <ClInclude Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.h"/>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\GainProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaseShifterFilter.h"/>
@@ -2272,7 +2279,6 @@
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionCircuit.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionEquation.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionProcessor.h"/>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\ProcessorBase.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\SampleRemapper.h"/>
@@ -2291,12 +2297,16 @@
     <ClInclude Include="..\..\Source\UIComponent\StageUIComponent\RMSMeter.h"/>
     <ClInclude Include="..\..\Source\UIComponent\StageUIComponent\StageComponent.h"/>
     <ClInclude Include="..\..\Source\UIComponent\StageUIComponent\StereoRMSMeterComponent.h"/>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\DiStateButton.h"/>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_ComboBox.h"/>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_Gradient.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\MainLayer\MainLayerMenuComponent.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\DiStateButton.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledComboBox.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledDualStateButton.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledSlider.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\OnOffButton.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_ComboBox.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_Gradient.h"/>
+    <ClInclude Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_NeonGreen.h"/>
     <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\SelectablePointDragger.h"/>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\OnOffButton.h"/>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\MainLayerMenuComponent.h"/>
     <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\MainMenuComponent.h"/>
     <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\MainMenuTabComponent.h"/>
     <ClInclude Include="..\..\Source\UIComponent\EQUIComponent\EQComponent.h"/>

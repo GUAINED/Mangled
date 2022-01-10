@@ -36,10 +36,10 @@ MainLayerMenuComponent::MainLayerMenuComponent(MainLayerDataStruct& mlDataStruct
 
     for (int stageID = 0; stageID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stageID)
     {
-        stageIDButtonVector.add(new juce::TextButton("Stage " + (juce::String)(stageID + 1)));
-        stageIDButtonVector[stageID]->setClickingTogglesState(true);
-        stageIDButtonVector[stageID]->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-        stageIDButtonVector[stageID]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
+        stageIDButtonVector.add(new MangledDualStateButton("Stage " + (juce::String)(stageID + 1)));
+        //stageIDButtonVector[stageID]->setClickingTogglesState(true);
+        //stageIDButtonVector[stageID]->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
+        //stageIDButtonVector[stageID]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
         stageIDButtonVector[stageID]->setRadioGroupId(StageButtons, juce::dontSendNotification);
         stageIDButtonVector[stageID]->addListener(this);
         addAndMakeVisible(stageIDButtonVector[stageID]);
@@ -111,10 +111,10 @@ void MainLayerMenuComponent::switchToStageMenu(int stageID)
     for (int i = 0; i < MainLayerConstants::Processor<float>::nbOfStageMax; ++i)
     {
         stageComponentVector[i]->setVisible(false);
-        stageComponentVector[i]->getScope()->getScopeDisplay()->setIsDisplayed(false);
+        //stageComponentVector[i]->getScope()->getScopeDisplay()->setIsDisplayed(false);
     }
 
-    stageComponentVector[stageID]->getScope()->getScopeDisplay()->setIsDisplayed(true);
+    //stageComponentVector[stageID]->getScope()->getScopeDisplay()->setIsDisplayed(true);
     stageComponentVector[stageID]->setVisible(true);
 }
 

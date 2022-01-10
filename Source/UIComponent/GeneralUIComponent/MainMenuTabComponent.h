@@ -11,8 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "OnOffButton.h"
-#include "DiStateButton.h"
+#include "../Controls/OnOffButton.h"
+#include "../Controls/MangledDualStateButton.h"
 //==============================================================================
 /*
 */
@@ -63,7 +63,7 @@ public:
 private:
     //Text Button===================================
     OnOffButton mainLayerOnOffButton;
-    juce::TextButton mainLayerTextButton;
+    MangledDualStateButton mainLayerTextButton;
 
     //juce::TextButton onOffPunchTextButton;
     //juce::TextButton punchTextButton;

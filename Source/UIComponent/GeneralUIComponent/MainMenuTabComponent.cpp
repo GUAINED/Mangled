@@ -40,9 +40,9 @@ MainMenuTabComponent::MainMenuTabComponent()
     addAndMakeVisible(mainLayerOnOffButton);
 
     mainLayerTextButton.setButtonText("Main Layer");
-    mainLayerTextButton.setClickingTogglesState(true);
-    mainLayerTextButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-    mainLayerTextButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
+    //mainLayerTextButton.setClickingTogglesState(true);
+    //mainLayerTextButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
+    //mainLayerTextButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
     mainLayerTextButton.setRadioGroupId(LayerButtons);
     mainLayerTextButton.setToggleState(true, juce::dontSendNotification);
     addAndMakeVisible(mainLayerTextButton);

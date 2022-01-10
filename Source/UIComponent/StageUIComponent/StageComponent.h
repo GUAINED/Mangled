@@ -16,6 +16,7 @@
 #include "../../UIComponent/EQUIComponent/EQComponent.h"
 #include "../../UIComponent/PhaserUIComponent/PhaserComponent.h"
 #include "../../UIComponent/DistortionUIComponent/DistortionComponent.h"
+#include "../../UIComponent/Controls/MangledDualStateButton.h"
 #include "RMSMeter.h"
 #include "StereoRMSMeterComponent.h"
 #include "../../Processor/LayerProcessor/MainLayerProcessor.h"
@@ -70,11 +71,12 @@ public:
                     float scopeHeight = static_cast<float>(scopeBounds.getHeight());
                     dataStruct.setMouseAddFilterEQ(e.getEventRelativeTo(scope.getScopeDisplay()), filterID, scopeWidth, scopeHeight);
 
-                    getEQComponent()->addFilter();
+                    //getEQComponent()->addFilter();
                     getEQComponent()->switchToEQSliderMenu(filterID);
-                    getEQComponent()->getFilterIdUpEQTextButton()->setEnabled(true);
+                    //getEQComponent()->getFilterIdUpEQTextButton()->setEnabled(true);
+                    //eqComponent.getFilterIdEQLabel()->setVisible(true);
                     getEQComponent()->getFilterIdUpEQTextButton()->setVisible(true);
-                    getEQComponent()->getFilterIdDownEQTextButton()->setEnabled(true);
+                    //getEQComponent()->getFilterIdDownEQTextButton()->setEnabled(true);
                     getEQComponent()->getFilterIdDownEQTextButton()->setVisible(true);
                 }
 
@@ -134,8 +136,8 @@ public:
     void switchWaveShaperToEQ();
 
     juce::ComboBox* getDataToDisplayComboBox() { return &dataToDisplayComboBox; };
-    juce::TextButton* getDisplayEQButton() { return &displayEQButton; };
-    juce::TextButton* getDisplayDistoButton() { return &displayDistoButton; };
+    MangledDualStateButton* getDisplayEQButton() { return &displayEQButton; };
+    MangledDualStateButton* getDisplayDistoButton() { return &displayDistoButton; };
 
     ScopeComponent*      getScope()               { return &scope; };
     EQComponent*         getEQComponent()         { return &eqComponent; };
@@ -147,8 +149,9 @@ public:
 private:
     juce::Label dataLabel;
     juce::ComboBox dataToDisplayComboBox;
-    juce::TextButton displayEQButton;
-    juce::TextButton displayDistoButton;
+    MangledDualStateButton displayEQButton;
+    MangledDualStateButton displayDistoButton;
+    MangledDualStateButton displayEnvButton;
 
     ScopeComponent scope;
 

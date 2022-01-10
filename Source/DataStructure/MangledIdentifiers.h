@@ -28,6 +28,17 @@ namespace AudioEngineConstants
         static constexpr SampleType masterGaindBIncrement = static_cast<SampleType>(0.1);
         static constexpr SampleType masterLimiterReleaseValueMs = static_cast<SampleType>(400.0);
         static constexpr SampleType masterLimiterThresholdValuedB = static_cast<SampleType>(-3.0);
+        static constexpr int nbOfStates = 4;
+
+
+        enum StateID
+        {
+            A,
+            B,
+            C,
+            D,
+            maxStateID
+        };
     };
 
     class UI
@@ -36,6 +47,14 @@ namespace AudioEngineConstants
         static constexpr int uiWidth = 800;
         static constexpr int uiHeight = 600;
         static constexpr int refreshRateHz = 30;
+        static juce::StringArray stateString;
+        static const juce::Colour neonGreen;
+        static const juce::Colour darkerNeonGreen;
+        static const juce::Colour darkNeonGreen;
+        static const juce::Colour darkestNeonGreen;
+
+        
+
     };
 
     namespace ParamStringID
@@ -43,6 +62,8 @@ namespace AudioEngineConstants
         static const juce::String masterLimiterOnOff{ "MASTERLIMITERONOFF" };
         static const juce::String masterGain{ "MASTERGAIN" };
         static const juce::String mainLayerOnOff;
+        static const juce::Identifier audioEngine{ "AUDIOENGINE" };
+        static const juce::Identifier selectedState{ "STATE" };
 
         class GetParamStringID
         {
@@ -257,7 +278,7 @@ namespace StageConstants
     };
 };
 
-namespace ScopeConstants
+namespace RMSConstants
 {
     template <typename SampleType>
     class Processor
@@ -267,13 +288,144 @@ namespace ScopeConstants
         static constexpr SampleType subViewCutoffMax = static_cast<SampleType>(300.0);
         static constexpr SampleType subViewCutoffIncrement = static_cast<SampleType>(0.01 * 0.5);
         static constexpr SampleType subViewCutoffStartValue = static_cast<SampleType>(110.0);
+        static constexpr bool isNormalizedStartValue = true;
+        static constexpr bool subViewIsBypassedStartValue = true;
+        static constexpr bool monoViewIsBypassedStartValue = true;
+    };
+
+    class UI
+    {
+
+    };
+
+    namespace ParamStringID
+    {
+        static const juce::String rms{ "RMS" };
+        static const juce::String isNormalized{ "ISNORMALIZED" };
+        static const juce::String subView{ "SUBVIEW" };
+        static const juce::String cutoff{ "CUTOFF" };
+        static const juce::String monoView{ "MONOVIEW" };
+        static const juce::String isBypassed{ "ISBYPASSED" };
+
+        class GetParamStringID
+        {
+        public:
+            static inline juce::String isNormalized(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + RMSConstants::ParamStringID::rms
+                    + RMSConstants::ParamStringID::isNormalized;
+
+                return paramString;
+            };
+            static inline juce::String subViewIsBypassed(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + RMSConstants::ParamStringID::rms
+                    + RMSConstants::ParamStringID::subView
+                    + RMSConstants::ParamStringID::isBypassed;
+
+                return paramString;
+            };
+            static inline juce::String subViewCutoff(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + RMSConstants::ParamStringID::rms
+                    + RMSConstants::ParamStringID::subView
+                    + RMSConstants::ParamStringID::cutoff;
+
+                return paramString;
+            };
+            static inline juce::String monoViewIsBypassed(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + RMSConstants::ParamStringID::rms
+                    + RMSConstants::ParamStringID::monoView
+                    + RMSConstants::ParamStringID::isBypassed;
+
+                return paramString;
+            };
+        };
+    };
+
+    namespace AutomationString
+    {
+        static const juce::String rms{ "RMS " };
+        static const juce::String monoView{ "Mono View " };
+        static const juce::String subView{ "Sub View " };
+        static const juce::String cutoff{ "Cutoff" };
+        static const juce::String isNormalized{ "Is Normalized" };
+        static const juce::String isBypassed{ "Is Bypassed" };
+
+        class GetString
+        {
+        public:
+            static inline juce::String isNormalized(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + RMSConstants::AutomationString::rms
+                    + RMSConstants::AutomationString::isNormalized;
+
+                return paramString;
+            };
+            static inline juce::String subViewIsBypassed(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + RMSConstants::AutomationString::rms
+                    + RMSConstants::AutomationString::subView
+                    + RMSConstants::AutomationString::isBypassed;
+
+                return paramString;
+            };
+            static inline juce::String subViewCutoff(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + RMSConstants::AutomationString::rms
+                    + RMSConstants::AutomationString::subView
+                    + RMSConstants::AutomationString::cutoff;
+
+                return paramString;
+            };
+            static inline juce::String monoViewIsBypassed(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + RMSConstants::AutomationString::rms
+                    + RMSConstants::AutomationString::monoView
+                    + RMSConstants::AutomationString::isBypassed;
+
+                return paramString;
+            };
+        };
+    };
+};
+
+namespace ScopeConstants
+{
+    template <typename SampleType>
+    class Processor
+    {
+    public:
+
         static constexpr int modeStartValue = 0;
         static constexpr bool preEQIsBypassedStartValue = false;
         static constexpr bool postEQIsBypassedStartValue = false;
         static constexpr bool postDistoIsBypassedStartValue = false;
-        static constexpr bool isNormalizedStartValue = true;
-        static constexpr bool subViewIsBypassedStartValue = true;
-        static constexpr bool monoViewIsBypassedStartValue = true;
     };
 
     class UI
@@ -437,49 +589,6 @@ namespace ScopeConstants
 
                 return paramString;
             };
-            static inline juce::String isNormalized(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
-                    + MainLayerConstants::ParamStringID::stage
-                    + (juce::String)stageID
-                    + ScopeConstants::ParamStringID::scope
-                    + ScopeConstants::ParamStringID::isNormalized;
-
-                return paramString;
-            };
-            static inline juce::String subViewIsBypassed(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
-                    + MainLayerConstants::ParamStringID::stage
-                    + (juce::String)stageID
-                    + ScopeConstants::ParamStringID::scope
-                    + ScopeConstants::ParamStringID::subView
-                    + ScopeConstants::ParamStringID::isBypassed;
-
-                return paramString;
-            };
-            static inline juce::String subViewCutoff(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
-                    + MainLayerConstants::ParamStringID::stage
-                    + (juce::String)stageID
-                    + ScopeConstants::ParamStringID::scope
-                    + ScopeConstants::ParamStringID::subView
-                    + ScopeConstants::ParamStringID::cutoff;
-
-                return paramString;
-            };
-            static inline juce::String monoViewIsBypassed(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
-                    + MainLayerConstants::ParamStringID::stage
-                    + (juce::String)stageID
-                    + ScopeConstants::ParamStringID::scope
-                    + ScopeConstants::ParamStringID::monoView
-                    + ScopeConstants::ParamStringID::isBypassed;
-
-                return paramString;
-            };
             static inline juce::String dataType(int stageID)
             {
                 juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
@@ -542,49 +651,6 @@ namespace ScopeConstants
 
                 return paramString;
             };
-            static inline juce::String isNormalized(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
-                    + MainLayerConstants::AutomationString::stage
-                    + (juce::String)stageID + " "
-                    + ScopeConstants::AutomationString::scope
-                    + ScopeConstants::AutomationString::isNormalized;
-
-                return paramString;
-            };
-            static inline juce::String subViewIsBypassed(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
-                    + MainLayerConstants::AutomationString::stage
-                    + (juce::String)stageID + " "
-                    + ScopeConstants::AutomationString::scope
-                    + ScopeConstants::AutomationString::subView
-                    + ScopeConstants::AutomationString::isBypassed;
-
-                return paramString;
-            };
-            static inline juce::String subViewCutoff(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
-                    + MainLayerConstants::AutomationString::stage
-                    + (juce::String)stageID + " "
-                    + ScopeConstants::AutomationString::scope
-                    + ScopeConstants::AutomationString::subView
-                    + ScopeConstants::AutomationString::cutoff;
-
-                return paramString;
-            };
-            static inline juce::String monoViewIsBypassed(int stageID)
-            {
-                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
-                    + MainLayerConstants::AutomationString::stage
-                    + (juce::String)stageID + " "
-                    + ScopeConstants::AutomationString::scope
-                    + ScopeConstants::AutomationString::monoView
-                    + ScopeConstants::AutomationString::isBypassed;
-
-                return paramString;
-            };
             static inline juce::String dataType(int stageID)
             {
                 juce::String paramString = MainLayerConstants::AutomationString::mainLayer
@@ -596,7 +662,7 @@ namespace ScopeConstants
                 return paramString;
             };
         };
-    }
+    };
 }
 
 namespace EQConstants
@@ -607,6 +673,7 @@ namespace EQConstants
     public:
         static constexpr SampleType mixMin = static_cast<SampleType>(0.0);
         static constexpr SampleType mixMax = static_cast<SampleType>(100.0);
+        static constexpr SampleType mixIncrement = static_cast<SampleType>(0.01);
         static constexpr SampleType mixStartValue = static_cast<SampleType>(100.0);
         static constexpr int nbOfFilterMax = 14;
         static constexpr bool isBypassedStartValue = false;
@@ -632,7 +699,7 @@ namespace EQConstants
         static constexpr int typeStartValue = 0;
         static constexpr int orderStartValue = 0;
         static constexpr bool isBypassedStartValue = true;
-        static constexpr bool isActiveStartValue = true; //Link to the "Delete" button. Button = on means filter not active.
+        static constexpr bool isActiveStartValue = false; //Link to the "Delete" button. Button = on means filter not active.
 
         enum Types
         {
@@ -705,6 +772,7 @@ namespace EQConstants
 
         static const juce::Identifier eq("EQ");
         static const juce::Identifier selectedFilterID("SelectedFilterID");
+        static const juce::Identifier nbOfActiveFilters("NbOfActiveFilters");
 
         class GetParamStringID
         {
@@ -949,10 +1017,51 @@ namespace PhaserConstants
     class Processor
     {
     public:
+        class Parameters
+        {
+        public:
+            //static const juce::String name = { "PHASER" };
+            //static const juce::String automationName{ "Phaser " };
+            
+            class CentreFrequency
+            {
+            public:
+                static constexpr SampleType limMin = static_cast<SampleType>(20.1);
+                static constexpr SampleType limMax = static_cast<SampleType>(19999.9);
+                static constexpr SampleType min = static_cast<SampleType>(120.0);
+                static constexpr SampleType max = static_cast<SampleType>(12000.0);
+                static constexpr SampleType start = static_cast<SampleType>(1000.0);
+                //static const juce::String name = { "CENTREFREQUENCY" };
+                //static const juce::String automationName{ "Centre Frequency" };
+
+                //static inline juce::String paramStringID(int stageID)
+                //{
+                //    juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                //        + MainLayerConstants::ParamStringID::stage
+                //        + (juce::String)stageID
+                //        + PhaserConstants::ParamStringID::phaser
+                //        + name;
+
+                //    return paramString;
+                //};
+
+                //static inline juce::String automationString(int stageID)
+                //{
+                //    juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                //        + MainLayerConstants::AutomationString::stage
+                //        + (juce::String)stageID + " "
+                //        + PhaserConstants::AutomationString::phaser
+                //        + automationName;
+
+                //    return paramString;
+                //};
+            };
+        };
+
         static constexpr SampleType cfreqLimMin = static_cast<SampleType>(20.1);
         static constexpr SampleType cfreqLimMax = static_cast<SampleType>(19999.9);
-        static constexpr SampleType cfreqMin = static_cast<SampleType>(120);
-        static constexpr SampleType cfreqMax = static_cast<SampleType>(12000);
+        static constexpr SampleType cfreqMin = static_cast<SampleType>(120.0);
+        static constexpr SampleType cfreqMax = static_cast<SampleType>(12000.0);
         static constexpr SampleType cfreqStartValue = static_cast<SampleType>(1000.0);
         static constexpr SampleType feedbackMin = static_cast<SampleType>(0.0);
         static constexpr SampleType feedbackMax = static_cast<SampleType>(0.9);
@@ -1158,87 +1267,13 @@ namespace DistortionConstants
     class Processor
     {
     public:
+        static constexpr SampleType mixMin = static_cast<SampleType>(0.0);
+        static constexpr SampleType mixMax = static_cast<SampleType>(100.0);
+        static constexpr SampleType mixIncrement = static_cast<SampleType>(0.01);
         static constexpr SampleType mixStartValue = static_cast<SampleType>(100.0);
         static constexpr bool oversamplingStartValue = false;
         static constexpr bool isBypassedStartValue = false;
         static constexpr int nbOfDUMax = 2;
-    };
-
-    template <typename SampleType>
-    class DistortionUnit
-    {
-    public:
-        static constexpr SampleType preGaindBMin = static_cast<SampleType>(-30.0);
-        static constexpr SampleType preGaindBMax = static_cast<SampleType>(20.0);
-        static constexpr SampleType preGaindBStartValue = static_cast<SampleType>(0.0);
-        static constexpr SampleType driveMin = static_cast<SampleType>(0.0);
-        static constexpr SampleType driveMax = static_cast<SampleType>(10.0);
-        static constexpr SampleType driveStartValue = static_cast<SampleType>(2.0);
-        static constexpr SampleType warpMin = static_cast<SampleType>(0.0);
-        static constexpr SampleType warpMax = static_cast<SampleType>(1.0);
-        static constexpr SampleType warpStartValue = static_cast<SampleType>(0.0);
-        static constexpr SampleType postGaindBMin = static_cast<SampleType>(-40.0);
-        static constexpr SampleType postGaindBMax = static_cast<SampleType>(10.0);
-        static constexpr SampleType postGaindBStartValue = static_cast<SampleType>(0.0);
-        static constexpr SampleType preGaindBIncrement = static_cast<SampleType>(0.1);
-        static constexpr SampleType driveIncrement = static_cast<SampleType>(0.01);
-        static constexpr SampleType warpIncrement = static_cast<SampleType>(0.01);
-        static constexpr SampleType postGaindBIncrement = static_cast<SampleType>(0.1);
-        static constexpr SampleType dcFilterCutoff = static_cast<SampleType>(20.0);
-        static constexpr SampleType mixStartValue = static_cast<SampleType>(100.0);
-        static constexpr int equationStartType = 0;
-        static constexpr bool routingStartValue = true;
-        static constexpr bool isHybridStartValue = false;
-        static constexpr bool dcFilterIsBypassedStartValue = false;
-        static constexpr bool distortionUnitIsBypassedStartValue = false;
-
-        enum EquationType
-        {
-            sigmoid,
-            symetric,
-            asymetric,
-            special,
-            maxEQAType
-        };
-
-        enum SigmoidEquationID
-        {
-            tanh,
-            parabolic,
-            hyperbolic,
-            asinh,
-            unbSat1,
-            fuzz,
-            softClipper,
-            maxEQAID
-        };
-
-        enum SymetricEquationID
-        {
-            hardclip,
-            sin,
-            sinh,
-            sinhAlt,
-            tape,
-            foldover,
-            maxSymEQAID
-        };
-
-        enum AsymetricEquationID
-        {
-            tubeSimulation,
-            distortionSimulation,
-            diode,
-            diode2,
-            maxAsymEQAID
-        };
-
-        enum SpecialEquationID
-        {
-            halfrect,
-            fullrect,
-            maxSpeEQAID
-        };
     };
 
     template <typename SampleType>
@@ -1284,6 +1319,8 @@ namespace DistortionConstants
 
         static juce::StringArray curveStringArray;// ("Polynomial", "ArcSinH", "Double Curve", "Square", "Triangle", "Stairs", "Sine");
 
+        static juce::StringArray equationTypeStringArray;
+
         static juce::StringArray sigmoidEQAStringArray;// ("Tanh", "Parabolic", "Hyperbolic", "Asinh", "UnB Sat", "Fuzz", "Soft Clipper");
 
         static juce::StringArray symetricEQAStringArray;// ("Hard Clip", "Sin", "Sinh", "Sinh Alt 1", "Tape", "Foldover");
@@ -1318,7 +1355,7 @@ namespace DistortionConstants
         };
     };
 
-    namespace DistortionParamStringID
+    namespace ParamStringID
     {
         //static const juce::String distortion("DISTO");
         static const juce::String isBypassed("ISBYPASSED");
@@ -1329,14 +1366,138 @@ namespace DistortionConstants
         static const juce::String onOff{ "ONOFF" };
 
         static const juce::Identifier distortion("DISTO");
+
+        class GetParamStringID
+        {
+        public:
+            static inline juce::String overSampling(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistortionConstants::ParamStringID::oversampling;
+
+                return paramString;
+            };
+
+            static inline juce::String mix(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistortionConstants::ParamStringID::mix;
+
+                return paramString;
+            };
+
+            static inline juce::String isBypassed(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistortionConstants::ParamStringID::isBypassed;
+
+                return paramString;
+            };
+
+        };
     };
 
-    namespace DistoUnitParamStringID
+    namespace AutomationString
+    {
+        static const juce::String distortion("Distortion ");
+        static const juce::String oversampling("OverSampling");
+        static const juce::String mix{ "Mix" };
+        static const juce::String isBypassed{ "Is Bypassed" };
+
+        class GetString
+        {
+        public:
+            static inline juce::String overSampling(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistortionConstants::AutomationString::oversampling;
+
+                return paramString;
+            };
+
+            static inline juce::String mix(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistortionConstants::AutomationString::mix;
+
+                return paramString;
+            };
+
+            static inline juce::String isBypassed(int stageID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistortionConstants::AutomationString::isBypassed;
+
+                return paramString;
+            }
+        };
+    };
+};
+
+namespace DistoUnitConstants
+{
+    template <typename SampleType>
+    class Processor
+    {
+    public:
+        static constexpr SampleType preGaindBMin = static_cast<SampleType>(-30.0);
+        static constexpr SampleType preGaindBMax = static_cast<SampleType>(20.0);
+        static constexpr SampleType preGaindBStartValue = static_cast<SampleType>(0.0);
+        static constexpr SampleType driveMin = static_cast<SampleType>(0.0);
+        static constexpr SampleType driveMax = static_cast<SampleType>(10.0);
+        static constexpr SampleType driveStartValue = static_cast<SampleType>(2.0);
+        static constexpr SampleType warpMin = static_cast<SampleType>(0.0);
+        static constexpr SampleType warpMax = static_cast<SampleType>(1.0);
+        static constexpr SampleType warpStartValue = static_cast<SampleType>(0.0);
+        static constexpr SampleType postGaindBMin = static_cast<SampleType>(-40.0);
+        static constexpr SampleType postGaindBMax = static_cast<SampleType>(10.0);
+        static constexpr SampleType postGaindBStartValue = static_cast<SampleType>(0.0);
+        static constexpr SampleType preGaindBIncrement = static_cast<SampleType>(0.1);
+        static constexpr SampleType driveIncrement = static_cast<SampleType>(0.01);
+        static constexpr SampleType warpIncrement = static_cast<SampleType>(0.01);
+        static constexpr SampleType postGaindBIncrement = static_cast<SampleType>(0.1);
+        static constexpr SampleType dcFilterCutoff = static_cast<SampleType>(20.0);
+        static constexpr SampleType mixMin = static_cast<SampleType>(0.0);
+        static constexpr SampleType mixMax = static_cast<SampleType>(100.0);
+        static constexpr SampleType mixIncrement = static_cast<SampleType>(0.01);
+        static constexpr SampleType mixStartValue = static_cast<SampleType>(100.0);
+        static constexpr int equationStartType = 0;
+        static constexpr bool routingStartValue = true;
+        static constexpr bool isBipolarStartValue = false;
+        static constexpr bool dcFilterIsBypassedStartValue = false;
+        static constexpr bool isBypassedStartValue = false;
+        static constexpr bool overSamplingStartValue = false;
+    };
+
+    namespace ParamStringID
     {
         //static const juce::String distoUnit("WS");
         static const juce::String isBypassed("ISBYPASSED");
         static const juce::String routing("ROUTING");
-        //const juce::String eqPositiveValue{ "EQFORPOSVALUE" };
+        static const juce::String eqa{ "EQA" };
+        static const juce::String type{ "TYPE" };
+        static const juce::String sigmoid{ "SIGM" };
+        static const juce::String symetric{ "SYM" };
+        static const juce::String asymetric{ "ASYM" };
+        static const juce::String special{ "SPE" };
         //const juce::String eqNegativeValue{ "EQFORNEGVALUE" };
         static const juce::String isHybrid{ "ISHYBRID" };
         static const juce::String dcFilterIsBypassed{ "DCFILTERISBYPASSED" };
@@ -1349,82 +1510,520 @@ namespace DistortionConstants
         static const juce::Identifier distoUnit("DU");
         static const juce::Identifier selectedDistoUnitID("SelectedDistoUnitID");
 
-        static const juce::Identifier distortionCircuit("DistoCircuit");
-        static const juce::Identifier equationType("equationType");
-        static const juce::Identifier equationID("equationID");
-    };
+        class GetParamStringID
+        {
+        public:
+            static inline juce::String id(int distoUnitID)
+            {
+                juce::String paramString = DistoUnitConstants::ParamStringID::distoUnit + (juce::String)distoUnitID;
 
-    namespace WaveShaperParamStringID
-    {
-        static const juce::Identifier waveshaper("WS");
+                return paramString;
+            };
 
-        static const juce::Identifier selectedCurveID("SelectedCurveID");
-        static const juce::Identifier selectedPointID("SelectedPointID");
-        static const juce::Identifier selectedTensionID("SelectedTensionID");
-        static const juce::Identifier wsPoints("WSPoints");
-        static const juce::Identifier point("Point");
-        static const juce::Identifier pointX("PointX");
-        static const juce::Identifier pointY("PointY");
-        static const juce::Identifier tension("Tension");
-        static const juce::Identifier horizontalDragOn("HorDragOn");
-        static const juce::Identifier curveType("CurveType");
-        static const juce::Identifier isDeletable("IsDeletable");
-        static const juce::Identifier wsPointSave("WSPointSave");
-        static const juce::Identifier isBipolar("IsBipolar");
+            static inline juce::String isBypassed(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::isBypassed;
+
+                return paramString;
+            };
+
+            static inline juce::String equationType(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::eqa
+                    + DistoUnitConstants::ParamStringID::type;
+
+                return paramString;
+            };
+
+            static inline juce::String sigmoidEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::sigmoid
+                    + DistoUnitConstants::ParamStringID::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String symetricEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::symetric
+                    + DistoUnitConstants::ParamStringID::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String asymetricEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::asymetric
+                    + DistoUnitConstants::ParamStringID::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String specialEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::special
+                    + DistoUnitConstants::ParamStringID::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String routing(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::routing;
+
+                return paramString;
+            };
+
+            static inline juce::String preGain(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::preGain;
+
+                return paramString;
+            };
+
+            static inline juce::String drive(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::drive;
+
+                return paramString;
+            };
+
+            static inline juce::String warp(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::warp;
+
+                return paramString;
+            };
+
+            static inline juce::String postGain(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::postGain;
+
+                return paramString;
+            };
+
+            static inline juce::String isHybrid(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::isHybrid;
+
+                return paramString;
+            };
+
+            static inline juce::String dcFilterIsBypassed(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::dcFilterIsBypassed;
+
+                return paramString;
+            };
+
+            static inline juce::String mix(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::ParamStringID::mainLayer
+                    + MainLayerConstants::ParamStringID::stage
+                    + (juce::String)stageID
+                    + DistortionConstants::ParamStringID::distortion
+                    + DistoUnitConstants::ParamStringID::distoUnit
+                    + (juce::String)distortionUnitID
+                    + DistoUnitConstants::ParamStringID::mix;
+
+                return paramString;
+            };
+        };
     };
 
     namespace AutomationString
     {
-        static const juce::String distortion("Distortion ");
-        static const juce::String oversampling("OverSampling");
-        static const juce::String mix{ "Mix" };
+        static const juce::String distoUnit("Disto Unit ");
         static const juce::String isBypassed{ "Is Bypassed" };
+        static const juce::String routing{ "Routing" };
+        static const juce::String eqa{ "Equation" };
+        static const juce::String type{ "Type" };
+        static const juce::String sigmoid{ "Sigmoid " };
+        static const juce::String symetric{ "Symetric " };
+        static const juce::String asymetric{ "Asymetric " };
+        static const juce::String special{ "Special " };
+        //const juce::String eqPositiveValue{ "Equation For Positive Value" };
+        //const juce::String eqNegativeValue{ "Equation For Negative Value" };
+        static const juce::String isHybrid{ "Is Hybrid" };
+        static const juce::String dcFilterIsBypassed{ "DC Filter Is Bypassed" };
+        static const juce::String preGain{ "Pre Gain" };
+        static const juce::String drive{ "Drive" };
+        static const juce::String warp{ "Warp" };
+        static const juce::String postGain{ "Post Gain" };
+        static const juce::String mix{ "Mix" };
 
-        namespace DistoUnitString
+        class GetString
         {
-            static const juce::String distoUnit("Disto Unit ");
-            static const juce::String isBypassed{ "Is Bypassed" };
-            static const juce::String routing{ "Routing" };
-            //const juce::String eqPositiveValue{ "Equation For Positive Value" };
-            //const juce::String eqNegativeValue{ "Equation For Negative Value" };
-            static const juce::String isHybrid{ "Is Hybrid" };
-            static const juce::String dcFilterIsBypassed{ "DC Filter Is Bypassed" };
-            static const juce::String preGain{ "Pre Gain" };
-            static const juce::String drive{ "Drive" };
-            static const juce::String warp{ "Warp" };
-            static const juce::String postGain{ "Post Gain" };
-            static const juce::String mix{ "Mix" };
-        }
-    }
+        public:
+            static inline juce::String isBypassed(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::isBypassed;
+
+                return paramString;
+            };
+
+            static inline juce::String routing(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::routing;
+
+                return paramString;
+            };
+
+            static inline juce::String equationType(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::eqa + " "
+                    + DistoUnitConstants::AutomationString::type;
+
+                return paramString;
+            };
+
+            static inline juce::String sigmoidEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::sigmoid
+                    + DistoUnitConstants::AutomationString::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String symetricEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::symetric
+                    + DistoUnitConstants::AutomationString::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String asymetricEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::asymetric
+                    + DistoUnitConstants::AutomationString::eqa;
+
+                return paramString;
+            };
+
+            static inline juce::String specialEQA(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::special
+                    + DistoUnitConstants::AutomationString::eqa;
+
+                return paramString;
+            };
+
+
+            static inline juce::String preGain(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::preGain;
+
+                return paramString;
+            };
+
+            static inline juce::String drive(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::drive;
+
+                return paramString;
+            };
+
+            static inline juce::String warp(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::warp;
+
+                return paramString;
+            };
+
+            static inline juce::String postGain(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::postGain;
+
+                return paramString;
+            };
+
+            static inline juce::String isHybrid(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::isHybrid;
+
+                return paramString;
+            };
+
+            static inline juce::String dcFilterIsBypassed(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::dcFilterIsBypassed;
+
+                return paramString;
+            };
+
+            static inline juce::String mix(int stageID, int distortionUnitID)
+            {
+                juce::String paramString = MainLayerConstants::AutomationString::mainLayer
+                    + MainLayerConstants::AutomationString::stage
+                    + (juce::String)stageID + " "
+                    + DistortionConstants::AutomationString::distortion
+                    + DistoUnitConstants::AutomationString::distoUnit
+                    + (juce::String)distortionUnitID + " "
+                    + DistoUnitConstants::AutomationString::mix;
+
+                return paramString;
+            };
+        };
+    };
 };
 
-//Distortion Param String get Function======================================================
-juce::String getDistortionOverSamplingParamString(int stageID);
-juce::String getDistortionMixParamString(int stageID);
-juce::String getDistortionIsBypassedParamString(int stageID);
+namespace SampleRemapperConstants
+{
+    namespace ParamStringID
+    {
+        static const juce::String sampleRemapper{ "SR" };
 
-juce::String getDistortionDUIsBypassedParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDURoutingParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUPreGainParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUDriveParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUWarpParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUPostGainParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUIsHybridParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUDCFilterIsBypassedParamString(int stageID, int distortionUnitID);
-juce::String getDistortionDUMixParamString(int stageID, int distortionUnitID);
+        static const juce::String selectedCurveID{ "SelectedCurveID" };
+        static const juce::String selectedPointID{ "SelectedPointID" };
+        static const juce::String selectedTensionID{ "SelectedTensionID" };
+        static const juce::String srPoints{ "srPoints" };
+        static const juce::String point{ "Point" };
+        static const juce::String pointX{ "PointX" };
+        static const juce::String pointY{ "PointY" };
+        static const juce::String tension{ "Tension" };
+        static const juce::String horizontalDragOn{ "HorDragOn" };
+        static const juce::String curveType{ "CurveType" };
+        static const juce::String isDeletable{ "IsDeletable" };
+        static const juce::String wsPointSave{ "WSPointSave" };
+        static const juce::String isBipolar{ "IsBipolar" };
 
-//Distortion Param String get Function=====================================================
-juce::String getDistortionOverSamplingParamAutomationString(int stageID);
-juce::String getDistortionMixParamAutomationString(int stageID);
-juce::String getDistortionIsBypassedParamAutomationString(int stageID);
+        //class GetIdentifier
+        //{
+        //    static inline juce::Identifier sampleRemapper()
+        //    {
+        //        juce::Identifier id(SampleRemapper)
+        //        return isBipolar;
+        //    };
+        //};
+    };
+};
 
-juce::String getDistortionDUIsBypassedParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDURoutingParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDUPreGainParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDUDriveParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDUWarpParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDUPostGainParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDUIsHybridParamAutomationString(int stageID, int distortionUnitID);
-juce::String getDistortionDUDCFilterIsBypassedParamAutomationString(int stageID, int distortionUnitID);
+namespace DistortionCircuitConstants
+{
+    template <typename SampleType>
+    class Processor
+    {
+    public:
+        enum class EquationType
+        {
+            sigmoid,
+            symetric,
+            asymetric,
+            special,
+            maxEQAType
+        };
 
-juce::String getDistortionDUMixParamAutomationString(int stageID, int distortionUnitID);
+        enum class SigmoidEquationID
+        {
+            none,
+            tanh,
+            parabolic,
+            hyperbolic,
+            asinh,
+            unbSat1,
+            fuzz,
+            softClipper,
+            maxEQAID
+        };
+
+        enum class SymetricEquationID
+        {
+            none,
+            hardclip,
+            sin,
+            sinh,
+            sinhAlt,
+            tape,
+            foldover,
+            maxSymEQAID
+        };
+
+        enum class AsymetricEquationID
+        {
+            none,
+            tubeSimulation,
+            distortionSimulation,
+            diode,
+            diode2,
+            maxAsymEQAID
+        };
+
+        enum class SpecialEquationID
+        {
+            none,
+            halfrect,
+            fullrect,
+            maxSpeEQAID
+        };
+    };
+
+    namespace ParamsID
+    {
+        static const juce::Identifier distortionCircuit("DistoCircuit");
+        static const juce::Identifier equationType("equationType");
+        static const juce::Identifier equationID("equationID");
+
+        class GetString
+        {
+        public:
+
+        };
+    };
+};

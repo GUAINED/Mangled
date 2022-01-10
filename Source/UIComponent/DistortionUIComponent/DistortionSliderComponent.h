@@ -13,8 +13,8 @@
 #include <JuceHeader.h>
 
 #include "WaveShaperScope.h"
-#include "../GeneralUIComponent/OnOffButton.h"
-
+#include "../Controls/OnOffButton.h"
+#include "../Controls/MangledSlider.h"
 //class DistoList : public juce::ListBoxModel
 //{
 //public:
@@ -113,12 +113,6 @@ public:
     {
         juce::Point<int> mousePos = e.getPosition();
 
-        //Stage==============================================================================
-        int stageID = dataStruct.getSelectedStageID();
-
-        //WaveShaper Scope=================================================================================================
-        int distortionUnitID = dataStruct.getSelectedDistoUnitID();
-
         WaveShaperScope* pWaveShaperScope = getScope();
         juce::Rectangle<int> wsScopeBounds = pWaveShaperScope->getBounds();
 
@@ -142,12 +136,6 @@ public:
     {
         juce::Point<int> mousePos = e.getPosition();
 
-        //Stage
-        int stageID = dataStruct.getSelectedStageID();
-
-        //WaveShaper Scope
-        int distortionUnitID = dataStruct.getSelectedDistoUnitID();
-
         WaveShaperScope* pWaveShaperScope = getScope();
         juce::Rectangle<int> wsScopeBounds = pWaveShaperScope->getBounds();
 
@@ -165,15 +153,12 @@ public:
     //ComboBox Listener
     void comboBoxChanged(juce::ComboBox* comboBox) override;
 
-    //void resetComboBoxSelectedID(int selectedComboBox) {
-    //    
-    //}
-
-    //set UI
+    void switchComboBox();
 
     void setUI(int circuitID, int circuitType);
 
     //Get Function
+    juce::ComboBox*   getEquationTypeComboBox()      { return &eqaTypeComboBox; };
     juce::ComboBox*   getSigmoidEquationComboBox()   { return &sigmoidEquationComboBox; };
     juce::ComboBox*   getSymetricEquationComboBox()  { return &symEquationComboBox; };
     juce::ComboBox*   getAsymetricEquationComboBox() { return &asymEquationComboBox; };
@@ -185,15 +170,17 @@ public:
     OnOffButton*      getDCFilterOnOffButton()       { return &dcFilterOnOffButton; };
     juce::TextButton* getResetWSButton()             { return &resetWSButton; };
     juce::ComboBox*   getCurveTypeComboBox()         { return &sampleRemapperCurveComboBox; };
-    juce::Slider*     getPreGainWaveShaperSlider()   { return &preGainWaveShaperSlider; };
-    juce::Slider*     getDriveWaveShaperSlider()     { return &driveWaveShaperSlider; };
-    juce::Slider*     getWarpWaveShaperSlider()      { return &warpWaveShaperSlider; };
-    juce::Slider*     getPostGainWaveShaperSlider()  { return &postGainWaveShaperSlider; };
-    juce::Slider*     getMixWaveShaperSlider()       { return &mixWaveShaperSlider; };
+    MangledSlider*     getPreGainWaveShaperSlider()   { return &preGainWaveShaperSlider; };
+    MangledSlider*     getDriveWaveShaperSlider()     { return &driveWaveShaperSlider; };
+    MangledSlider*     getWarpWaveShaperSlider()      { return &warpWaveShaperSlider; };
+    MangledSlider*     getPostGainWaveShaperSlider()  { return &postGainWaveShaperSlider; };
+    MangledSlider*     getMixWaveShaperSlider()       { return &mixWaveShaperSlider; };
     juce::TextButton* getResetAllButton() { return &resetAllButton; };
     WaveShaperScope* getScope() { return &waveShaperScope; };
 
 private:
+    juce::Label eqaTypeLabel;
+    juce::ComboBox eqaTypeComboBox;
 
     juce::Label sigmoidEquationLabel;
     juce::ComboBox sigmoidEquationComboBox;
@@ -228,19 +215,19 @@ private:
 
     WaveShaperScope waveShaperScope;
 
-    juce::Slider preGainWaveShaperSlider;
+    MangledSlider preGainWaveShaperSlider;
     juce::Label preGainWaveShaperLabel;
 
-    juce::Slider driveWaveShaperSlider;
+    MangledSlider driveWaveShaperSlider;
     juce::Label driveWaveShaperLabel;
 
-    juce::Slider warpWaveShaperSlider;
+    MangledSlider warpWaveShaperSlider;
     juce::Label warpWaveShaperLabel;
 
-    juce::Slider postGainWaveShaperSlider;
+    MangledSlider postGainWaveShaperSlider;
     juce::Label postGainWaveShaperLabel;
 
-    juce::Slider mixWaveShaperSlider;
+    MangledSlider mixWaveShaperSlider;
     juce::Label mixWaveShaperLabel;
 
     juce::TextButton resetAllButton;

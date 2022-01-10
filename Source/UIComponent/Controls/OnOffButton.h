@@ -11,7 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LookAndFeel_V4_Gradient.h"
+#include "../LookAndFeel/LookAndFeel_V4_Gradient.h"
+#include "../../DataStructure/MangledIdentifiers.h"
 //==============================================================================
 /*
 */

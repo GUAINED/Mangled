@@ -80,11 +80,11 @@ void TemporalScopeDisplay::resized()
 
 void TemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
 {
-    juce::Path inputPath;
-    juce::Path outputPath;
+    juce::Path inPath;
+    juce::Path outPath;
 
-    inputPath.clear();
-    outputPath.clear();
+    inPath.clear();
+    outPath.clear();
 
     //float start = inputBuffer.findMinMax(channelID, 0, inputBuffer.getNumSamples()).getStart();
     //float end = inputBuffer.findMinMax(channelID, 0, inputBuffer.getNumSamples()).getEnd();
@@ -117,8 +117,8 @@ void TemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
     float inputMagRemap = juce::jmap(inputMag/inputNormCoef, minLin, maxLin, height, 0.0f);
     float outputMagRemap = juce::jmap(outputMag/outputNormCoef, minLin, maxLin, height, 0.0f);
     
-    inputPath.startNewSubPath(pos, inputMagRemap);
-    outputPath.startNewSubPath(pos, outputMagRemap);
+    inPath.startNewSubPath(pos, inputMagRemap);
+    outPath.startNewSubPath(pos, outputMagRemap);
 
     juce::int64 forLim = (juce::int64)nbSamplePerBeat - ppqSampleMod;
     jassert(juce::isPositiveAndBelow(forLim, inputBuffer.getNumSamples()));
@@ -136,8 +136,8 @@ void TemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
         inputMagRemap = juce::jmap(inputMag/inputNormCoef, minLin, maxLin, height, 0.0f);
         outputMagRemap = juce::jmap(outputMag/outputNormCoef, minLin, maxLin, height, 0.0f);
         
-        inputPath.lineTo(pos, inputMagRemap);
-        outputPath.lineTo(pos, outputMagRemap);
+        inPath.lineTo(pos, inputMagRemap);
+        outPath.lineTo(pos, outputMagRemap);
     }
 
     int count = 0;
@@ -150,8 +150,8 @@ void TemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
     inputMagRemap = juce::jmap(inputMag/inputNormCoef, minLin, maxLin, height, 0.0f);
     outputMagRemap = juce::jmap(outputMag/outputNormCoef, minLin, maxLin, height, 0.0f);
     
-    inputPath.startNewSubPath(pos, inputMagRemap);
-    outputPath.startNewSubPath(pos, outputMagRemap);
+    inPath.startNewSubPath(pos, inputMagRemap);
+    outPath.startNewSubPath(pos, outputMagRemap);
 
     for (int i = forLim + 1; i < nbSamplePerBeat; i = i + inc)
     {
@@ -166,18 +166,18 @@ void TemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
         inputMagRemap = juce::jmap(inputMag/inputNormCoef, minLin, maxLin, height, 0.0f);
         outputMagRemap = juce::jmap(outputMag/outputNormCoef, minLin, maxLin, height, 0.0f);
         
-        inputPath.lineTo(pos, inputMagRemap);
-        outputPath.lineTo(pos, outputMagRemap);
+        inPath.lineTo(pos, inputMagRemap);
+        outPath.lineTo(pos, outputMagRemap);
 
     }
     
     g.setOpacity(1.0f);
     g.setColour(juce::Colours::darkgrey);
-    g.strokePath(inputPath, juce::PathStrokeType(1.0f));
+    g.strokePath(inPath, juce::PathStrokeType(1.0f));
 
     g.setGradientFill(outputGradient);
     g.setOpacity(1.0f);
-    g.strokePath(outputPath, juce::PathStrokeType(1.0f));
+    g.strokePath(outPath, juce::PathStrokeType(1.0f));
 }
 
 void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
@@ -185,11 +185,11 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
     if (previousPPQSample == ppqSample)
         return;
 
-    juce::Path inputPath;
-    juce::Path outputPath;
+    juce::Path inPath;
+    juce::Path outPath;
 
-    inputPath.clear();
-    outputPath.clear();
+    inPath.clear();
+    outPath.clear();
 
     //float start = inputBuffer.findMinMax(channelID, 0, inputBuffer.getNumSamples()).getStart();
     //float end = inputBuffer.findMinMax(channelID, 0, inputBuffer.getNumSamples()).getEnd();
@@ -226,8 +226,8 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
     float inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
     float outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-    inputPath.startNewSubPath(pos, inputMagRemap);
-    outputPath.startNewSubPath(pos, outputMagRemap);
+    inPath.startNewSubPath(pos, inputMagRemap);
+    outPath.startNewSubPath(pos, outputMagRemap);
 
     juce::int64 forLim = juce::jmin((juce::int64)nbSamplePerBeat - previousPPQSampleMod, ppqSampleMod);
     jassert(juce::isPositiveAndBelow(forLim, inputBuffer.getNumSamples()));
@@ -245,8 +245,8 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
             inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
             outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-            inputPath.lineTo(pos, inputMagRemap);
-            outputPath.lineTo(pos, outputMagRemap);
+            inPath.lineTo(pos, inputMagRemap);
+            outPath.lineTo(pos, outputMagRemap);
         }
     }
     else
@@ -260,8 +260,8 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
             inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
             outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-            inputPath.lineTo(pos, inputMagRemap);
-            outputPath.lineTo(pos, outputMagRemap);
+            inPath.lineTo(pos, inputMagRemap);
+            outPath.lineTo(pos, outputMagRemap);
         }
 
         int count = 0;
@@ -274,8 +274,8 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
         inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
         outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-        inputPath.startNewSubPath(pos, inputMagRemap);
-        outputPath.startNewSubPath(pos, outputMagRemap);
+        inPath.startNewSubPath(pos, inputMagRemap);
+        outPath.startNewSubPath(pos, outputMagRemap);
 
         for (int i = (juce::int64)nbSamplePerBeat - previousPPQSampleMod + 1; i < ppqSampleMod; ++i)
         {
@@ -290,8 +290,8 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
             inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
             outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-            inputPath.lineTo(pos, inputMagRemap);
-            outputPath.lineTo(pos, outputMagRemap);
+            inPath.lineTo(pos, inputMagRemap);
+            outPath.lineTo(pos, outputMagRemap);
 
         }
     }
@@ -299,11 +299,11 @@ void TemporalScopeDisplay::computeTemporalPathPerFrame(juce::Graphics& g)
 
     g.setOpacity(1.0f);
     g.setColour(juce::Colours::darkgrey);
-    g.strokePath(inputPath, juce::PathStrokeType(1.0f));
+    g.strokePath(inPath, juce::PathStrokeType(1.0f));
 
     g.setGradientFill(outputGradient);
     g.setOpacity(1.0f);
-    g.strokePath(outputPath, juce::PathStrokeType(1.0f));
+    g.strokePath(outPath, juce::PathStrokeType(1.0f));
 
     previousPPQSample = ppqSample;
 }
@@ -408,11 +408,11 @@ StereoToMonoTemporalScopeDisplay::~StereoToMonoTemporalScopeDisplay()
 
 void StereoToMonoTemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
 {
-    juce::Path inputPath;
-    juce::Path outputPath;
+    juce::Path inPath;
+    juce::Path outPath;
 
-    inputPath.clear();
-    outputPath.clear();
+    inPath.clear();
+    outPath.clear();
 
     //float start = inputBuffer.findMinMax(channelID, 0, inputBuffer.getNumSamples()).getStart();
     //float end = inputBuffer.findMinMax(channelID, 0, inputBuffer.getNumSamples()).getEnd();
@@ -445,8 +445,8 @@ void StereoToMonoTemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
     float inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
     float outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-    inputPath.startNewSubPath(pos, inputMagRemap);
-    outputPath.startNewSubPath(pos, outputMagRemap);
+    inPath.startNewSubPath(pos, inputMagRemap);
+    outPath.startNewSubPath(pos, outputMagRemap);
 
     juce::int64 forLim = (juce::int64)nbSamplePerBeat - ppqSampleMod;
     jassert(juce::isPositiveAndBelow(forLim, inputBuffer.getNumSamples()));
@@ -462,8 +462,8 @@ void StereoToMonoTemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
         inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
         outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-        inputPath.lineTo(pos, inputMagRemap);
-        outputPath.lineTo(pos, outputMagRemap);
+        inPath.lineTo(pos, inputMagRemap);
+        outPath.lineTo(pos, outputMagRemap);
     }
 
     int count = 0;
@@ -476,8 +476,8 @@ void StereoToMonoTemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
     inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
     outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-    inputPath.startNewSubPath(pos, inputMagRemap);
-    outputPath.startNewSubPath(pos, outputMagRemap);
+    inPath.startNewSubPath(pos, inputMagRemap);
+    outPath.startNewSubPath(pos, outputMagRemap);
 
     for (int i = forLim + 1; i < nbSamplePerBeat; ++i)
     {
@@ -492,17 +492,17 @@ void StereoToMonoTemporalScopeDisplay::computeTemporalPath(juce::Graphics& g)
         inputMagRemap = juce::jmap(inputMag / inputNormCoef, minLin, maxLin, height, 0.0f);
         outputMagRemap = juce::jmap(outputMag / outputNormCoef, minLin, maxLin, height, 0.0f);
 
-        inputPath.lineTo(pos, inputMagRemap);
-        outputPath.lineTo(pos, outputMagRemap);
+        inPath.lineTo(pos, inputMagRemap);
+        outPath.lineTo(pos, outputMagRemap);
 
     }
 
     g.setOpacity(1.0f);
     //g.setColour(juce::Colours::darkgrey);
     g.setGradientFill(inputGradient);
-    g.strokePath(inputPath, juce::PathStrokeType(1.0f));
+    g.strokePath(inPath, juce::PathStrokeType(1.0f));
     g.setGradientFill(outputGradient);
     //g.setOpacity(1.0f);
-    g.strokePath(outputPath, juce::PathStrokeType(1.0f));
+    g.strokePath(outPath, juce::PathStrokeType(1.0f));
 }
 

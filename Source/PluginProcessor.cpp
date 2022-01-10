@@ -28,6 +28,10 @@ MangledAudioProcessor::MangledAudioProcessor()
 
 #endif
 {
+    for (int i = 0; i < AudioEngineConstants::UI::stateString.size(); ++i)
+    {
+        state.add(new juce::ValueTree(AudioEngineConstants::UI::stateString[i]));
+    }
 }
 
 MangledAudioProcessor::~MangledAudioProcessor()
@@ -212,8 +216,16 @@ bool MangledAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* MangledAudioProcessor::createEditor()
 {
     MangledAudioProcessorEditor* editor = new MangledAudioProcessorEditor(*this);
+
     setParams();
+    //editor->timerCallback2(3);
+    //editor->timerCallback2(2);
+    //editor->timerCallback2(1);
+    editor->updateUI(0, 0);
+
+
     editor->setUI();
+    
     return editor;
     //return new MangledAudioProcessorEditor (*this);
 }
@@ -225,54 +237,27 @@ void MangledAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 
-    if (mainLayerDataStruct.getRoot().getProperty("IsOpening"))
-    {
-        mainLayerDataStruct.getRoot().setProperty("IsOpening", false, nullptr);
-        return;
-    }
-
-
-    auto state = mainLayerDataStruct.getAPVTSMainLayer().copyState();
-    //if (state.isValid())
+    //if (mainLayerDataStruct.getRoot().getProperty("IsOpening"))
     //{
-    //    int yolooo = 4;
+    //    mainLayerDataStruct.getRoot().setProperty("IsOpening", false, nullptr);
+    //    return;
     //}
-    //std::unique_ptr<juce::XmlElement> xml(state.createXml());
-    
-    //std::unique_ptr < juce::XmlElement> xmlAPVTS(state.createXml());
-    //std::unique_ptr < juce::XmlElement> xmlWS(mainLayerDataStruct.getRoot().createXml());
-    //xml.addChildElement(xmlWS, 1);
+
+    mainLayerDataStruct.setSelectedStageID(0);
+    mainLayerDataStruct.setDistoUnitID(0, 0);
+    mainLayerDataStruct.setDistoUnitID(1, 0);
+    mainLayerDataStruct.setDistoUnitID(2, 0);
+    mainLayerDataStruct.setDistoUnitID(3, 0);
+    auto state = mainLayerDataStruct.getAPVTSMainLayer().copyState();
+
     juce::ValueTree vtData("ALLDATA");
 
     vtData.addChild(state, 0, nullptr);
     vtData.addChild(mainLayerDataStruct.getRoot(), 1, nullptr);
 
-    //int type = mainLayerDataStruct.getDistortionCircuitEquationType(0, 0);
-
-    ////paramString = getDistortionDUEquationParamString(stageID, distortionUnitID);
-    //int id = mainLayerDataStruct.getDistortionCircuitEquationID(0, 0);
-
-
     std::unique_ptr<juce::XmlElement> xml(vtData.createXml());
 
     copyXmlToBinary(*xml, destData);
-
-    //juce::ValueTree vtTest = juce::ValueTree::fromXml(*xml);
-    //if (vtTest.isValid())
-    //{
-    //    int yolo = 2;
-
-    //}
-
-    //    juce::ValueTree vtD = vtTest.getChildWithName(mainLayerDataStruct.getRoot().getType());
-
-
-    //    juce::ValueTree vtMainLayer = vtD.getChildWithName(MainLayerApvtsIDString::stage + "0");
-    //juce::ValueTree vtDisto = vtMainLayer.getChildWithName(MainLayerValueTreeID::distortion);
-    //juce::ValueTree vtDU = vtDisto.getChildWithName(MainLayerValueTreeID::distoUnit + "0");
-    //juce::ValueTree vtCircuit = vtDU.getChildWithName(MainLayerValueTreeID::distortionCircuit);
-    //int vtType = vtCircuit.getProperty(MainLayerValueTreeID::equationType);
-    //int vtID = vtCircuit.getProperty(MainLayerValueTreeID::equationID);
 }
 
 void MangledAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -311,12 +296,9 @@ void MangledAudioProcessor::setStateInformation (const void* data, int sizeInByt
                 mainLayerDataStruct.getRoot().copyPropertiesAndChildrenFrom(vtTest, nullptr);
 
             }
-
-
         }
     }
 
-    //mainLayerDataStruct.getRoot().setProperty("IsOpening", false, nullptr);
     setParams();
 }
 
@@ -331,7 +313,6 @@ void MangledAudioProcessor::setParams()
 {
     juce::AudioProcessorValueTreeState& apvts = mainLayerDataStruct.getAPVTSMainLayer();
 
-    //count++;
     //Audio Engine=======================================================================================
     juce::String paramString = AudioEngineConstants::ParamStringID::GetParamStringID::masterLimiterOnOff();
     auto& newMasterLimiterIsBypassed = *apvts.getRawParameterValue(paramString);
@@ -413,22 +394,22 @@ void MangledAudioProcessor::setScopeParams(juce::AudioProcessorValueTreeState& a
     auto& postDistoIsBypassed = *apvts.getRawParameterValue(paramString);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPostDistoScopeProcessor()->setIsBypassed((postDistoIsBypassed || dataMask) || stageMask);
     
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
     auto& isNormalized = *apvts.getRawParameterValue(paramString);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setIsNormalized(isNormalized);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setIsNormalized(isNormalized);
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::subViewIsBypassed(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::subViewIsBypassed(stageID);
     auto& subViewIsBypassed = *apvts.getRawParameterValue(paramString);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setSubViewIsBypassed(subViewIsBypassed);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setSubViewIsBypassed(subViewIsBypassed);
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
     auto& monoViewIsBypassed = *apvts.getRawParameterValue(paramString);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setMonoViewIsBypassed(monoViewIsBypassed);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setMonoViewIsBypassed(monoViewIsBypassed);
 
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::subViewCutoff(stageID);
+    paramString = RMSConstants::ParamStringID::GetParamStringID::subViewCutoff(stageID);
     auto& subViewCutoff = *apvts.getRawParameterValue(paramString);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setSubViewCutoff(subViewCutoff);
     audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setSubViewCutoff(subViewCutoff);
@@ -445,7 +426,8 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
 
     EQProcessor<float>* pEQProcessor = audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getEQProcessor();
 
-    EQProcessor<float>::FilterParamsForUpdate newEQFilterParams;
+    //EQProcessor<float>::FilterParamsForUpdate newEQFilterParams;
+    IIRBiquadFilter<float>::FilterParams newEQFilterParams;
 
     //Mix EQ
     juce::String paramString = EQConstants::ParamStringID::GetParamStringID::mix(stageID);
@@ -460,16 +442,17 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
     for (int filterID = 0; filterID < EQConstants::Processor<float>::nbOfFilterMax; ++filterID)
     {
         paramString = EQConstants::ParamStringID::GetParamStringID::filterCutoff(stageID, filterID);
-        newEQFilterParams.cutoff = *apvts.getRawParameterValue(paramString);
+        newEQFilterParams.biquadParams.cutoff = *apvts.getRawParameterValue(paramString);
 
         paramString = EQConstants::ParamStringID::GetParamStringID::filterQ(stageID, filterID);
-        newEQFilterParams.q = *apvts.getRawParameterValue(paramString);
+        newEQFilterParams.biquadParams.q = *apvts.getRawParameterValue(paramString);
 
         paramString = EQConstants::ParamStringID::GetParamStringID::filterGain(stageID, filterID);
-        newEQFilterParams.gain = *apvts.getRawParameterValue(paramString);
+        float gaindb = *apvts.getRawParameterValue(paramString);
+        newEQFilterParams.biquadParams.gain = juce::Decibels::decibelsToGain(gaindb);
 
         paramString = EQConstants::ParamStringID::GetParamStringID::filterOrder(stageID, filterID);
-        newEQFilterParams.nbOfBiquads = (int)*apvts.getRawParameterValue(paramString);
+        newEQFilterParams.nbOfBiquads = (int)*apvts.getRawParameterValue(paramString) + 1;
 
         paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
         newEQFilterParams.isActive = !(*apvts.getRawParameterValue(paramString));
@@ -478,8 +461,8 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
         newEQFilterParams.isBypassed = (*apvts.getRawParameterValue(paramString));
 
         paramString = EQConstants::ParamStringID::GetParamStringID::filterType(stageID, filterID);
-        newEQFilterParams.isActive ? newEQFilterParams.type = (int)*apvts.getRawParameterValue(paramString)
-            : newEQFilterParams.type = -1;
+        newEQFilterParams.isActive ? newEQFilterParams.biquadParams.type = (int)*apvts.getRawParameterValue(paramString)
+            : newEQFilterParams.biquadParams.type = -1;
 
         newEQFilterParams.id = filterID;
 
@@ -503,6 +486,7 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
         }
     }
 
+    pEQProcessor->pushFilterSumBufferIntoFifo();
 }
 
 void MangledAudioProcessor::setPhaserParams(juce::AudioProcessorValueTreeState& apvts, int stageID)
@@ -511,7 +495,7 @@ void MangledAudioProcessor::setPhaserParams(juce::AudioProcessorValueTreeState& 
 
     CustomPhaser<float>* pPhaserProcessor = audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPhaserProcessor();
 
-    CustomPhaser<float>::CustomPhaserParams newPhaserProcessorParams;
+    CustomPhaser<float>::Parameters newPhaserProcessorParams;
 
     juce::String paramString = PhaserConstants::ParamStringID::GetParamStringID::centerFrequency(stageID);
     newPhaserProcessorParams.centreHz = *apvts.getRawParameterValue(paramString);
@@ -528,51 +512,78 @@ void MangledAudioProcessor::setPhaserParams(juce::AudioProcessorValueTreeState& 
     paramString = PhaserConstants::ParamStringID::GetParamStringID::nbOfStages(stageID);
     newPhaserProcessorParams.numStages = (int)*apvts.getRawParameterValue(paramString);
 
-    if (&newPhaserProcessorParams != &(pPhaserProcessor->getPhaserParams()))
-    {
-        pPhaserProcessor->setPhaserParams(newPhaserProcessorParams);
-    }
     paramString = PhaserConstants::ParamStringID::GetParamStringID::mix(stageID);
-    auto& newPhaserMix = *apvts.getRawParameterValue(paramString);
-    pPhaserProcessor->setMix(newPhaserMix);
+    newPhaserProcessorParams.mix = *apvts.getRawParameterValue(paramString);
 
     paramString = PhaserConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
-    auto& newPhaserIsBypassed = *apvts.getRawParameterValue(paramString);
-    pPhaserProcessor->setIsBypassed(newPhaserIsBypassed);
+    newPhaserProcessorParams.isBypassed = *apvts.getRawParameterValue(paramString);
+
+    pPhaserProcessor->setPhaserParams(newPhaserProcessorParams);
+
 }
 
 void MangledAudioProcessor::setDistortionParams(juce::AudioProcessorValueTreeState& apvts, int stageID)
 {
     //juce::AudioProcessorValueTreeState& apvts = mainLayerDataStruct.getAPVTSMainLayer();
 
-    DistortionProcessor<float>::DistortionParams newDistortionProcessorParams;
-    DistortionUnitProcessor<float>::DistortionUnitParams newDistortionUnitProcessorParams;
+    DistortionProcessor<float>::Parameters newDistortionProcessorParams;
+    DistortionUnitProcessor<float>::Parameters newDistortionUnitProcessorParams;
 
     DistortionProcessor<float>* pDistortionProcessor = audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getDistortionProcessor();
 
     //Over Sampling
-    juce::String paramString = getDistortionOverSamplingParamString(stageID);
+    juce::String paramString = DistortionConstants::ParamStringID::GetParamStringID::overSampling(stageID);
     auto& newOverSampling = *apvts.getRawParameterValue(paramString);
 
     //Mix Distortion
-    paramString = getDistortionMixParamString(stageID);
+    paramString = DistortionConstants::ParamStringID::GetParamStringID::mix(stageID);
     auto& newMixDistortionProcessor = *apvts.getRawParameterValue(paramString);
 
     //Bypass Distortion
-    paramString = getDistortionIsBypassedParamString(stageID);
+    paramString = DistortionConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
     auto& newIsBypassedDistortionProcessor = *apvts.getRawParameterValue(paramString);
 
     newDistortionProcessorParams.mix = newMixDistortionProcessor;
     newDistortionProcessorParams.isBypassed = newIsBypassedDistortionProcessor;
-    pDistortionProcessor->setDistortionParams(newDistortionProcessorParams);
+    pDistortionProcessor->setParams(newDistortionProcessorParams);
 
-    for (int distortionUnitID = 0; distortionUnitID < static_cast<int>(DistortionProcessor<float>::DistortionUnitID::maxDistortionUnitID); ++distortionUnitID)
+    for (int distortionUnitID = 0; distortionUnitID < DistortionConstants::Processor<float>::nbOfDUMax; ++distortionUnitID)
     {
         DistortionUnitProcessor<float>* pDistortionDU = pDistortionProcessor->getDistortionUnitProcessor(distortionUnitID);
 
         //Distortion First Unit OnOff
-        paramString = getDistortionDUIsBypassedParamString(stageID, distortionUnitID);
-        newDistortionUnitProcessorParams.isBypassed = *apvts.getRawParameterValue(paramString);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distortionUnitID);
+        newDistortionUnitProcessorParams.circuit.equationType = *apvts.getRawParameterValue(paramString);
+
+        switch (newDistortionUnitProcessorParams.circuit.equationType)
+        {
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::sigmoid):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::sigmoidEQA(stageID, distortionUnitID);
+            newDistortionUnitProcessorParams.circuit.equationID = *apvts.getRawParameterValue(paramString);
+            break;
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::symetric):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::symetricEQA(stageID, distortionUnitID);
+            newDistortionUnitProcessorParams.circuit.equationID = *apvts.getRawParameterValue(paramString);
+            break;
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::asymetric):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::asymetricEQA(stageID, distortionUnitID);
+            newDistortionUnitProcessorParams.circuit.equationID = *apvts.getRawParameterValue(paramString);
+            break;
+        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::special):
+            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distortionUnitID);
+            newDistortionUnitProcessorParams.circuit.equationID = *apvts.getRawParameterValue(paramString);
+            break;
+         default: 
+            //paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distortionUnitID);
+            newDistortionUnitProcessorParams.circuit.equationID = 0;
+            break;
+        }
+
+        //paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distortionUnitID);
+        //newDistortionUnitProcessorParams.circuit.equationType = mainLayerDataStruct.getDistortionCircuitEquationType(stageID, distortionUnitID);
+
+        ////paramString = getDistortionDUEquationParamString(stageID, distortionUnitID);
+        //newDistortionUnitProcessorParams.circuit.equationID = mainLayerDataStruct.getDistortionCircuitEquationID(stageID, distortionUnitID);
 
         //paramString = (juce::String)("Sigmoid") + (juce::String)(stageID)+juce::String(distortionUnitID);
         //auto& sigmoidEQA = *apvts.getRawParameterValue(paramString);
@@ -590,77 +601,70 @@ void MangledAudioProcessor::setDistortionParams(juce::AudioProcessorValueTreeSta
         //    int yolo = 2;
         //}
         //Distortion Routing
-        paramString = getDistortionDURoutingParamString(stageID, distortionUnitID);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::routing(stageID, distortionUnitID);
         newDistortionUnitProcessorParams.routing = *apvts.getRawParameterValue(paramString);
 
-        //paramString = getDistortionDUEquationParamString(stageID, distortionUnitID);
-        newDistortionUnitProcessorParams.distortionEquationType = mainLayerDataStruct.getDistortionCircuitEquationType(stageID, distortionUnitID);
-
-        //paramString = getDistortionDUEquationParamString(stageID, distortionUnitID);
-        newDistortionUnitProcessorParams.distortionEquationID = mainLayerDataStruct.getDistortionCircuitEquationID(stageID, distortionUnitID);
-
         //DC Filter On
-        paramString = getDistortionDUDCFilterIsBypassedParamString(stageID, distortionUnitID);
-        newDistortionUnitProcessorParams.dcFilterIsBypassed = *apvts.getRawParameterValue(paramString);
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::dcFilterIsBypassed(stageID, distortionUnitID);
+        newDistortionUnitProcessorParams.dcFilter.isBypassed = *apvts.getRawParameterValue(paramString);
 
-        //PreGain WaveShaper
-        paramString = getDistortionDUPreGainParamString(stageID, distortionUnitID);
+        //PreGain
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::preGain(stageID, distortionUnitID);
         newDistortionUnitProcessorParams.preGain = *apvts.getRawParameterValue(paramString);
 
-        //Drive WaveShaper
-        paramString = getDistortionDUDriveParamString(stageID, distortionUnitID);
-        newDistortionUnitProcessorParams.drive = *apvts.getRawParameterValue(paramString);
+        //Drive
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::drive(stageID, distortionUnitID);
+        newDistortionUnitProcessorParams.circuit.drive = *apvts.getRawParameterValue(paramString);
 
-        //Warp WaveShaper
-        paramString = getDistortionDUWarpParamString(stageID, distortionUnitID);
-        newDistortionUnitProcessorParams.warp = *apvts.getRawParameterValue(paramString);
+        //Warp
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::warp(stageID, distortionUnitID);
+        newDistortionUnitProcessorParams.circuit.warp = *apvts.getRawParameterValue(paramString);
 
-        //PostGain WaveShaper
-        paramString = getDistortionDUPostGainParamString(stageID, distortionUnitID);
+        //PostGain
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::postGain(stageID, distortionUnitID);
         newDistortionUnitProcessorParams.postGain = *apvts.getRawParameterValue(paramString);
 
-        //Mix WaveShaper
-        paramString = getDistortionDUMixParamString(stageID, distortionUnitID);
+        //Mix
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::mix(stageID, distortionUnitID);
         newDistortionUnitProcessorParams.mix = *apvts.getRawParameterValue(paramString);
 
+        //Is Bypassed
+        paramString = DistoUnitConstants::ParamStringID::GetParamStringID::isBypassed(stageID, distortionUnitID);
+        newDistortionUnitProcessorParams.isBypassed = *apvts.getRawParameterValue(paramString);
+
         //OverSampling
-        newDistortionUnitProcessorParams.oversampling = newOverSampling;
+        newDistortionUnitProcessorParams.overSampling = newOverSampling;
 
         //DistortionUnit ID
-        newDistortionUnitProcessorParams.distortionUnitID = distortionUnitID;
+        newDistortionUnitProcessorParams.id = distortionUnitID;
 
-        //if (&newDistortionUnitProcessorParams != &(stageProcessor->getDistortionProcessor()->getDistortionUnitParams(distortionUnit)))
-        {
-            pDistortionDU->setDistortionUnitParams(newDistortionUnitProcessorParams);
-        }
+        pDistortionDU->setDistortionUnitParams(newDistortionUnitProcessorParams);
 
         SampleRemapper<float>* pSampleRemapper = pDistortionDU->getSampleRemapper();
 
         int nbOfPoints = mainLayerDataStruct.getNbOfPoints(stageID, distortionUnitID);
-        pSampleRemapper->setNbOfActiveBins(nbOfPoints - 1 + 2);
+        pSampleRemapper->setNbOfActiveBins(nbOfPoints - 1);
 
         juce::Point<float> leftPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, 0);
         juce::Point<float> rightPoint(0.0f, 0.0f);
-        float tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, 0);
-        int curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, 0);
+        //float tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, 0);
+        //int curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, 0);
         SampleRemapperBin<float>* pSRBin = nullptr;
-       // bool isBipolar = mainLayerDataStruct.getIsBipolar(stageID, distortionUnitID);
 
         for (int binID = 0; binID < nbOfPoints - 1; ++binID)
         {
             pSRBin = pSampleRemapper->getBin(binID);
-            leftPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID + 1);
-            rightPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID);
-            tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, binID);
-            curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, binID);
+            SampleRemapperBin<float>::BinParams srBinParams;
+            srBinParams.leftPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID + 1);
+            srBinParams.rightPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID);
+            srBinParams.tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, binID);
+            srBinParams.curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, binID);
 
-            //pSampleRemapper->setWaveShaperPoint(binID, leftPoint, rightPoint, tension, curveType);
-
-            pSRBin->setBinParam(leftPoint, rightPoint, tension, curveID);
-        }
-
-        pDistortionDU->computeDistortionEQAPathData();
-
-        //pDistortionDU->getDCFilter()->reset();
+            //if (srBinParams != pSRBin->getBinParams())
+            //{
+                pSRBin->setBinParam(srBinParams);
+            //}
+            pDistortionDU->computeDistortionEQAPathData(binID);
+        }//SR Bin Loop
     }//Disto Unit loop
 }

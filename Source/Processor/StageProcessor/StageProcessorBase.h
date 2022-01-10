@@ -29,15 +29,15 @@ public:
         outputGainProcessor.setGainDecibels(static_cast<SampleType>(0.0));
     }
 
-    enum class UnitProcessorID
-    {
-        //preEQScopeIndex,
-        eqID,
-        //postEQScopeIndex,
-        phaserID,
-        distortionID,
-        maxProcessorID
-    };
+    //enum class UnitProcessorID
+    //{
+    //    //preEQScopeIndex,
+    //    eqID,
+    //    //postEQScopeIndex,
+    //    phaserID,
+    //    distortionID,
+    //    maxProcessorID
+    //};
 
     struct StageProcessorParams
     {
@@ -120,7 +120,7 @@ public:
     {
         //fxChain.reset();
         inputGainProcessor.reset();
-
+        inputRMSProcessor.reset();
         preEQScopeProcessor.reset();
         eqProcessor.reset();
         postEQScopeProcessor.reset();
@@ -130,6 +130,7 @@ public:
         postDistoScopeProcessor.reset();
 
         outputGainProcessor.reset();
+        outputRMSProcessor.reset();
     }
 
     //SampleType getRmsLevel(const int channel)
@@ -175,6 +176,66 @@ public:
     DistortionProcessor<SampleType>* getDistortionProcessor()  { return &distortionProcessor; };
     ScopeProcessor<SampleType>*      getPostDistoScopeProcessor() { return &postDistoScopeProcessor; };
     RMSProcessor<SampleType>* getOutputRMSProcessor() { return &outputRMSProcessor; };
+
+    static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto)
+    {
+        juce::NormalisableRange<SampleType> normalisableGainRange{ StageConstants::Processor<SampleType>::gainMin,
+                                                      StageConstants::Processor<SampleType>::gainMax,
+                                                       StageConstants::Processor<SampleType>::gaindBIncrement };
+
+        //Stage OnOff
+        juce::String paramString = StageConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
+        juce::String automationParamString = StageConstants::AutomationString::GetString::isBypassed(stageID);
+
+        bool startValue = stageID == 0 ? StageConstants::Processor<SampleType>::isBypassedStartValue : !StageConstants::Processor<SampleType>::isBypassedStartValue;
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString, automationParamString, startValue));
+
+        paramString = StageConstants::ParamStringID::GetParamStringID::inputGain(stageID);
+        automationParamString = StageConstants::AutomationString::GetString::inputGain(stageID);
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            normalisableGainRange,
+            StageConstants::Processor<SampleType>::gainStartValue));
+
+        paramString = StageConstants::ParamStringID::GetParamStringID::outputGain(stageID);
+        automationParamString = StageConstants::AutomationString::GetString::outputGain(stageID);
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
+            automationParamString,
+            normalisableGainRange,
+            StageConstants::Processor<SampleType>::gainStartValue));
+
+        //RMS=====================================================================================================
+        RMSProcessor<SampleType>::createParametersLayout(plugInParameters, stageID);
+
+        //Scope===================================================================================================
+        ScopeProcessor<SampleType>::createParametersLayout(plugInParameters, stageID);
+
+        //EQ======================================================================================================
+        EQProcessor<SampleType>::createParametersLayout(plugInParameters, stageID, nbOfFiltersPerEQ);
+
+        //Phaser==================================================================================================
+        CustomPhaser<SampleType>::createParametersLayout(plugInParameters, stageID);
+
+        //Distortion==============================================================================================
+        DistortionProcessor<SampleType>::createParametersLayout(plugInParameters, stageID, nbOfDistoUnitPerDisto);
+    };
+
+    static void createValueTree(juce::ValueTree& vt, int stageID, juce::UndoManager* undoManager)
+    {
+        juce::Identifier id(MainLayerConstants::ParamStringID::stage + (juce::String)stageID);
+        juce::ValueTree vtStage(id);
+        vt.addChild(vtStage, -1, nullptr);
+
+        vtStage.setProperty(StageConstants::ParamStringID::isEQ, false, nullptr);
+
+        ScopeProcessor<SampleType>::createValueTree(vtStage);
+        EQProcessor<SampleType>::createValueTree(vtStage);
+        DistortionProcessor<SampleType>::createValueTree(vtStage, undoManager);
+        //Need to Add Phaser.
+    }
 
 private:
     GainProcessor<SampleType> inputGainProcessor;

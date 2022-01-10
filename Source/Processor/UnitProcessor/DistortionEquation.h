@@ -124,7 +124,7 @@ public:
 
             SampleType absX = std::abs(x);
             SampleType output = static_cast<SampleType>(0.0);
-            SampleType xOverAbsX = x / absX;
+            //SampleType xOverAbsX = x / absX;
 
             x > static_cast<SampleType>(0.0) ?
                 output = static_cast<SampleType>(1.0) * (static_cast<SampleType>(1.0) - std::exp(-driveRemap * x))
@@ -164,6 +164,8 @@ public:
         {
             SampleType driveRemap = juce::jmap(drive, static_cast<SampleType>(0.0), static_cast<SampleType>(10.0), static_cast<SampleType>(1.0), static_cast<SampleType>(20.0));
             SampleType output = juce::jlimit(static_cast<SampleType>(-1.0), static_cast<SampleType>(1.0), driveRemap * x);
+
+            output = (static_cast<SampleType>(1.0) - warp) * output + warp * x;
 
             return output;
         }
@@ -315,7 +317,7 @@ public:
                 static_cast<SampleType>(0.25),
                 static_cast<SampleType>(4.0));
 
-            SampleType alpha = static_cast<SampleType>(1.93);
+            //SampleType alpha = static_cast<SampleType>(1.93);
             SampleType beta = static_cast<SampleType>(0.2);
             SampleType output = beta * (std::pow(juce::MathConstants<SampleType>::euler, driveRemap * x) - static_cast<SampleType>(1.0));
 

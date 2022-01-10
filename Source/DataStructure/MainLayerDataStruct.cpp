@@ -15,8 +15,8 @@ void MainLayerDataStruct::valueTreePropertyChanged(juce::ValueTree& treeWhosePro
 {
     juce::ValueTree parent = treeWhosePropertyHasChanged.getParent();
 
-    if(property == juce::Identifier("IsOpening"))
-        return;
+    //if(property == juce::Identifier("IsOpening"))
+    //    return;
 
     //if ((treeWhosePropertyHasChanged.getType() == juce::Identifier("PARAM"))
     //    || (treeWhosePropertyHasChanged.getType() == juce::Identifier("Ws"))
@@ -39,12 +39,12 @@ void MainLayerDataStruct::valueTreePropertyChanged(juce::ValueTree& treeWhosePro
 
 void MainLayerDataStruct::valueTreeChildAdded(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenAdded)
 {
-    if (parentTree.getType() == DistortionConstants::WaveShaperParamStringID::wsPoints)
+    if (parentTree.getType() == juce::Identifier(SampleRemapperConstants::ParamStringID::srPoints))
     {
         //int stageID = getSelectedStageID();
         //int distortionUnitID = getSelectedDistoUnitID();
         //audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper()->IsResizeNedded(parentTree.getNumChildren());
-        if (parentTree.getParent().getProperty(DistortionConstants::WaveShaperParamStringID::isBipolar))
+        if (parentTree.getParent().getProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::isBipolar)))
         {
             shouldUpdate = true;
         }
@@ -61,13 +61,12 @@ void MainLayerDataStruct::valueTreeChildAdded(juce::ValueTree& parentTree, juce:
                 //audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper()->IsResizeNedded(parentTree.getNumChildren());
             }
         }
-
     }
 }
 
 void MainLayerDataStruct::valueTreeChildRemoved(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved)
 {
-    if (parentTree.getType() == DistortionConstants::WaveShaperParamStringID::wsPoints)
+    if (parentTree.getType() == juce::Identifier(SampleRemapperConstants::ParamStringID::srPoints))
     {
         //int stageID = getSelectedStageID();
         //int distortionUnitID = getSelectedDistoUnitID();
@@ -75,7 +74,7 @@ void MainLayerDataStruct::valueTreeChildRemoved(juce::ValueTree& parentTree, juc
         if (nbOfChild == 0)
             return;
         //audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper()->IsResizeNedded(parentTree.getNumChildren());
-        if (parentTree.getParent().getProperty(DistortionConstants::WaveShaperParamStringID::isBipolar))
+        if (parentTree.getParent().getProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::isBipolar)))
         {
             shouldUpdate = true;
         }
@@ -117,583 +116,33 @@ juce::AudioProcessorValueTreeState::ParameterLayout MainLayerDataStruct::createP
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     //Audio Engine Master Gain=============================================================================================================================================================
-    createMainParametersLayout(&parameters);
-
-    //Main Menu Tab Attachement===========================================================================================================================================================
-    createMainLayerParametersLayout(&parameters, nbOfStages,nbOfFiltersPerEQ, nbOfDistoUnitPerDisto);
+    AudioEngine<float>::createParametersLayout(&parameters, nbOfStages, nbOfFiltersPerEQ, nbOfDistoUnitPerDisto);
 
     return { parameters.begin(), parameters.end() };
 }
 
-void MainLayerDataStruct::createMainParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters)
-{
-    juce::String paramString = AudioEngineConstants::ParamStringID::GetParamStringID::masterLimiterOnOff();;
-    juce::String automationParamString = AudioEngineConstants::AutomationString::GetString::masterLimiterOnOff();;
-
-    juce::NormalisableRange<float> normalisableMasterGainRange{AudioEngineConstants::Processor<float>::masterGainMin,
-                                                      AudioEngineConstants::Processor<float>::masterGainMax,
-                                                       AudioEngineConstants::Processor<float>::masterGaindBIncrement };
-
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        AudioEngineConstants::Processor<float>::masterLimiterIsBypassedStartValue));
-
-    paramString = AudioEngineConstants::ParamStringID::GetParamStringID::masterGain();
-    automationParamString = AudioEngineConstants::AutomationString::GetString::masterGain();
-
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableMasterGainRange,
-        AudioEngineConstants::Processor<float>::masterGainStartValue));
-
-}
-
-void MainLayerDataStruct::createMainLayerParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int nbOfStages, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto)
-{
-    juce::String paramString = MainLayerConstants::ParamStringID::GetParamStringID::isBypassed();
-    juce::String automationParamString = MainLayerConstants::AutomationString::GetString::isBypassed();
-
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        MainLayerConstants::Processor<float>::isBypassedStartValue));
-
-    //Main Layer Stage Attachement========================================================================================================================================================
-    //paramString = getPostProcessingOnOffParamString();
-    //automationParamString = getPostProcessingOnOffParamAutomationString();
-    //plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-    //    automationParamString,
-    //    true));
-
-    //Main Layer All Stage All Parameters Layout==========================================================================================================================================
-    for (int stageID = 0; stageID < nbOfStages; ++stageID)
-    {
-        createStageParametersLayout(plugInParameters, stageID, nbOfFiltersPerEQ, nbOfDistoUnitPerDisto);
-    }
-}
-
-void MainLayerDataStruct::createStageParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto)
-{
-    juce::NormalisableRange<float> normalisableGainRange{ StageConstants::Processor<float>::gainMin,
-                                                  StageConstants::Processor<float>::gainMax,
-                                                   StageConstants::Processor<float>::gaindBIncrement };
-
-    //Stage OnOff
-    juce::String paramString = StageConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
-    juce::String automationParamString = StageConstants::AutomationString::GetString::isBypassed(stageID);
-    
-    bool startValue = stageID == 0 ? StageConstants::Processor<float>::isBypassedStartValue : !StageConstants::Processor<float>::isBypassedStartValue;
-    
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString, automationParamString, startValue));
-
-    paramString = StageConstants::ParamStringID::GetParamStringID::inputGain(stageID);
-    automationParamString = StageConstants::AutomationString::GetString::inputGain(stageID);
-
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableGainRange,
-        StageConstants::Processor<float>::gainStartValue));
-
-    paramString = StageConstants::ParamStringID::GetParamStringID::outputGain(stageID);
-    automationParamString = StageConstants::AutomationString::GetString::outputGain(stageID);
-
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableGainRange,
-        StageConstants::Processor<float>::gainStartValue));
-
-    //Scope===========================================================================================================================================================================
-    createScopeParametersLayout(plugInParameters, stageID);
-
-    //EQ==============================================================================================================================
-    createEQParametersLayout(plugInParameters, stageID, nbOfFiltersPerEQ);
-
-    //Phaser======================================================================================================================
-    createPhaserParametersLayout(plugInParameters, stageID);
-
-    //Distortion===============================================================================================================
-    createDistortionParametersLayout(plugInParameters, stageID, nbOfDistoUnitPerDisto);
-}
-
-void MainLayerDataStruct::createScopeParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID)
-{
-    juce::NormalisableRange<float> normalisableCutoffRange{ ScopeConstants::Processor<float>::subViewCutoffMin,
-                                                ScopeConstants::Processor<float>::subViewCutoffMax,
-                                                 ScopeConstants::Processor<float>::subViewCutoffIncrement,
-                                                  ScopeConstants::Processor<float>::subViewCutoffStartValue }; //20 000Hz to avoid jassert in IIR filter at 44100Hz sr.
-    normalisableCutoffRange.setSkewForCentre(ScopeConstants::Processor<float>::subViewCutoffStartValue);
-
-    //Data Type
-    juce::String paramString = ScopeConstants::ParamStringID::GetParamStringID::dataType(stageID);
-    juce::String automationParamString = ScopeConstants::AutomationString::GetString::dataType(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
-        automationParamString,
-        ScopeConstants::UI::modeStringArray,
-        ScopeConstants::Processor<float>::modeStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::preEQIsBypassed(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::preEQIsBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        ScopeConstants::Processor<float>::preEQIsBypassedStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::postEQIsBypassed(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::postEQIsBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        ScopeConstants::Processor<float>::postEQIsBypassedStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::postDistoIsBypassed(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::postDistoIsBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        ScopeConstants::Processor<float>::postDistoIsBypassedStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::isNormalized(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        ScopeConstants::Processor<float>::isNormalizedStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::subViewIsBypassed(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::subViewIsBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        ScopeConstants::Processor<float>::subViewIsBypassedStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::subViewCutoff(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::subViewCutoff(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableCutoffRange,
-        ScopeConstants::Processor<float>::subViewCutoffStartValue));
-
-    paramString = ScopeConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
-    automationParamString = ScopeConstants::AutomationString::GetString::monoViewIsBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        ScopeConstants::Processor<float>::monoViewIsBypassedStartValue));
-}
-
-void MainLayerDataStruct::createEQParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfFiltersPerEQ)
-{
-    juce::NormalisableRange<float> normalisableMixRange{ 0.0f, 100.0f, 0.1f };
-
-    juce::NormalisableRange<float> normalisableFRange{ EQConstants::BiquadConstants<float>::cutoffMin,
-                                                    EQConstants::BiquadConstants<float>::cutoffMax,
-                                                     EQConstants::BiquadConstants<float>::cutoffIncrement,
-                                                      EQConstants::BiquadConstants<float>::cutoffStartValue }; //20 000Hz to avoid jassert in IIR filter at 44100Hz sr.
-
-    normalisableFRange.setSkewForCentre(EQConstants::BiquadConstants<float>::cutoffStartValue);
-
-    juce::NormalisableRange<float> normalisableQRange{ EQConstants::BiquadConstants<float>::qMin,
-                                                        EQConstants::BiquadConstants<float>::qMax,
-                                                          EQConstants::BiquadConstants<float>::qIncrement,
-                                                           EQConstants::BiquadConstants<float>::qStartValue };
-
-    normalisableQRange.setSkewForCentre(EQConstants::BiquadConstants<float>::qStartValue);
-
-    //Mix EQ
-    juce::String paramString = EQConstants::ParamStringID::GetParamStringID::mix(stageID);
-    juce::String automationParamString = EQConstants::AutomationString::GetString::mix(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableMixRange,
-        EQConstants::Processor<float>::mixStartValue));
-
-    //Bypass EQ
-    paramString = EQConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
-    automationParamString = EQConstants::AutomationString::GetString::isBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        EQConstants::Processor<float>::isBypassedStartValue));
-
-    for (int filterID = 0; filterID < nbOfFiltersPerEQ; ++filterID)
-    {
-        //Filter CutOff
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterCutoff(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterCutoff(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisableFRange,
-            ((float)filterID) * 1000.0f + 100.0f));
-        //Filter Q
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterQ(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterQ(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisableQRange,
-            EQConstants::BiquadConstants<float>::qStartValue));
-
-        //Filter Gain
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterGain(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterGain(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            EQConstants::BiquadConstants<float>::gaindBMin,
-            EQConstants::BiquadConstants<float>::gaindBMax,
-            EQConstants::BiquadConstants<float>::gaindBStartValue));
-
-        //Filter Type
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterType(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterType(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
-            automationParamString,
-            EQConstants::UI::typeStringArray,
-            EQConstants::BiquadConstants<float>::typeStartValue));
-
-        //Filter Order
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterOrder(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterOrder(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
-            automationParamString,
-            EQConstants::UI::orderStringArray,
-            EQConstants::BiquadConstants<float>::orderStartValue));
-
-        //On Off Filter
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterIsBypassed(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterIsBypassed(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-            automationParamString,
-            EQConstants::BiquadConstants<float>::isBypassedStartValue));
-
-        //Is Active Filter
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
-        automationParamString = EQConstants::AutomationString::GetString::filterIsActive(stageID, filterID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-            automationParamString,
-            EQConstants::BiquadConstants<float>::isActiveStartValue));
-    }
-}
-
-void MainLayerDataStruct::createPhaserParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID)
-{
-    juce::NormalisableRange<float> normalisableMixRange{ 0.0f, 100.0f, 0.1f };
-
-    juce::String paramString = PhaserConstants::ParamStringID::GetParamStringID::centerFrequency(stageID);
-    juce::String automationParamString = PhaserConstants::AutomationString::GetString::centerFrequency(stageID);
-
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        PhaserConstants::Processor<float>::cfreqMin,
-        PhaserConstants::Processor<float>::cfreqMax,
-        PhaserConstants::Processor<float>::cfreqStartValue));
-
-    paramString = PhaserConstants::ParamStringID::GetParamStringID::feedback(stageID);
-    automationParamString = PhaserConstants::AutomationString::GetString::feedback(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        PhaserConstants::Processor<float>::feedbackMin,
-        PhaserConstants::Processor<float>::feedbackMax,
-        PhaserConstants::Processor<float>::feedbackStartValue));
-
-    paramString = PhaserConstants::ParamStringID::GetParamStringID::rate(stageID);
-    automationParamString = PhaserConstants::AutomationString::GetString::rate(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        PhaserConstants::Processor<float>::rateMin,
-        PhaserConstants::Processor<float>::rateMax,
-        PhaserConstants::Processor<float>::rateStartValue));
-
-    paramString = PhaserConstants::ParamStringID::GetParamStringID::depth(stageID);
-    automationParamString = PhaserConstants::AutomationString::GetString::depth(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        PhaserConstants::Processor<float>::depthMin,
-        PhaserConstants::Processor<float>::depthMax,
-        PhaserConstants::Processor<float>::depthStartValue));
-
-    paramString = PhaserConstants::ParamStringID::GetParamStringID::mix(stageID);
-    automationParamString = PhaserConstants::AutomationString::GetString::mix(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableMixRange,
-        PhaserConstants::Processor<float>::mixStartValue));
-
-    paramString = PhaserConstants::ParamStringID::GetParamStringID::nbOfStages(stageID);
-    automationParamString = PhaserConstants::AutomationString::GetString::nbOfStages(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
-        automationParamString,
-        PhaserConstants::UI::nbOfStgStringArray,
-        PhaserConstants::Processor<float>::nbOfStgStartValue));
-
-    paramString = PhaserConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
-    automationParamString = PhaserConstants::AutomationString::GetString::isBypassed(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        PhaserConstants::Processor<float>::isBypassedStartValue));
-
-}
-
-void MainLayerDataStruct::createDistortionParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfDistoUnitPerDisto)
-{
-    juce::NormalisableRange<float> normalisableMixRange{ 0.0f, 100.0f, 0.1f };
-
-    juce::NormalisableRange<float> normalisablePreGainRange{ DistortionConstants::DistortionUnit<float>::preGaindBMin,
-                                                          DistortionConstants::DistortionUnit<float>::preGaindBMax,
-                                                           DistortionConstants::DistortionUnit<float>::preGaindBIncrement };
-
-    juce::NormalisableRange<float> normalisableDriveRange{ DistortionConstants::DistortionUnit<float>::driveMin,
-                                                            DistortionConstants::DistortionUnit<float>::driveMax,
-                                                             DistortionConstants::DistortionUnit<float>::driveIncrement };
-
-    juce::NormalisableRange<float> normalisableWarpRange{ DistortionConstants::DistortionUnit<float>::warpMin,
-                                                        DistortionConstants::DistortionUnit<float>::warpMax,
-                                                         DistortionConstants::DistortionUnit<float>::warpIncrement };
-
-    juce::NormalisableRange<float> normalisablePostGainRange{ DistortionConstants::DistortionUnit<float>::postGaindBMin,
-                                                               DistortionConstants::DistortionUnit<float>::postGaindBMax,
-                                                                DistortionConstants::DistortionUnit<float>::postGaindBIncrement };
-
-    //OverSampling Distortion
-    juce::String paramString = getDistortionOverSamplingParamString(stageID);
-    juce::String automationParamString = getDistortionOverSamplingParamAutomationString(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        DistortionConstants::Processor<float>::oversamplingStartValue));
-
-    //Mix Distortion
-    paramString = getDistortionMixParamString(stageID);
-    automationParamString = getDistortionMixParamAutomationString(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-        automationParamString,
-        normalisableMixRange,
-        DistortionConstants::Processor<float>::mixStartValue));
-
-    //OnOff Distortion
-    paramString = getDistortionIsBypassedParamString(stageID);
-    automationParamString = getDistortionIsBypassedParamAutomationString(stageID);
-    plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-        automationParamString,
-        DistortionConstants::Processor<float>::isBypassedStartValue));
-
-    for (int distortionUnitID = 0; distortionUnitID < nbOfDistoUnitPerDisto; ++distortionUnitID)
-    {
-        bool duOnOffStartValue = distortionUnitID == 0 ? DistortionConstants::DistortionUnit<float>::distortionUnitIsBypassedStartValue
-                                                        : !DistortionConstants::DistortionUnit<float>::distortionUnitIsBypassedStartValue;
-
-        paramString = getDistortionDUIsBypassedParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUIsBypassedParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-            automationParamString,
-            duOnOffStartValue));
-
-        //Distortion Equation
-        paramString = getDistortionDURoutingParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDURoutingParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-            automationParamString,
-            DistortionConstants::DistortionUnit<float>::routingStartValue));
-
-        //paramString = (juce::String)("Sigmoid") + (juce::String)(stageID) + (juce::String)(distortionUnitID);
-        //automationParamString = getPhaserNbOfStagesParamAutomationString(stageID);
-        //plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
-        //    automationParamString,
-        //    DistortionConstants::UI::sigmoidEQAStringArray,
-        //    1));
-
-        //paramString = (juce::String)("Symetric") + (juce::String)(stageID)+(juce::String)(distortionUnitID);
-        //automationParamString = getPhaserNbOfStagesParamAutomationString(stageID);
-        //plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
-        //    automationParamString,
-        //    DistortionConstants::UI::symetricEQAStringArray,
-        //    0));
-
-        //DC Filter OnOff
-        paramString = getDistortionDUDCFilterIsBypassedParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUDCFilterIsBypassedParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
-            automationParamString,
-            DistortionConstants::DistortionUnit<float>::dcFilterIsBypassedStartValue));
-
-        //PreGain WaveShaper
-        paramString = getDistortionDUPreGainParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUPreGainParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisablePreGainRange,
-            DistortionConstants::DistortionUnit<float>::preGaindBStartValue));
-
-        //Drive WaveShaper
-        paramString = getDistortionDUDriveParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUDriveParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisableDriveRange,
-            DistortionConstants::DistortionUnit<float>::driveStartValue));
-
-        //Warp WaveShaper
-        paramString = getDistortionDUWarpParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUWarpParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisableWarpRange,
-            DistortionConstants::DistortionUnit<float>::warpStartValue));
-
-        //PostGain WaveShaper
-        paramString = getDistortionDUPostGainParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUPostGainParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisablePostGainRange,
-            DistortionConstants::DistortionUnit<float>::postGaindBStartValue));
-
-        //Mix WaveShaper
-        paramString = getDistortionDUMixParamString(stageID, distortionUnitID);
-        automationParamString = getDistortionDUMixParamAutomationString(stageID, distortionUnitID);
-        plugInParameters->push_back(std::make_unique<juce::AudioParameterFloat>(paramString,
-            automationParamString,
-            normalisableMixRange,
-            DistortionConstants::DistortionUnit<float>::mixStartValue));
-    }
-}
-
 //Create ValueTree============================================================================================================================
-void MainLayerDataStruct::createValueTreeMainLayer()
-{
-    rootMainLayer.removeAllChildren(nullptr);
-
-    rootMainLayer.setProperty("IsOpening", true, nullptr);
-
-    rootMainLayer.setProperty(juce::Identifier("Name"), MainLayerConstants::ParamStringID::mainLayer, nullptr);
-
-    rootMainLayer.setProperty(StageConstants::ParamStringID::selectedStageID, 0, nullptr);
-
-    for (int stage = 0; stage < 4; ++stage)
-    {
-        createValueTreeStage(rootMainLayer, stage);
-    }
-
-}
-
-void MainLayerDataStruct::createValueTreeStage(juce::ValueTree& vt, int stageID)
-{
-    juce::Identifier id(MainLayerConstants::ParamStringID::stage + (juce::String)stageID);
-    juce::ValueTree vtStage(id);
-    vt.addChild(vtStage, -1, nullptr);
-
-    vt.setProperty(StageConstants::ParamStringID::isEQ, false, nullptr);
-
-    createValueTreeScope(vtStage);
-    createValueTreeEQ(vtStage);
-    createValueTreeDistortion(vtStage);
-    //Need to Add EQ AND Phaser.
-}
-
-void MainLayerDataStruct::createValueTreeScope(juce::ValueTree& vt)
-{
-    juce::ValueTree vtScope(ScopeConstants::ParamStringID::scope);
-    vt.addChild(vtScope, -1, nullptr);
-
-    vtScope.setProperty(ScopeConstants::ParamStringID::zoom, -1, nullptr);
-    //vtScope.setProperty(ScopeConstants::ParamStringID::scope::preEQIsBypassed, false, nullptr);
-    //vtScope.setProperty(ScopeConstants::ParamStringID::scope::postEQIsBypassed, false, nullptr);
-    //vtScope.setProperty(ScopeConstants::ParamStringID::scope::postDistoIsBypassed, false, nullptr);
-}
-
-void MainLayerDataStruct::createValueTreeEQ(juce::ValueTree& vt)
-{
-    juce::ValueTree vtEQ(EQConstants::ParamStringID::eq);
-    vt.addChild(vtEQ, -1, nullptr);
-
-    vtEQ.setProperty(EQConstants::ParamStringID::selectedFilterID, -1, nullptr);
-}
-
-void MainLayerDataStruct::createValueTreeDistortion(juce::ValueTree& vt)
-{
-    juce::ValueTree vtDistortion(DistortionConstants::DistortionParamStringID::distortion);
-    vt.addChild(vtDistortion, -1, nullptr);
-
-    vt.setProperty(DistortionConstants::DistoUnitParamStringID::selectedDistoUnitID, 0, nullptr);
-
-    for (int distortionUnit = 0; distortionUnit < 2; ++distortionUnit)
-        createValueTreeDistortionUnit(vtDistortion, distortionUnit);
-}
-
-void MainLayerDataStruct::createValueTreeDistortionUnit(juce::ValueTree& vt, int distortionUnitID)
-{
-    juce::Identifier id(DistortionConstants::DistoUnitParamStringID::distoUnit + (juce::String)distortionUnitID);
-    juce::ValueTree vtDistortionUnit(id);
-    vt.addChild(vtDistortionUnit, -1, nullptr);
-
-    createValueTreeSampleRemapper(vtDistortionUnit);
-
-    createValueTreeDistortionCircuit(vtDistortionUnit);
-}
-
-void MainLayerDataStruct::createValueTreeSampleRemapper(juce::ValueTree& vt)//, int distortionUnitID)
-{
-    juce::ValueTree vtSampleRemapper(DistortionConstants::WaveShaperParamStringID::waveshaper);
-    vt.addChild(vtSampleRemapper, -1, nullptr);
-
-    vtSampleRemapper.setProperty(DistortionConstants::WaveShaperParamStringID::isBipolar, false, nullptr);
-    vtSampleRemapper.setProperty(DistortionConstants::WaveShaperParamStringID::selectedCurveID, 0, nullptr);
-    vtSampleRemapper.setProperty(DistortionConstants::WaveShaperParamStringID::selectedPointID, 0, nullptr);
-    vtSampleRemapper.setProperty(DistortionConstants::WaveShaperParamStringID::selectedTensionID, -1, nullptr);
-
-    createValueTreeSampleRemapperPointUnipolar(vtSampleRemapper);
-}
-
-void MainLayerDataStruct::createValueTreeDistortionCircuit(juce::ValueTree& vt)//, int distortionUnitID)
-{
-    juce::ValueTree vtDistortionCircuit(DistortionConstants::DistoUnitParamStringID::distortionCircuit);
-    vt.addChild(vtDistortionCircuit, -1, nullptr);
-
-    vtDistortionCircuit.setProperty(DistortionConstants::DistoUnitParamStringID::equationType, 0, nullptr);
-    vtDistortionCircuit.setProperty(DistortionConstants::DistoUnitParamStringID::equationID, 0, nullptr);
-}
-
-void MainLayerDataStruct::createValueTreeSampleRemapperPointUnipolar(juce::ValueTree& vt)//, int distortionUnitID)
-{
-    juce::ValueTree vtSampleRemapperPoint(DistortionConstants::WaveShaperParamStringID::wsPoints);
-    vt.addChild(vtSampleRemapperPoint, -1, &undoManager);
-
-    vtSampleRemapperPoint.addChild(createPoint(1.0f, 1.0f, 0.0f, 0, false), -1, &undoManager);
-    vtSampleRemapperPoint.addChild(createPoint(0.0f, 0.0f, 0.0f, 0, false), -1, &undoManager);
-    vtSampleRemapperPoint.addChild(createPoint(0.0f, 0.0f, 0.0f, 0, false), -1, &undoManager);
-    vtSampleRemapperPoint.addChild(createPoint(-1.0f, -1.0f, 0.0f, 0, false), -1, &undoManager);
-}
-
-void MainLayerDataStruct::createValueTreeSampleRemapperPointBipolar(juce::ValueTree& vt)//, int distortionUnitID)
-{
-    juce::ValueTree vtSampleRemapperPoint(DistortionConstants::WaveShaperParamStringID::wsPoints);
-    vt.addChild(vtSampleRemapperPoint, -1, &undoManager);
-
-    vtSampleRemapperPoint.addChild(createPoint(1.0f, 1.0f, 0.0f,0, false), -1, &undoManager);
-    vtSampleRemapperPoint.addChild(createPoint(0.0f, 0.0f, 0.0f,0, true), -1, &undoManager);
-    vtSampleRemapperPoint.addChild(createPoint(-1.0f, -1.0f, 0.0f,0, false), -1, &undoManager);
-}
-
-juce::ValueTree MainLayerDataStruct::createPoint(float pointX, float pointY, float tension, int curveID, bool horizontalDragOn)
-{
-    juce::ValueTree vt(DistortionConstants::WaveShaperParamStringID::point);
-
-    vt.setProperty(DistortionConstants::WaveShaperParamStringID::pointX, pointX, &undoManager);
-    vt.setProperty(DistortionConstants::WaveShaperParamStringID::pointY, pointY, &undoManager);
-
-    vt.setProperty(DistortionConstants::WaveShaperParamStringID::tension, tension, &undoManager);
-    vt.setProperty(DistortionConstants::WaveShaperParamStringID::horizontalDragOn, horizontalDragOn, &undoManager);
-
-    vt.setProperty(DistortionConstants::WaveShaperParamStringID::curveType, curveID, &undoManager);
-
-    return vt;
-}
-
 juce::ValueTree MainLayerDataStruct::createPointNoListener(float pointX, float pointY, float tension, int curveID, bool horizontalDragOn)
 {
-    juce::ValueTree vt(DistortionConstants::WaveShaperParamStringID::point);
+    juce::ValueTree vt(SampleRemapperConstants::ParamStringID::point);
 
-    vt.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::pointX, pointX, &undoManager);
-    vt.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::pointY, pointY, &undoManager);
+    vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointX, pointX, &undoManager);
+    vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointY, pointY, &undoManager);
 
-    vt.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::tension, tension, &undoManager);
-    vt.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::horizontalDragOn, horizontalDragOn, &undoManager);
+    vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, tension, &undoManager);
+    vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::horizontalDragOn, horizontalDragOn, &undoManager);
 
-    vt.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::curveType, curveID, &undoManager);
+    vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveID, &undoManager);
 
     return vt;
-}
+};
 
 //AudioEngine=================================================================================================================================
+void MainLayerDataStruct::setSelectedState(int stateID)
+{
+    rootAudioEngine.setPropertyExcludingListener(this, AudioEngineConstants::ParamStringID::selectedState, stateID, &undoManager);
+}
+
 void MainLayerDataStruct::resetAudioEngineParam()
 {
     //undoManager.beginNewTransaction();
@@ -741,7 +190,7 @@ void MainLayerDataStruct::resetStageParam(int stageID)
 //Set Function===============================================================================================================================
 void MainLayerDataStruct::setSelectedStageID(int stageID)
 {
-    rootMainLayer.setProperty(StageConstants::ParamStringID::selectedStageID, stageID, &undoManager);
+    getMainLayerVT().setProperty(StageConstants::ParamStringID::selectedStageID, stageID, &undoManager);
 }
 
 void MainLayerDataStruct::setIsEQ(int stageID, bool newIsEQ)
@@ -842,7 +291,6 @@ void MainLayerDataStruct::setEQFilterCutOff(int stageID, int filterID, float new
 
 void MainLayerDataStruct::setEQFilterQ(int stageID, int filterID, float newQ)
 {
-    //juce::String paramString = "MLS" + (juce::String)stageID + "EQFILTER" + (juce::String)filterID + "Q";
     juce::String paramString = EQConstants::ParamStringID::GetParamStringID::filterQ(stageID, filterID);
     juce::Value qValue = apvtsMainLayer.getParameterAsValue(paramString);
 
@@ -851,7 +299,6 @@ void MainLayerDataStruct::setEQFilterQ(int stageID, int filterID, float newQ)
 
 void MainLayerDataStruct::setEQFilterGain(int stageID, int filterID, float newGain)
 {
-    //juce::String paramString = "MLS" + (juce::String)stageID + "EQFILTER" + (juce::String)filterID + "GAIN";
     juce::String paramString = EQConstants::ParamStringID::GetParamStringID::filterGain(stageID, filterID);
     juce::Value gainValue = apvtsMainLayer.getParameterAsValue(paramString);
 
@@ -860,7 +307,6 @@ void MainLayerDataStruct::setEQFilterGain(int stageID, int filterID, float newGa
 
 void MainLayerDataStruct::setEQFilterType(int stageID, int filterID, int filterType)
 {
-    //juce::String paramString = "MLS" + (juce::String)stageID + "EQFILTER" + (juce::String)filterID + "GAIN";
     juce::String paramString = EQConstants::ParamStringID::GetParamStringID::filterType(stageID, filterID);
     juce::Value filterTypeValue = apvtsMainLayer.getParameterAsValue(paramString);
 
@@ -869,7 +315,6 @@ void MainLayerDataStruct::setEQFilterType(int stageID, int filterID, int filterT
 
 void MainLayerDataStruct::setEQFilterIsBypassed(int stageID, int filterID, bool newIsBypassed)
 {
-    //juce::String paramString = "MLS" + (juce::String)stageID + "EQFILTER" + (juce::String)filterID + "GAIN";
     juce::String paramString = EQConstants::ParamStringID::GetParamStringID::filterIsBypassed(stageID, filterID);
     juce::Value isBypassedValue = apvtsMainLayer.getParameterAsValue(paramString);
 
@@ -878,7 +323,6 @@ void MainLayerDataStruct::setEQFilterIsBypassed(int stageID, int filterID, bool 
 
 void MainLayerDataStruct::setEQFilterIsActive(int stageID, int filterID, bool newIsActive)
 {
-    //juce::String paramString = "MLS" + (juce::String)stageID + "EQFILTER" + (juce::String)filterID + "GAIN";
     juce::String paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
     juce::Value isActiveValue = apvtsMainLayer.getParameterAsValue(paramString);
 
@@ -949,7 +393,7 @@ void MainLayerDataStruct::setMouseAddFilterEQ(const juce::MouseEvent& e, int fil
     setEQFilterGain(stageID, filterID, filterGain);
     setEQFilterIsBypassed(stageID, filterID, false);
     setEQFilterIsActive(stageID, filterID, false);
-
+    addActiveFilterCount(stageID);
     //setEQFilterQ();
 }
 
@@ -977,68 +421,67 @@ int MainLayerDataStruct::findNextAvailableFilterIDEQ(int stageID)
 
 int MainLayerDataStruct::findNextActiveFilterDown(int stageID)
 {
-    int filterID = getSelectedFilterID(stageID);
+    if (getNbOfActiveFilters(stageID) == 0)
+        return -1;
+
+    int filterID = getSelectedFilterID(stageID) - 1;
     juce::String paramString;
     bool isActive = true;
-    if (filterID == 0)
-    {
+    //int count = 0;
+    if(filterID < 0)
         filterID = EQConstants::Processor<float>::nbOfFilterMax - 1;
+
+    paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
+    isActive = (*apvtsMainLayer.getRawParameterValue(paramString));
+
+    while (isActive && (filterID > -1))// EQConstants::Processor<float>::nbOfFilterMax)
+    {
+        //count++;
+        filterID--;
+        filterID = (filterID + EQConstants::Processor<float>::nbOfFilterMax - 1) % (EQConstants::Processor<float>::nbOfFilterMax - 1);
         paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
         isActive = (*apvtsMainLayer.getRawParameterValue(paramString));
     }
-    else
-    {
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
-        isActive = !(*apvtsMainLayer.getRawParameterValue(paramString));
-    }
-
-    while (isActive && (filterID < EQConstants::Processor<float>::nbOfFilterMax) && (filterID >= 0))
-    {
-        filterID --;
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
-        isActive = (*apvtsMainLayer.getRawParameterValue(paramString));
-    }
-
-    //if (filterID == EQConstants::nbOfFilterMax)
-    //if (filterID == EQConstants::nbOfFilterMax - 1 && isActive)
-    //{
-    //    filterID = -1;
-    //}
 
     return filterID;
 }
 
 int MainLayerDataStruct::findNextActiveFilterUp(int stageID)
 {
-    int filterID = getSelectedFilterID(stageID);
+    if (getNbOfActiveFilters(stageID) == 0)
+        return -1;
+
+    int filterID = getSelectedFilterID(stageID) + 1;
     juce::String paramString;
     bool isActive = true;
-    if (filterID == EQConstants::Processor<float>::nbOfFilterMax - 1 || filterID == -1)
-    {
+    if (filterID > EQConstants::Processor<float>::nbOfFilterMax - 1)
         filterID = 0;
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
-        isActive = (*apvtsMainLayer.getRawParameterValue(paramString));
-    }
-    else
-    {
-        paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
-        isActive = !(*apvtsMainLayer.getRawParameterValue(paramString));
-    }
 
-    while (isActive && (filterID < EQConstants::Processor<float>::nbOfFilterMax - 1) && (filterID >= 0))
+    paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
+    isActive = (*apvtsMainLayer.getRawParameterValue(paramString));
+
+    while (isActive && (filterID < EQConstants::Processor<float>::nbOfFilterMax ))
     {
         filterID++;
+        filterID = filterID % (EQConstants::Processor<float>::nbOfFilterMax - 1);
         paramString = EQConstants::ParamStringID::GetParamStringID::filterIsActive(stageID, filterID);
         isActive = (*apvtsMainLayer.getRawParameterValue(paramString));
-    }
-
-    //if (filterID == EQConstants::nbOfFilterMax)
-    if (filterID == EQConstants::Processor<float>::nbOfFilterMax - 1 && isActive)
-    {
-        filterID = 0;
     }
 
     return filterID;
+}
+
+void MainLayerDataStruct::addActiveFilterCount(int stageID)
+{
+    int yolo = getNbOfActiveFilters(stageID);
+    int nbOfActiveFilters = juce::jlimit(0, EQConstants::Processor<float>::nbOfFilterMax - 1, getNbOfActiveFilters(stageID) + 1);
+    getEQVT(stageID).setPropertyExcludingListener(this, EQConstants::ParamStringID::nbOfActiveFilters, nbOfActiveFilters, &undoManager);
+}
+
+void MainLayerDataStruct::remodeActiveFilterCount(int stageID)
+{
+    int nbOfActiveFilters = juce::jlimit(0, EQConstants::Processor<float>::nbOfFilterMax - 1, getNbOfActiveFilters(stageID) - 1);
+    getEQVT(stageID).setPropertyExcludingListener(this, EQConstants::ParamStringID::nbOfActiveFilters, nbOfActiveFilters, &undoManager);
 }
 
 void MainLayerDataStruct::setMouseDragEventEQ(const juce::MouseEvent& e, float scopeWidth, float scopeHeight)
@@ -1051,7 +494,7 @@ void MainLayerDataStruct::setMouseDragEventEQ(const juce::MouseEvent& e, float s
 
     float xPos = static_cast<float>(e.getPosition().getX());
     float yPos = static_cast<float>(e.getPosition().getY());
-
+    yPos = juce::jlimit(0.0f + scopeHeight / 14.0f, scopeHeight - scopeHeight / 14.0f, yPos);
     float filterCutoff = Conversion<float>::fromMouseToCutoff(xPos, 0.0f, scopeWidth - 100.0f, 10.0f, 22050.0f);
     setEQFilterCutOff(stageID, filterID, filterCutoff);
 
@@ -1059,6 +502,7 @@ void MainLayerDataStruct::setMouseDragEventEQ(const juce::MouseEvent& e, float s
 
     if (filterType == EQConstants::BiquadConstants<float>::Types::peak || filterType == EQConstants::BiquadConstants<float>::Types::lowshelf || filterType == EQConstants::BiquadConstants<float>::Types::highshelf)
     {
+        
         float gainMin = 0.0f;
         float gainMax = 0.0f;
 
@@ -1136,7 +580,7 @@ void MainLayerDataStruct::setMouseDragEventEQ(const juce::MouseEvent& e, float s
             break;
         }
 
-        float filterQ = Conversion<float>::fromMouseToQ(yPos, scopeHeight, 0.0f, qMin, qMax);
+        float filterQ = Conversion<float>::fromMouseToQ(yPos, scopeHeight - scopeHeight / 14.0f, 0.0f + scopeHeight / 14.0f, qMin, qMax);
         setEQFilterQ(stageID, filterID, filterQ);
     }
 }
@@ -1200,12 +644,12 @@ void MainLayerDataStruct::resetPhaserParam(int stageID)
 void MainLayerDataStruct::resetDistortionParam(int stageID)
 {
     //Distortion Mix
-    juce::String paramString = getDistortionMixParamString(stageID);
+    juce::String paramString = DistortionConstants::ParamStringID::GetParamStringID::mix(stageID);
     juce::Value apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
     apvtsValue = DistortionConstants::Processor<float>::mixStartValue;
 
     //Distortion isBypassed
-    paramString = getDistortionIsBypassedParamString(stageID);
+    paramString = DistortionConstants::ParamStringID::GetParamStringID::isBypassed(stageID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
     apvtsValue = DistortionConstants::Processor<float>::isBypassedStartValue;
 
@@ -1220,51 +664,51 @@ void MainLayerDataStruct::resetDistortionDUParam(int stageID, int distortionUnit
     bool duOnOffStartValue = true;
 
     //DU OnOff
-    juce::String paramString = getDistortionDUIsBypassedParamString(stageID, distortionUnitID);
+    juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::isBypassed(stageID, distortionUnitID);
     juce::Value apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
     apvtsValue = duOnOffStartValue;
 
-    getDistortionCircuitVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::DistoUnitParamStringID::equationType, 0, &undoManager);
+    getDistortionCircuitVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionCircuitConstants::ParamsID::equationType, 0, &undoManager);
     
-    getDistortionCircuitVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::DistoUnitParamStringID::equationID, 0, &undoManager);
+    getDistortionCircuitVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionCircuitConstants::ParamsID::equationID, 0, &undoManager);
 
     //DU Routing
-    paramString = getDistortionDURoutingParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::routing(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::routingStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::routingStartValue;
 
     //DU PreGain
-    paramString = getDistortionDUPreGainParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::preGain(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::preGaindBStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::preGaindBStartValue;
 
     //DU Drive
-    paramString = getDistortionDUDriveParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::drive(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::driveStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::driveStartValue;
 
     //DU PostGain
-    paramString = getDistortionDUPostGainParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::postGain(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::postGaindBStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::postGaindBStartValue;
 
     //DU Warp
-    paramString = getDistortionDUWarpParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::warp(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::warpStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::warpStartValue;
 
     //Is Bipolar. Has to be done that way. OtherWise the undoManager Will begin a new transaction.
-    getSampleRemapperVT(stageID, distortionUnitID).setProperty(DistortionConstants::WaveShaperParamStringID::isBipolar, false, &undoManager);
+    getSampleRemapperVT(stageID, distortionUnitID).setProperty(SampleRemapperConstants::ParamStringID::isBipolar, false, &undoManager);
 
     //DU DCFilterOn
-    paramString = getDistortionDUDCFilterIsBypassedParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::dcFilterIsBypassed(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::dcFilterIsBypassedStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::dcFilterIsBypassedStartValue;
 
     //DU Mix
-    paramString = getDistortionDUMixParamString(stageID, distortionUnitID);
+    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::mix(stageID, distortionUnitID);
     apvtsValue = apvtsMainLayer.getParameterAsValue(paramString);
-    apvtsValue = DistortionConstants::DistortionUnit<float>::mixStartValue;
+    apvtsValue = DistoUnitConstants::Processor<float>::mixStartValue;
 
     resetSampleRemapper(stageID, distortionUnitID);
 }
@@ -1318,7 +762,7 @@ void MainLayerDataStruct::switchFromUnipolarToBipolar(int stageID, int distortio
         setSelectedIDCurve(stageID, distortionUnitID, pointID);
     }
 
-    vtWS.sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::tension);
+    vtWS.sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
 }
 
 void MainLayerDataStruct::switchFromBipolarToUnipolar(int stageID, int distortionUnitID)
@@ -1384,7 +828,7 @@ void MainLayerDataStruct::switchFromBipolarToUnipolar(int stageID, int distortio
     tension = 0.0f;
     vtWSPoints.addChild(createPointNoListener(pointX, pointY, tension, 0, true), -1, &undoManager);
 
-    vtWSPoints.sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::tension);
+    vtWSPoints.sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
 }
 
 //Value Tree Add/Remove point from SampleRemapper================================================================================================
@@ -1403,7 +847,7 @@ void MainLayerDataStruct::setMouseAddPointWS(juce::MouseEvent& e, float scopeWid
     juce::Point<float> point = e.getPosition().toFloat();
     float pointX = juce::jmap(point.getX(), 0.0f, scopeWidth, scopeMinLin, scopeMaxLin);
     float pointY = juce::jmap(point.getY(), scopeHeight, 0.0f, scopeMinLin, scopeMaxLin);
-    float tension = 1.0f;
+    //float tension = 1.0f;
 
     addPoint(stageID, distortionUnitID, pointX, pointY);
 }
@@ -1450,7 +894,7 @@ void MainLayerDataStruct::setMouseDragEventWS(juce::MouseEvent& e, float scopeWi
         }
     }
 
-    //getWaveShaperPointsVT(stageID, distortionUnitID).getChild(tensionID).sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::tension);
+    //getWaveShaperPointsVT(stageID, distortionUnitID).getChild(tensionID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
 
 
 }
@@ -1503,7 +947,8 @@ void MainLayerDataStruct::addPoint(int stageID, int distortionUnitID, float poin
         setTensionNoListener(stageID, distortionUnitID, mirrorID - 1, 0.0f);
     }
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(childID).sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::selectedCurveID);
+    setSelectedIDCurve(stageID, distortionUnitID, childID);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(childID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::selectedCurveID);
 }
 
 void MainLayerDataStruct::deleteSelectedPoint(int stageID, int distortionUnitID)
@@ -1547,7 +992,7 @@ void MainLayerDataStruct::deleteSelectedPoint(int stageID, int distortionUnitID)
     }
     //undoManager.beginNewTransaction
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(selectedID - 1).sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::tension);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(selectedID - 1).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
 }
 
 void MainLayerDataStruct::resetSampleRemapper(int stageID, int distortionUnitID)
@@ -1565,24 +1010,24 @@ void MainLayerDataStruct::resetSampleRemapper(int stageID, int distortionUnitID)
 
     if (isBipolar)
     {
-        createValueTreeSampleRemapperPointBipolar(vtWS);
+        SampleRemapper<float>::createValueTreePointBipolar(vtWS, &undoManager);
     }
     else
     {
-        createValueTreeSampleRemapperPointUnipolar(vtWS);
+        SampleRemapper<float>::createValueTreePointUnipolar(vtWS, &undoManager);
     }
 
 }
 
 void MainLayerDataStruct::setDistoUnitID(int stageID, int distortionUnitID)
 {
-    getDistortionVT(stageID).setProperty(DistortionConstants::DistoUnitParamStringID::selectedDistoUnitID, distortionUnitID, nullptr);
+    getDistortionVT(stageID).setProperty(DistoUnitConstants::ParamStringID::selectedDistoUnitID, distortionUnitID, nullptr);
 }
 
 void MainLayerDataStruct::setSelectedDistoUnitID(int distortionUnitID)
 {
     int stageID = getSelectedStageID();
-    getDistortionVT(stageID).setProperty(DistortionConstants::DistoUnitParamStringID::selectedDistoUnitID, distortionUnitID, nullptr);
+    getDistortionVT(stageID).setProperty(DistoUnitConstants::ParamStringID::selectedDistoUnitID, distortionUnitID, nullptr);
 }
 
 void MainLayerDataStruct::setPoint(int stageID, int distortionUnitID, int pointID, juce::Point<float> newPoint)
@@ -1618,7 +1063,7 @@ void MainLayerDataStruct::setPoint(int stageID, int distortionUnitID, int pointI
     }
 
     setPointY(stageID, distortionUnitID, pointID, pointY);
-    //vtWSPoint.sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::pointY); NoListener
+    //vtWSPoint.sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::pointY); NoListener
 }
 
 void MainLayerDataStruct::setPointX(int stageID, int distortionUnitID, int pointID, float newPointX)
@@ -1628,7 +1073,7 @@ void MainLayerDataStruct::setPointX(int stageID, int distortionUnitID, int point
                              newPointX
                             );
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(DistortionConstants::WaveShaperParamStringID::pointX, newPointX, &undoManager);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(SampleRemapperConstants::ParamStringID::pointX, newPointX, &undoManager);
 }
 
 void MainLayerDataStruct::setPointY(int stageID, int distortionUnitID, int pointID, float newPointY)
@@ -1638,7 +1083,7 @@ void MainLayerDataStruct::setPointY(int stageID, int distortionUnitID, int point
                              newPointY
                             );
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(DistortionConstants::WaveShaperParamStringID::pointY, newPointY, &undoManager);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(SampleRemapperConstants::ParamStringID::pointY, newPointY, &undoManager);
 }
 
 void MainLayerDataStruct::setPointXNoListener(int stageID, int distortionUnitID, int pointID, float newPointX)
@@ -1648,7 +1093,7 @@ void MainLayerDataStruct::setPointXNoListener(int stageID, int distortionUnitID,
         newPointX
     );
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::pointX, newPointX, &undoManager);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointX, newPointX, &undoManager);
 }
 
 void MainLayerDataStruct::setPointYNoListener(int stageID, int distortionUnitID, int pointID, float newPointY)
@@ -1658,7 +1103,7 @@ void MainLayerDataStruct::setPointYNoListener(int stageID, int distortionUnitID,
         newPointY
     );
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::pointY, newPointY, &undoManager);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointY, newPointY, &undoManager);
 }
 
 void MainLayerDataStruct::setSelectedPoint(int stageID, int distortionUnitID, juce::Point<float> newPoint)
@@ -1669,7 +1114,7 @@ void MainLayerDataStruct::setSelectedPoint(int stageID, int distortionUnitID, ju
 
 void MainLayerDataStruct::setTension(int stageID, int distortionUnitID, int pointID, float newTension)
 {
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::tension, newTension, &undoManager);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, newTension, &undoManager);
 
     bool isBipolar = getIsBipolar(stageID, distortionUnitID);
 
@@ -1690,15 +1135,15 @@ void MainLayerDataStruct::setTension(int stageID, int distortionUnitID, int poin
             tension = newTension;
         }
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::tension, tension, &undoManager);
+        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, tension, &undoManager);
     }
 
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::tension);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
 }
 
 void MainLayerDataStruct::setTensionNoListener(int stageID, int distortionUnitID, int pointID, float newTension)
 {
-    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::tension, newTension, &undoManager);
+    getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, newTension, &undoManager);
 
     bool isBipolar = getIsBipolar(stageID, distortionUnitID);
 
@@ -1718,7 +1163,7 @@ void MainLayerDataStruct::setTensionNoListener(int stageID, int distortionUnitID
             tension = newTension;
         }
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::tension, tension, &undoManager);
+        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, tension, &undoManager);
     }
 }
 
@@ -1732,7 +1177,7 @@ void MainLayerDataStruct::setHorizontalDragOn(int stageID, int distortionUnitID,
 {
     juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID);
 
-    vtWSPoints.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::horizontalDragOn, horizontalDragOn, nullptr);
+    vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::horizontalDragOn, horizontalDragOn, nullptr);
 }
 
 void MainLayerDataStruct::setPointCurveType(int stageID, int distortionUnitID, int pointID, int curveType)
@@ -1741,14 +1186,14 @@ void MainLayerDataStruct::setPointCurveType(int stageID, int distortionUnitID, i
     {
         juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID);
 
-        vtWSPoints.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::curveType, curveType, &undoManager);
+        vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
 
         if (!getIsBipolar(stageID, distortionUnitID))
         {
             int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
             int mirrorID = nbOfChildren - pointID;
             vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID);
-            vtWSPoints.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::curveType, curveType, &undoManager);
+            vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
 
             float tension = getTension(stageID, distortionUnitID, pointID);
             setTensionNoListener(stageID, distortionUnitID, mirrorID, tension);
@@ -1759,7 +1204,7 @@ void MainLayerDataStruct::setPointCurveType(int stageID, int distortionUnitID, i
             float tension = getTension(stageID, distortionUnitID, pointID);
             setTensionNoListener(stageID, distortionUnitID, pointID, -tension);
         }
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::curveType);
+        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::curveType);
         undoManager.beginNewTransaction();
     }
 }
@@ -1770,7 +1215,7 @@ void MainLayerDataStruct::setPointCurveTypeNoListener(int stageID, int distortio
     {
         juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID);
 
-        vtWSPoints.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::curveType, curveType, &undoManager);
+        vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
 
         //float tension = getTension(stageID, distortionUnitID, pointID);
 
@@ -1779,7 +1224,7 @@ void MainLayerDataStruct::setPointCurveTypeNoListener(int stageID, int distortio
             int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
             int mirrorID = nbOfChildren - pointID;
             vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID);
-            vtWSPoints.setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::curveType, curveType, &undoManager);
+            vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
         }
     }
 }
@@ -1788,7 +1233,7 @@ void MainLayerDataStruct::setIsBipolar(int stageID, int distortionUnitID, bool i
 {
     undoManager.beginNewTransaction();
 
-    getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::isBipolar, isBipolar, &undoManager);
+    getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::isBipolar, isBipolar, &undoManager);
 
     isBipolar ? switchFromUnipolarToBipolar(stageID, distortionUnitID) : switchFromBipolarToUnipolar(stageID, distortionUnitID);
 
@@ -1801,14 +1246,14 @@ void MainLayerDataStruct::setSelectedIDPoint(int stageID, int distortionUnitID, 
 
     if (isBipolar)
     {
-        getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::selectedPointID, pointID, &undoManager);
+        getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedPointID, pointID, &undoManager);
         //saveSelectedPoint();
     }
     else
     {
         if ((pointID < nbOfPoint / 2))
         {
-            getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::selectedPointID, pointID, &undoManager);
+            getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedPointID, pointID, &undoManager);
             //saveSelectedPoint();
         }
     }
@@ -1816,7 +1261,7 @@ void MainLayerDataStruct::setSelectedIDPoint(int stageID, int distortionUnitID, 
 
 void MainLayerDataStruct::setSelectedIDTension(int stageID, int distortionUnitID, int tensionID)
 {
-    getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::selectedTensionID, tensionID, &undoManager);
+    getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedTensionID, tensionID, &undoManager);
 }
 
 void MainLayerDataStruct::setSelectedIDCurve(int stageID, int distortionUnitID, int curveID)
@@ -1833,7 +1278,7 @@ void MainLayerDataStruct::setSelectedIDCurve(int stageID, int distortionUnitID, 
     if (curveID < 0)
         curveID = 0;
 
-    getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, DistortionConstants::WaveShaperParamStringID::selectedCurveID, curveID, &undoManager);
+    getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedCurveID, curveID, &undoManager);
 }
 
 void MainLayerDataStruct::setPointAndTensionID(int stageID, int distortionUnitID, int pointID, int tensionID)
@@ -1852,7 +1297,7 @@ void MainLayerDataStruct::setPointAndTensionID(int stageID, int distortionUnitID
         setSelectedIDCurve(stageID, distortionUnitID, tensionID);
     }
 
-    //getWaveShaperVT(stageID, distortionUnitID).sendPropertyChangeMessage(DistortionConstants::WaveShaperParamStringID::selectedCurveID);
+    //getWaveShaperVT(stageID, distortionUnitID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::selectedCurveID);
 }
 
 void MainLayerDataStruct::setPointAndTensionIDNoTransaction(int stageID, int distortionUnitID, int pointID, int tensionID)
@@ -1870,21 +1315,28 @@ void MainLayerDataStruct::setPointAndTensionIDNoTransaction(int stageID, int dis
     }
 }
 
-void MainLayerDataStruct::setDistortionCircuitEquation(int stageID, int distortionUnitID, int equationType, int equationID)
-{
-    //undoManager.beginNewTransaction();
-    juce::ValueTree vt = getDistortionCircuitVT(stageID, distortionUnitID);
-    vt.setPropertyExcludingListener(this, DistortionConstants::DistoUnitParamStringID::equationType, equationType, &undoManager);
-    vt.setProperty(DistortionConstants::DistoUnitParamStringID::equationID, equationID, &undoManager);
-    
-}
+//void MainLayerDataStruct::setDistortionCircuitEquation(int stageID, int distortionUnitID, int equationType, int equationID)
+//{
+//    //undoManager.beginNewTransaction();
+//    juce::ValueTree vt = getDistortionCircuitVT(stageID, distortionUnitID);
+//    //vt.setPropertyExcludingListener(this, DistortionCircuitConstants::ParamsID::equationType, equationType, &undoManager);
+//    vt.setProperty(DistortionCircuitConstants::ParamsID::equationType, equationType, &undoManager);
+//
+//    vt.setProperty(DistortionCircuitConstants::ParamsID::equationID, equationID, &undoManager);
+//    
+//}
 
 //Get function==============================================================================================================================
+juce::ValueTree MainLayerDataStruct::getMainLayerVT()
+{
+    return rootAudioEngine.getChildWithName(juce::Identifier(MainLayerConstants::ParamStringID::mainLayer));
+}
+
 juce::ValueTree MainLayerDataStruct::getStageVT(int stageID)
 {
     juce::Identifier name(MainLayerConstants::ParamStringID::stage + (juce::String)stageID);
 
-    return rootMainLayer.getChildWithName(name);
+    return getMainLayerVT().getChildWithName(name);
 }
 
 juce::ValueTree MainLayerDataStruct::getSelectedStageVT()
@@ -1906,12 +1358,12 @@ juce::ValueTree MainLayerDataStruct::getEQVT(int stageID)
 
 juce::ValueTree MainLayerDataStruct::getDistortionVT(int stageID)
 {
-    return getStageVT(stageID).getChildWithName(DistortionConstants::DistortionParamStringID::distortion);
+    return getStageVT(stageID).getChildWithName(DistortionConstants::ParamStringID::distortion);
 }
 
 juce::ValueTree MainLayerDataStruct::getDistoUnitVT(int stageID, int distortionUnitID)
 {
-    juce::Identifier name(DistortionConstants::DistoUnitParamStringID::distoUnit + (juce::String)distortionUnitID);
+    juce::Identifier name(DistoUnitConstants::ParamStringID::distoUnit + (juce::String)distortionUnitID);
 
     return getDistortionVT(stageID).getChildWithName(name);
 }
@@ -1927,23 +1379,31 @@ juce::ValueTree MainLayerDataStruct::getSelectedDistoUnitVT()
 
 juce::ValueTree MainLayerDataStruct::getSampleRemapperVT(int stageID, int distortionUnitID)
 {
-    return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(DistortionConstants::WaveShaperParamStringID::waveshaper);
+    return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(SampleRemapperConstants::ParamStringID::sampleRemapper);
 }
 
 juce::ValueTree MainLayerDataStruct::getDistortionCircuitVT(int stageID, int distortionUnitID)
 {
-    return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(DistortionConstants::DistoUnitParamStringID::distortionCircuit);
+    return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(DistortionCircuitConstants::ParamsID::distortionCircuit);
 }
 
 juce::ValueTree MainLayerDataStruct::getSampleRemapperPointsVT(int stageID, int distortionUnitID)
 {
-    return getSampleRemapperVT(stageID, distortionUnitID).getChildWithName(DistortionConstants::WaveShaperParamStringID::wsPoints);
+    return getSampleRemapperVT(stageID, distortionUnitID).getChildWithName(SampleRemapperConstants::ParamStringID::srPoints);
+}
+
+//Get Function Audio Engine
+int MainLayerDataStruct::getSelectedState()
+{
+    return rootAudioEngine.getProperty(AudioEngineConstants::ParamStringID::selectedState);
 }
 
 //Get function Main Layer
+
+//Get Function Stage
 int MainLayerDataStruct::getSelectedStageID()
 {
-    return getRoot().getProperty(StageConstants::ParamStringID::selectedStageID);
+    return getMainLayerVT().getProperty(StageConstants::ParamStringID::selectedStageID);
 }
 
 //Get Function Scope
@@ -2010,11 +1470,16 @@ bool MainLayerDataStruct::getEQFilterIsActive(int stageID, int filterID)
     return filterIsActive;
 }
 
+int MainLayerDataStruct::getNbOfActiveFilters(int stageID)
+{
+    int nbOfActiveFilter = getEQVT(stageID).getProperty(EQConstants::ParamStringID::nbOfActiveFilters);
+    return nbOfActiveFilter;
+}
 
 //Get Function Distortion
 bool MainLayerDataStruct::getDistoUnitRouting(int stageID, int distortionUnitID)
 {
-    juce::String paramString = getDistortionDURoutingParamString(stageID, distortionUnitID);
+    juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::routing(stageID, distortionUnitID);
     bool distoRouting = *apvtsMainLayer.getRawParameterValue(paramString);
 
     return distoRouting;
@@ -2022,7 +1487,7 @@ bool MainLayerDataStruct::getDistoUnitRouting(int stageID, int distortionUnitID)
 
 float MainLayerDataStruct::getDistoUnitDrive(int stageID, int distortionUnitID)
 {
-    juce::String paramString = getDistortionDUDriveParamString(stageID, distortionUnitID);
+    juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::drive(stageID, distortionUnitID);
     float distoEquationType = *apvtsMainLayer.getRawParameterValue(paramString);
 
     return distoEquationType;
@@ -2033,14 +1498,14 @@ int MainLayerDataStruct::getSelectedDistoUnitID()
     int selectedStageID = getSelectedStageID();
     juce::ValueTree distoVT = getDistortionVT(selectedStageID);
 
-    return distoVT.getProperty(DistortionConstants::DistoUnitParamStringID::selectedDistoUnitID);
+    return distoVT.getProperty(DistoUnitConstants::ParamStringID::selectedDistoUnitID);
 }
 
 int MainLayerDataStruct::getDistortionUnitID(int stageID)
 {
     juce::ValueTree vtDistortion = getDistortionVT(stageID);
 
-    return vtDistortion.getProperty(DistortionConstants::DistoUnitParamStringID::selectedDistoUnitID);
+    return vtDistortion.getProperty(DistoUnitConstants::ParamStringID::selectedDistoUnitID);
 }
 
 bool MainLayerDataStruct::getIsEQ(int stageID)
@@ -2086,46 +1551,46 @@ juce::Point<float> MainLayerDataStruct::getSelectedPoint(int stageID, int distor
 
 float MainLayerDataStruct::getTension(int stageID, int distortionUnitID, int pointID)
 {
-    return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(DistortionConstants::WaveShaperParamStringID::tension);
+    return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(SampleRemapperConstants::ParamStringID::tension);
 }
 
 int MainLayerDataStruct::getSelectedPointID(int stageID, int distortionUnitID)
 {
-    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(DistortionConstants::WaveShaperParamStringID::selectedPointID);
+    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::selectedPointID);
 }
 
 int MainLayerDataStruct::getSelectedTensionID(int stageID, int distortionUnitID)
 {
 
-    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(DistortionConstants::WaveShaperParamStringID::selectedTensionID);
+    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::selectedTensionID);
 }
 
 int MainLayerDataStruct::getSelectedCurveID(int stageID, int distortionUnitID)
 {
-    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(DistortionConstants::WaveShaperParamStringID::selectedCurveID);
+    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::selectedCurveID);
 }
 
 bool MainLayerDataStruct::getHorizontalDragOn(int stageID, int distortionUnitID, int pointID)
 {
-    return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(DistortionConstants::WaveShaperParamStringID::horizontalDragOn);
+    return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(SampleRemapperConstants::ParamStringID::horizontalDragOn);
 }
 
 int MainLayerDataStruct::getPointCurveType(int stageID, int distortionUnitID, int pointID)
 {
-    return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(DistortionConstants::WaveShaperParamStringID::curveType);
+    return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(SampleRemapperConstants::ParamStringID::curveType);
 }
 
 bool MainLayerDataStruct::getIsBipolar(int stageID, int distortionUnitID)
 {
-    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(DistortionConstants::WaveShaperParamStringID::isBipolar);
+    return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::isBipolar);
 }
 
 int MainLayerDataStruct::getDistortionCircuitEquationType(int stageID, int distortionUnitID)
 {
-    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionConstants::DistoUnitParamStringID::equationType);
+    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionCircuitConstants::ParamsID::equationType);
 }
 
 int MainLayerDataStruct::getDistortionCircuitEquationID(int stageID, int distortionUnitID)
 {
-    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionConstants::DistoUnitParamStringID::equationID);
+    return getDistortionCircuitVT(stageID, distortionUnitID).getProperty(DistortionCircuitConstants::ParamsID::equationID);
 }

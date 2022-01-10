@@ -13,9 +13,11 @@
 
 //==============================================================================
 ScopeDisplay::ScopeDisplay(MainLayerDataStruct& dataStruct)
-    : preEQFFTBuffer(2,4096)
+    : preEQFFTBuffer(2, 4096)
     , postEQFFTBuffer(2, 4096)
     , postDistoFFTBuffer(2, 4096)
+    , filterMagBuffer(EQConstants::Processor<float>::nbOfFilterMax, EQConstants::UI::filterMagnitudeSize)
+    , filterSumMagBuffer(1, EQConstants::UI::filterMagnitudeSize)
     , dataStruct(dataStruct)
 {
     setInterceptsMouseClicks(false, true);
@@ -38,10 +40,17 @@ ScopeDisplay::ScopeDisplay(MainLayerDataStruct& dataStruct)
     preEQFFTBuffer.clear();
     postEQFFTBuffer.clear();
     postDistoFFTBuffer.clear();
-    
+    filterSumMagBuffer.clear();
+
+    for (int i = 0; i < filterSumMagBuffer.getNumSamples(); ++i)
+    {
+        filterSumMagBuffer.getWritePointer(0)[i] = 10.0f;
+    }
+
     isStereo = false;
 
     zoomComboBox.setLookAndFeel(&lafComboBox);
+    //zoomComboBox.addItemList(ScopeConstants::UI::thirtydB::gridLabelStringArray, 1);
     zoomComboBox.addItem(ScopeConstants::UI::thirtydB::gridLabelStringArray[0], 1);
     zoomComboBox.addItem(ScopeConstants::UI::fifteendB::gridLabelStringArray[0], 2);
     zoomComboBox.addItem(ScopeConstants::UI::ninedB::gridLabelStringArray[0], 3);
@@ -93,8 +102,8 @@ void ScopeDisplay::paint (juce::Graphics& g)
     //g.setGradientFill(grad);
     //g.fillRect(getLocalBounds());
 
-    if (!isDisplayed)
-        return;
+    //if (!isDisplayed)
+    //    return;
 
     g.setOpacity(1.0f);
 
@@ -226,32 +235,47 @@ void ScopeDisplay::computeGainGridPath()
     gainAxisGridPath.clear();
     gainAxisGridPath.startNewSubPath(0.0f, yPos);
     gainAxisGridPath.lineTo(xPosPath, yPos);
-    zoomComboBox.setBounds(xPosPath, yPos - 10.0f, labelWidth, labelHeight);
+    zoomComboBox.setBounds(static_cast<int>(xPosPath),
+        static_cast<int>(yPos - 10.0f), 
+        static_cast<int>(labelWidth),
+        static_cast<int>(labelHeight));
 
     //0 dB
     xPos = (float)getWidth() - 50.0f;
     yPos = juce::jmap(0.0f, gainMin, gainMax, height, 0.0f);
     gainAxisGridPath.startNewSubPath(0.0f, yPos);
     gainAxisGridPath.lineTo(xPosPath, yPos);
-    labelVector[2]->setBounds(xPosPath, yPos - 10.0f, labelWidth, labelHeight);
+    labelVector[2]->setBounds(static_cast<int>(xPosPath),
+        static_cast<int>(yPos - 10.0f),
+            static_cast<int>(labelWidth),
+                static_cast<int>(labelHeight));
 
     for (int i = 1 ; i < 3 ; ++i)
     {
         yPos = juce::jmap((float) (3 - i) * gainLabelInc, gainMin, gainMax, height, 0.0f);
         gainAxisGridPath.startNewSubPath(0.0f, yPos);
         gainAxisGridPath.lineTo(xPosPath, yPos);
-        labelVector[i - 1]->setBounds(xPosPath, yPos - 10.0f, labelWidth, labelHeight);
+        labelVector[i - 1]->setBounds(static_cast<int>(xPosPath),
+            static_cast<int>(yPos - 10.0f),
+            static_cast<int>(labelWidth),
+            static_cast<int>(labelHeight));
 
         yPos = juce::jmap(-((float)i * gainLabelInc), gainMin, gainMax, height, 0.0f);
         gainAxisGridPath.startNewSubPath(0.0f, yPos);
         gainAxisGridPath.lineTo(xPosPath, yPos);
-        labelVector[i + 2]->setBounds(xPosPath, yPos - 10.0f, labelWidth, labelHeight);
+        labelVector[i + 2]->setBounds(static_cast<int>(xPosPath),
+            static_cast<int>(yPos - 10.0f),
+            static_cast<int>(labelWidth),
+            static_cast<int>(labelHeight));
     }
 
     yPos = juce::jmap(-3.0f * gainLabelInc, gainMin, gainMax, height, 0.0f);
     gainAxisGridPath.startNewSubPath(0.0f, yPos);
     gainAxisGridPath.lineTo(xPosPath, yPos);
-    labelVector[5]->setBounds(xPosPath, yPos - 10.0f, labelWidth, labelHeight);
+    labelVector[5]->setBounds(static_cast<int>(xPosPath),
+        static_cast<int>(yPos - 10.0f),
+        static_cast<int>(labelWidth),
+        static_cast<int>(labelHeight));
 }
 
 void ScopeDisplay::computeXAxisValueForFFTPath()
@@ -338,13 +362,13 @@ void ScopeDisplay::computeFrequencyAndXAxisValueForFilterMagnitude()
     }
 }
 
-void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLayerDataStruct, const float* filterMagnitudeValue, int filterID)
+void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLayerDataStruct, int filterID) //const float* filterMagnitudeValue,
 {
     int stageID = mainLayerDataStruct.getSelectedStageID();
 
     filterDrawingBank[filterID].isActive = mainLayerDataStruct.getEQFilterIsActive(stageID, filterID);
 
-    if (!filterDrawingBank[filterID].isActive)
+    if (! filterDrawingBank[filterID].isActive)
     {
         filterDraggerVector[filterID]->setVisible(false);
         filterDraggerVector[filterID]->setEnabled(false);
@@ -361,7 +385,8 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
     //double sr = 44100.0;
     float scopeHeight = static_cast<float>(getHeight());
     float draggerDiameter = filterDraggerVector[filterID]->getDiameter();
-    float remappedMag = juce::jmap(filterMagnitudeValue[0], gainMin, gainMax, scopeHeight, 0.0f);
+    //float remappedMag = juce::jmap(filterMagnitudeValue[0], gainMin, gainMax, scopeHeight, 0.0f);
+    float remappedMag = juce::jmap(filterMagBuffer.getReadPointer(filterID)[0], gainMin, gainMax, scopeHeight, 0.0f);
 
     bool filterIsBypassed = mainLayerDataStruct.getEQFilterIsBypassed(stageID, filterID);
     float filterCutOff = mainLayerDataStruct.getEQFilterCutoff(stageID, filterID);
@@ -375,7 +400,8 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
     //Linear freq computation===================================================================================================================================================
     for (int i = 1; i < EQConstants::UI::filterMagnitudeSize; ++i)
     {
-        remappedMag = juce::jmap(filterMagnitudeValue[i], gainMin, gainMax, scopeHeight, 0.0f);
+        //remappedMag = juce::jmap(filterMagnitudeValue[i], gainMin, gainMax, scopeHeight, 0.0f);
+        remappedMag = juce::jmap(filterMagBuffer.getReadPointer(filterID)[i], gainMin, gainMax, scopeHeight, 0.0f);
 
         filterDrawingBank[filterID].filterPath.lineTo(xAxisForFilterMagnitude[i], remappedMag);
     }
@@ -472,7 +498,7 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
             break;
         }
         
-        yPos = Conversion<float>::fromQToYPositon(mainLayerDataStruct.getEQFilterQ(stageID, filterID), qMin, qMax, scopeHeight, 0.0f);
+        yPos = Conversion<float>::fromQToYPositon(mainLayerDataStruct.getEQFilterQ(stageID, filterID), qMin, qMax, scopeHeight - scopeHeight / 14.0f, 0.0f + scopeHeight / 14.0f);
         yPos -= 0.5f * draggerDiameter;
     }
 
@@ -486,11 +512,11 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
                                              static_cast<int>(draggerDiameter));
 }
 
-void ScopeDisplay::computeEQFilterSumFrequencyResponse(const float* filterSumMagnitudeValue, bool isAnyActiveFilter)
+void ScopeDisplay::computeEQFilterSumFrequencyResponse(bool isAnyActiveFilter) //const float* filterSumMagnitudeValue, 
 {
     filterSumDrawing.isActive = isAnyActiveFilter;
 
-    if (!filterSumDrawing.isActive)
+    if (! filterSumDrawing.isActive)
         return;
 
     //auto mindB = EQConstants::UI::scopeMinGaindB_f;
@@ -498,7 +524,9 @@ void ScopeDisplay::computeEQFilterSumFrequencyResponse(const float* filterSumMag
 
     //double sr = 44100.0;
     float scopeHeight = (float) getHeight();
-    float remappedMag = juce::jmap(filterSumMagnitudeValue[0], gainMin, gainMax, scopeHeight, 0.0f);
+    //float mag = filterSumMagBuffer.getSample(0, 0);
+    //float remappedMag = juce::jmap(filterSumMagnitudeValue[0], gainMin, gainMax, scopeHeight, 0.0f);
+    float remappedMag = juce::jmap(filterSumMagBuffer.getSample(0,0), gainMin, gainMax, scopeHeight, 0.0f);
 
     filterSumDrawing.filterPath.clear();
     filterSumDrawing.filterPath.startNewSubPath(xAxisForFilterMagnitude[0], remappedMag);
@@ -506,7 +534,8 @@ void ScopeDisplay::computeEQFilterSumFrequencyResponse(const float* filterSumMag
     //Linear freq computation===================================================================================================================================================
     for (int i = 1; i < EQConstants::UI::filterMagnitudeSize; ++i)
     {
-        remappedMag = juce::jmap(filterSumMagnitudeValue[i], gainMin, gainMax, scopeHeight, 0.0f);
+        //remappedMag = juce::jmap(filterSumMagnitudeValue[i], gainMin, gainMax, scopeHeight, 0.0f);
+        remappedMag = juce::jmap(filterSumMagBuffer.getSample(0, i), gainMin, gainMax, scopeHeight, 0.0f);
 
         filterSumDrawing.filterPath.lineTo(xAxisForFilterMagnitude[i], remappedMag);
     }
@@ -738,7 +767,7 @@ bool ScopeDisplay::isMouseOnScope(const juce::MouseEvent& e)
     return isMouseOnScope;
 }
 
-int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct, juce::AudioBuffer<float>* pFilterMagnitude, juce::AudioBuffer<float>* pFilterMagnitudeSum)
+int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct)
 {
     int stageID = mainLayerDataStruct.getSelectedStageID();
     bool isAnyActiveFilter = false;
@@ -777,9 +806,7 @@ int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct, juce::Audio
 
     for (int filterID = 0; filterID < EQConstants::Processor<float>::nbOfFilterMax; ++filterID)
     {
-        //computeEQFilterFrequencyResponse(mainLayerDataStruct, pEQProcessor->getFilterMagnitudeValue(filterID), filterID);
-        //computeEQFilterFrequencyResponse(mainLayerDataStruct, pEQProcessor->getPointerToFilterMagnitudeValue()[filterID], filterID);
-        computeEQFilterFrequencyResponse(mainLayerDataStruct, pFilterMagnitude->getReadPointer(filterID), filterID);
+        computeEQFilterFrequencyResponse(mainLayerDataStruct, filterID);
 
         if (mainLayerDataStruct.getEQFilterIsActive(stageID, filterID))
             nbOfActiveFilter += 1;
@@ -787,7 +814,7 @@ int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct, juce::Audio
         isAnyActiveFilter = isAnyActiveFilter || mainLayerDataStruct.getEQFilterIsActive(stageID, filterID);
     }
 
-    computeEQFilterSumFrequencyResponse(pFilterMagnitudeSum->getReadPointer(0), isAnyActiveFilter);
+    computeEQFilterSumFrequencyResponse(isAnyActiveFilter);
 
     return nbOfActiveFilter;
 }

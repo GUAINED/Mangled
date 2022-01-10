@@ -11,9 +11,10 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../GeneralUIComponent/OnOffButton.h"
+#include "../Controls/OnOffButton.h"
 #include "../../DataStructure/MangledIdentifiers.h"
-
+#include "../Controls/MangledSlider.h"
+#include "../Controls/MangledDualStateButton.h"
 //==============================================================================
 /*
 */
@@ -39,11 +40,11 @@ public:
 
     juce::TextButton* getOverSamplerOnOffButton() { return &oversamplerOnOffButton; };
     OnOffButton* getOnOffButton()            { return &onOffButton; };
-    juce::Slider*     getMixDistortionSlider()    { return &mixDistortionSlider; };
+    MangledSlider* getMixDistortionSlider()    { return &mixDistortionSlider; };
 
 private:
     juce::OwnedArray<OnOffButton> distoUnitOnOffButtonVector;
-    juce::OwnedArray<juce::TextButton> distoUnitIDButtonVector;
+    juce::OwnedArray<MangledDualStateButton> distoUnitIDButtonVector;
 
     //OnOffButton isBypassedSecondDistortionUnitTextButton;
     //juce::TextButton secondDistortionUnitTextButton;
@@ -52,7 +53,7 @@ private:
 
     juce::TextButton oversamplerOnOffButton;
 
-    juce::Slider mixDistortionSlider;
+    MangledSlider mixDistortionSlider;
     juce::Label mixDistortionLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionUnitMenuTabComponent)

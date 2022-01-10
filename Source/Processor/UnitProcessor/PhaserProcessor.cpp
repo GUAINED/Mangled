@@ -285,17 +285,22 @@ void CustomPhaser<SampleType>::update()
 //}
 
 template <typename SampleType>
- void CustomPhaser<SampleType>::setPhaserParams(CustomPhaser<SampleType>::CustomPhaserParams& newPhaserProcessorParams)
+ void CustomPhaser<SampleType>::setPhaserParams(CustomPhaser<SampleType>::Parameters& newParams)
 {
-    setNumStages(newPhaserProcessorParams.numStages);
+     if (params != newParams)
+     {
+         params = newParams;
 
-    setCentreFrequency(newPhaserProcessorParams.centreHz);
+         setNumStages(newParams.numStages);
 
-    setFeedback(newPhaserProcessorParams.feedback);
+         setCentreFrequency(newParams.centreHz);
 
-    //setRate(newPhaserProcessorParams.rateHz);
-    //setDepth(newPhaserProcessorParams.depth);
-    
+         setFeedback(newParams.feedback);
+
+         setMix(newParams.mix);
+
+         setIsBypassed(newParams.isBypassed);
+    }
 }
 
 

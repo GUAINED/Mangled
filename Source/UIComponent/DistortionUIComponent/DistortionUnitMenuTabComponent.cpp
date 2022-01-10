@@ -13,7 +13,7 @@
 
 //==============================================================================
 DistortionUnitMenuTabComponent::DistortionUnitMenuTabComponent()
-    : onOffButton("Distortion", "On", DistortionConstants::DistortionUnit<float>::distortionUnitIsBypassedStartValue)
+    : onOffButton("Distortion", "On", DistoUnitConstants::Processor<float>::isBypassedStartValue)
 {
     juce::String buttonIDString;
 
@@ -23,10 +23,10 @@ DistortionUnitMenuTabComponent::DistortionUnitMenuTabComponent()
     for (int distortionUnitID = 0; distortionUnitID < DistortionConstants::Processor<float>::nbOfDUMax; ++distortionUnitID)
     {
         buttonIDString = DistortionConstants::UI::distoUnitString + (juce::String) (distortionUnitID + 1);
-        distoUnitIDButtonVector.add(new juce::TextButton(buttonIDString));
-        distoUnitIDButtonVector[distortionUnitID]->setClickingTogglesState(true);
-        distoUnitIDButtonVector[distortionUnitID]->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-        distoUnitIDButtonVector[distortionUnitID]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
+        distoUnitIDButtonVector.add(new MangledDualStateButton(buttonIDString));
+        //distoUnitIDButtonVector[distortionUnitID]->setClickingTogglesState(true);
+        //distoUnitIDButtonVector[distortionUnitID]->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
+        //distoUnitIDButtonVector[distortionUnitID]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::black);
         distoUnitIDButtonVector[distortionUnitID]->setRadioGroupId(DistortionUnitButtons);
 
         addAndMakeVisible(distoUnitIDButtonVector[distortionUnitID]);

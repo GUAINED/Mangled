@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 
 
-#include "../../UIComponent/GeneralUIComponent/MainLayerMenuComponent.h"
+#include "../../UIComponent/MainLayer/MainLayerMenuComponent.h"
 #include "../../UIComponent/ScopeUIComponent/scopeComponent.h"
 
 //==============================================================================

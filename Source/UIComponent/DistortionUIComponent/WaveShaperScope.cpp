@@ -27,6 +27,8 @@ WaveShaperScope::WaveShaperScope(MainLayerDataStruct& mlDataStruct)
     {
         tensionDraggerVector.add(new WaveShaperTensionDragger(juce::Colours::red));
         addChildComponent(tensionDraggerVector[tensionID]);
+
+        binPathData.add(new juce::AudioBuffer<float>(3, DistortionConstants::UI::nbOfPointsPerBin + 1));
     }
 }
 
@@ -141,7 +143,7 @@ void WaveShaperScope::drawIsBipolarRectangle()
     isBipolarPath.addRectangle(recX, recY, recWidth, recHeight);
 }
 
-void WaveShaperScope::drawSampleRemapperPath(juce::Path* path, float* binXData, float* binYData)//, float* eqBinYData)
+void WaveShaperScope::drawSampleRemapperPath(juce::Path* path, const float* binXData, const float* binYData)//, float* eqBinYData)
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -166,18 +168,18 @@ void WaveShaperScope::drawSampleRemapperPath(juce::Path* path, float* binXData, 
     }
 }
 
-void WaveShaperScope::drawUnipolarPath(float* binXData, float* binYData)
+void WaveShaperScope::drawUnipolarPath(const float* binXData, const float* binYData)
 {
     drawSampleRemapperPath(&unipolarSampleRemapPath, binXData, binYData);
 
 }
 
-void WaveShaperScope::drawBipolarPath(float* binXData, float* binYData)
+void WaveShaperScope::drawBipolarPath(const float* binXData, const float* binYData)
 {
     drawSampleRemapperPath(&bipolarSampleRemapPath, binXData, binYData);
 }
 
-void WaveShaperScope::drawSelectedCurvePath(float* binXData, float* binYData)
+void WaveShaperScope::drawSelectedCurvePath(const float* binXData, const float* binYData)
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -214,10 +216,16 @@ void WaveShaperScope::setPointAndTension(int binID, bool pointVisible, float poi
     float pointXRemap = juce::jmap(pointX, scopeMinLin, scopeMaxLin, 0.0f, scopeWidth) - halfDiameter;
     float pointYRemap = juce::jmap(pointY, scopeMinLin, scopeMaxLin, scopeHeight, 0.0f) - halfDiameter;
 
-    pointDraggerVector[binID]->setBounds(pointXRemap, pointYRemap, diameter + 1.0f, diameter + 1.0f);
+    pointDraggerVector[binID]->setBounds(static_cast<int>(pointXRemap),
+        static_cast<int>(pointYRemap),
+            static_cast<int>(diameter + 1.0f),
+                static_cast<int>(diameter + 1.0f));
     pointDraggerVector[binID]->setVisible(pointVisible);
 
-    tensionDraggerVector[binID]->setBounds(tensionXRemap, tensionYRemap, diameter + 1.0f, diameter + 1.0f);
+    tensionDraggerVector[binID]->setBounds(static_cast<int>(tensionXRemap),
+        static_cast<int>(tensionYRemap),
+            static_cast<int>(diameter + 1.0f),
+                static_cast<int>(diameter + 1.0f));
     tensionDraggerVector[binID]->setVisible(tensionVisible);
 }
 
@@ -250,10 +258,11 @@ void WaveShaperScope::setWaveShaperTensionIsSelected(int selectedCurveID)
     tensionDraggerVector[selectedCurveID]->setColour(DistortionConstants::UI::Colour::selectedTension);
 }
 
-void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, SampleRemapper<float>* pSM)
+void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, int distortionUnitID, SampleRemapper<float>* pSM)
 {
     int selectedStageID = mainLayerDataStruct.getSelectedStageID();
-    int selectedDistoUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
+    //int selectedDistoUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
+    int selectedDistoUnitID = distortionUnitID;
     int selectedPointID = mainLayerDataStruct.getSelectedPointID(selectedStageID, selectedDistoUnitID);
     int selectedCurveID = mainLayerDataStruct.getSelectedCurveID(selectedStageID, selectedDistoUnitID);
 
@@ -298,16 +307,26 @@ void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, SampleR
         {
             if (i != selectedCurveID)
             {
-                drawUnipolarPath(pSM->getBin(i)->getBinPathXData(), pSM->getBin(i)->getBinPathYData());
+                pSM->getBin(i)->pullSampleFromFifo(binPathData[i]);
+                //drawUnipolarPath(pSM->getBin(i)->getBinPathData().getReadPointer(0), pSM->getBin(i)->getBinPathData().getReadPointer(1));
+                drawUnipolarPath(binPathData[i]->getReadPointer(0), binPathData[i]->getReadPointer(1));
             }
+
+            //setPointAndTension(i,
+            //    pointVisible,
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(0)[0],
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(1)[0],
+            //    true,
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(0)[101],
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(1)[101]);
 
             setPointAndTension(i,
                 pointVisible,
-                pSM->getBin(i)->getBinPathXData()[0],
-                pSM->getBin(i)->getBinPathYData()[0],
+                binPathData[i]->getReadPointer(0)[0],
+                binPathData[i]->getReadPointer(1)[0],
                 true,
-                pSM->getBin(i)->getBinPathXData()[101],
-                pSM->getBin(i)->getBinPathYData()[101]);
+                binPathData[i]->getReadPointer(0)[101],
+                binPathData[i]->getReadPointer(1)[101]);
         }
     }
     else
@@ -326,16 +345,26 @@ void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, SampleR
         {
             if (i != selectedCurveID)
             {
-                drawUnipolarPath(pSM->getBin(i)->getBinPathXData(), pSM->getBin(i)->getBinPathYData());
+                pSM->getBin(i)->pullSampleFromFifo(binPathData[i]);
+                //drawUnipolarPath(pSM->getBin(i)->getBinPathData().getReadPointer(0), pSM->getBin(i)->getBinPathData().getReadPointer(1));
+                drawUnipolarPath(binPathData[i]->getReadPointer(0), binPathData[i]->getReadPointer(1));
             }
+
+            //setPointAndTension(i,
+            //    pointVisible,
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(0)[0],
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(1)[0],
+            //    true,
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(0)[101],
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(1)[101]);
 
             setPointAndTension(i,
                 pointVisible,
-                pSM->getBin(i)->getBinPathXData()[0],
-                pSM->getBin(i)->getBinPathYData()[0],
+                binPathData[i]->getReadPointer(0)[0],
+                binPathData[i]->getReadPointer(1)[0],
                 true,
-                pSM->getBin(i)->getBinPathXData()[101],
-                pSM->getBin(i)->getBinPathYData()[101]);
+                binPathData[i]->getReadPointer(0)[101],
+                binPathData[i]->getReadPointer(1)[101]);
         }
 
         tensionDraggerVector[nbOfPoints / 2 - 1]->setVisible(false);
@@ -344,34 +373,56 @@ void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, SampleR
         {
             if (i != selectedCurveID)
             {
-                drawBipolarPath(pSM->getBin(i)->getBinPathXData(), pSM->getBin(i)->getBinPathYData());
+                pSM->getBin(i)->pullSampleFromFifo(binPathData[i]);
+                //drawUnipolarPath(pSM->getBin(i)->getBinPathData().getReadPointer(0), pSM->getBin(i)->getBinPathData().getReadPointer(1));
+                drawUnipolarPath(binPathData[i]->getReadPointer(0), binPathData[i]->getReadPointer(1));
             }
+
+            //setPointAndTension(i,
+            //    tensionVisible,
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(0)[0],
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(1)[0],
+            //    tensionVisible,
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(0)[101],
+            //    pSM->getBin(i)->getBinPathData().getReadPointer(1)[101]);
 
             setPointAndTension(i,
                 tensionVisible,
-                pSM->getBin(i)->getBinPathXData()[0],
-                pSM->getBin(i)->getBinPathYData()[0],
+                binPathData[i]->getReadPointer(0)[0],
+                binPathData[i]->getReadPointer(1)[0],
                 tensionVisible,
-                pSM->getBin(i)->getBinPathXData()[101],
-                pSM->getBin(i)->getBinPathYData()[101]);
+                binPathData[i]->getReadPointer(0)[101],
+                binPathData[i]->getReadPointer(1)[101]);
         }
     }
 
-    drawSelectedCurvePath(pSM->getBin(selectedCurveID)->getBinPathXData(), pSM->getBin(selectedCurveID)->getBinPathYData());
+    //drawSelectedCurvePath(pSM->getBin(selectedCurveID)->getBinPathData().getReadPointer(0), pSM->getBin(selectedCurveID)->getBinPathData().getReadPointer(1));
+    pSM->getBin(selectedCurveID)->pullSampleFromFifo(binPathData[selectedCurveID]);
+    drawSelectedCurvePath(binPathData[selectedCurveID]->getReadPointer(0), binPathData[selectedCurveID]->getReadPointer(1));
     setWaveShaperTensionIsSelected(selectedCurveID);
 
     for (int i = 0; i < (nbOfPoints - 1); ++i)
     {
-        drawSampleRemapperPath(&equationDistortionPath, pSM->getBin(i)->getBinPathXData(), pSM->getBin(i)->getEQBinPathYData());
+        //drawSampleRemapperPath(&equationDistortionPath, pSM->getBin(i)->getBinPathData().getReadPointer(0), pSM->getBin(i)->getBinPathData().getReadPointer(2));
+    
+        drawSampleRemapperPath(&equationDistortionPath, binPathData[i]->getReadPointer(0), binPathData[i]->getReadPointer(2));
     }
+
+    //setPointAndTension(nbOfPoints - 1,
+    //    tensionVisible,
+    //    pSM->getBin(nbOfPoints - 2)->getBinPathData().getReadPointer(0)[100],
+    //    pSM->getBin(nbOfPoints - 2)->getBinPathData().getReadPointer(1)[100],
+    //    false,
+    //    pSM->getBin(nbOfPoints - 2)->getBinPathData().getReadPointer(0)[101],
+    //    pSM->getBin(nbOfPoints - 2)->getBinPathData().getReadPointer(1)[101]);
 
     setPointAndTension(nbOfPoints - 1,
         tensionVisible,
-        pSM->getBin(nbOfPoints - 2)->getBinPathXData()[100],
-        pSM->getBin(nbOfPoints - 2)->getBinPathYData()[100],
+        binPathData[nbOfPoints - 2]->getReadPointer(0)[100],
+        binPathData[nbOfPoints - 2]->getReadPointer(1)[100],
         false,
-        pSM->getBin(nbOfPoints - 2)->getBinPathXData()[101],
-        pSM->getBin(nbOfPoints - 2)->getBinPathYData()[101]);
+        binPathData[nbOfPoints - 2]->getReadPointer(0)[101],
+        binPathData[nbOfPoints - 2]->getReadPointer(1)[101]);
 }
 
 int WaveShaperScope::findPoint(juce::MouseEvent& e)

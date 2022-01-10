@@ -40,8 +40,11 @@ struct PhaserAttachment
 struct DistortionUnitAttachment
 {
     std::unique_ptr<ButtonAttachment> onOff;
-    //std::unique_ptr<ComboBoxAttachment> sigmoidEQA;
-    //std::unique_ptr<ComboBoxAttachment> symetricEQA;
+    std::unique_ptr<ComboBoxAttachment> eqaType;
+    std::unique_ptr<ComboBoxAttachment> sigmoidEQA;
+    std::unique_ptr<ComboBoxAttachment> symetricEQA;
+    std::unique_ptr<ComboBoxAttachment> asymetricEQA;
+    std::unique_ptr<ComboBoxAttachment> specialEQA;
     std::unique_ptr<ButtonAttachment> distortionProcessorFirst;
     //std::unique_ptr<ButtonAttachment> isBipolar;
     //std::unique_ptr<ButtonAttachment> hybridModeOnOff;

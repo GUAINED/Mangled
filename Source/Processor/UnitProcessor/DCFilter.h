@@ -21,14 +21,42 @@ public:
     /** Constructor. */
     DCFilter(int nbOfChannels = 2);
 
-    //Set Function ==============================================================================================================================================================
+    struct Parameters
+    {
+        bool isBypassed;
+
+        inline Parameters& operator=(const Parameters& other)
+        {
+            // Guard self assignment
+            if (this == &other)
+                return *this;
+
+            this->isBypassed = isBypassed;
+
+            return *this;
+        };
+
+        inline bool operator==(const Parameters& rhs)
+        {
+            return ((isBypassed == rhs.isBypassed)
+                );
+        };
+
+        inline bool operator!=(const Parameters& rhs)
+        {
+            return !(*this == rhs);
+        };
+    };
+    //Set Function =================================================================
     /** Sets the Bypass of the EQ.
     */
     void setIsBypassed(const bool newIsBypassed);
 
-
-    //Get Function==================================================================================================================================================================
-
+    void setParams(const Parameters& params)
+    {
+        setIsBypassed(params.isBypassed);
+    };
+    //Get Function==================================================================
     /** Update the state of the Phaser to avoid calling update() each param. This is
     * because we update all the parameters each slider movement
 
@@ -77,12 +105,6 @@ public:
 
                 output = dcFilterBank[channel]->processSample(input);
 
-                //jassert(!isnan(output));
-                //if (isnan(output))
-                //{
-                //    int yolo = 1;
-                //}
-
                 outputSamples[sample] = output;
             }
         }
@@ -101,7 +123,7 @@ private:
 
     juce::OwnedArray<juce::dsp::IIR::Filter<SampleType>> dcFilterBank;
 
-    SampleType dcFilterFreq = static_cast<SampleType>(DistortionConstants::DistortionUnit<float>::dcFilterCutoff);
+    SampleType dcFilterFreq = static_cast<SampleType>(DistoUnitConstants::Processor<float>::dcFilterCutoff);
 
     double R = 0.995;
 

@@ -16,42 +16,53 @@ DistortionSliderComponent::DistortionSliderComponent(MainLayerDataStruct& mlData
     : distoProcFirstButton("Routing", "On", true)
     , bipolarOnOffButton("Bipolar", "Off", false)
     , dcFilterOnOffButton("DC Filter", "On", true)
-    , resetAllButton("Reset All")
+    , resetAllButton("Reset Unit")
     , waveShaperScope(mlDataStruct)
     , dataStruct(mlDataStruct)
     //: listBox("Test", &distoList)
 {
     //setInterceptsMouseClicks(false, true);
 
+    eqaTypeLabel.setText("Equation Type", juce::dontSendNotification);
+    eqaTypeLabel.setJustificationType(juce::Justification::centred);
+    eqaTypeComboBox.addItemList(DistortionConstants::UI::equationTypeStringArray, 1);
+    eqaTypeComboBox.setSelectedId(1, juce::dontSendNotification);
+    eqaTypeComboBox.addListener(this);
+    addAndMakeVisible(eqaTypeLabel);
+    addAndMakeVisible(eqaTypeComboBox);
+
     //Distortion Equation
     sigmoidEquationLabel.setText("Sigmoid Equation", juce::dontSendNotification);
     sigmoidEquationLabel.setJustificationType(juce::Justification::centred);
     sigmoidEquationComboBox.addItemList(DistortionConstants::UI::sigmoidEQAStringArray, 1);
     sigmoidEquationComboBox.setSelectedId(1, juce::dontSendNotification);
-    sigmoidEquationComboBox.addListener(this);
+    //sigmoidEquationComboBox.addListener(this);
     addAndMakeVisible(sigmoidEquationLabel);
     addAndMakeVisible(sigmoidEquationComboBox);
 
     symEquationLabel.setText("Symetric Equation", juce::dontSendNotification);
     symEquationLabel.setJustificationType(juce::Justification::centred);
     symEquationComboBox.addItemList(DistortionConstants::UI::symetricEQAStringArray, 1);
-    symEquationComboBox.addListener(this);
-    addAndMakeVisible(symEquationLabel);
-    addAndMakeVisible(symEquationComboBox);
+    symEquationComboBox.setSelectedId(1, juce::dontSendNotification);
+    //symEquationComboBox.addListener(this);
+    addChildComponent(symEquationLabel);
+    addChildComponent(symEquationComboBox);
 
     asymEquationLabel.setText("Asymetric Equation", juce::dontSendNotification);
     asymEquationLabel.setJustificationType(juce::Justification::centred);
     asymEquationComboBox.addItemList(DistortionConstants::UI::asymetricEQAStringArray, 1);
-    asymEquationComboBox.addListener(this);
-    addAndMakeVisible(asymEquationLabel);
-    addAndMakeVisible(asymEquationComboBox);
+    asymEquationComboBox.setSelectedId(1, juce::dontSendNotification);
+    //asymEquationComboBox.addListener(this);
+    addChildComponent(asymEquationLabel);
+    addChildComponent(asymEquationComboBox);
 
     specialEquationLabel.setText("Special Equation", juce::dontSendNotification);
     specialEquationLabel.setJustificationType(juce::Justification::centred);
     specialEquationComboBox.addItemList(DistortionConstants::UI::specialEQAStringArray, 1);
-    specialEquationComboBox.addListener(this);
-    addAndMakeVisible(specialEquationLabel);
-    addAndMakeVisible(specialEquationComboBox);
+    specialEquationComboBox.setSelectedId(1, juce::dontSendNotification);
+    //specialEquationComboBox.addListener(this);
+    addChildComponent(specialEquationLabel);
+    addChildComponent(specialEquationComboBox);
 
     //listBox.setModel(&distoList);
     //addAndMakeVisible(listBox);
@@ -101,7 +112,7 @@ DistortionSliderComponent::DistortionSliderComponent(MainLayerDataStruct& mlData
     addAndMakeVisible(dcFilterOnOffButton);
 
     //Reset WaveShaper Point Button
-    resetWSButton.setButtonText("Reset");
+    resetWSButton.setButtonText("Reset Map");
     resetWSButton.addListener(this);
     addAndMakeVisible(resetWSButton);
 
@@ -115,8 +126,10 @@ DistortionSliderComponent::DistortionSliderComponent(MainLayerDataStruct& mlData
     addAndMakeVisible(waveShaperScope);
 
     //PreGain
+    //preGainWaveShaperSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     preGainWaveShaperSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     preGainWaveShaperSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
+    //preGainWaveShaperSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 50, 20);
     preGainWaveShaperSlider.setTextBoxIsEditable(true);
     preGainWaveShaperLabel.setText("Pre", juce::dontSendNotification);
     preGainWaveShaperLabel.setJustificationType(juce::Justification::centred);
@@ -199,36 +212,52 @@ void DistortionSliderComponent::resized()
     int pixelSpace = DistortionConstants::UI::pixelSpace;
     int cbWidth = 2 * labelWidth - 15;
 
-    sigmoidEquationLabel.setBounds(0, pixelSpace, cbWidth, labelHeight);
+    eqaTypeLabel.setBounds(0, pixelSpace, cbWidth, labelHeight);
+    eqaTypeComboBox.setBounds(eqaTypeLabel.getX() + pixelSpace, eqaTypeLabel.getBottom(), cbWidth - 5, labelHeight);
+
+    sigmoidEquationLabel.setBounds(0, eqaTypeComboBox.getBottom() + 5, cbWidth, labelHeight);
     sigmoidEquationComboBox.setBounds(sigmoidEquationLabel.getX() + pixelSpace, sigmoidEquationLabel.getBottom(), cbWidth - 5, labelHeight);
 
-    symEquationLabel.setBounds(0, sigmoidEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
-    symEquationComboBox.setBounds(symEquationLabel.getX() + pixelSpace, symEquationLabel.getBottom(), cbWidth - 5, labelHeight);
+    symEquationLabel.setBounds(sigmoidEquationLabel.getBounds());
+    symEquationComboBox.setBounds(sigmoidEquationComboBox.getBounds());
 
-    asymEquationLabel.setBounds(0, symEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
-    asymEquationComboBox.setBounds(asymEquationLabel.getX() + pixelSpace, asymEquationLabel.getBottom(), cbWidth - 5, labelHeight);
+    asymEquationLabel.setBounds(sigmoidEquationLabel.getBounds());
+    asymEquationComboBox.setBounds(sigmoidEquationComboBox.getBounds());
 
-    specialEquationLabel.setBounds(0, asymEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
-    specialEquationComboBox.setBounds(specialEquationLabel.getX() + pixelSpace, specialEquationLabel.getBottom(), cbWidth - 5, labelHeight);
-    //listBox.setBounds(distortionEquationComboBox.getX() + 10, distortionEquationComboBox.getBottom() + 10, 2 * labelWidth - 5, 100);
+    specialEquationLabel.setBounds(sigmoidEquationLabel.getBounds());
+    specialEquationComboBox.setBounds(sigmoidEquationComboBox.getBounds());
+
+    distoProcFirstButton.setBounds(specialEquationComboBox.getX(), specialEquationComboBox.getBottom() + pixelSpace, labelWidth, labelHeight);
+    dcFilterOnOffButton.setBounds(distoProcFirstButton.getX(), distoProcFirstButton.getBottom() + 1, labelWidth, labelHeight);
+    resetAllButton.setBounds(dcFilterOnOffButton.getX(), dcFilterOnOffButton.getBottom() + 1, labelWidth, labelHeight);
+
+    //sigmoidEquationLabel.setBounds(0, pixelSpace, cbWidth, labelHeight);
+    //sigmoidEquationComboBox.setBounds(sigmoidEquationLabel.getX() + pixelSpace, sigmoidEquationLabel.getBottom(), cbWidth - 5, labelHeight);
+
+    //symEquationLabel.setBounds(0, sigmoidEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
+    //symEquationComboBox.setBounds(symEquationLabel.getX() + pixelSpace, symEquationLabel.getBottom(), cbWidth - 5, labelHeight);
+
+    //asymEquationLabel.setBounds(0, symEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
+    //asymEquationComboBox.setBounds(asymEquationLabel.getX() + pixelSpace, asymEquationLabel.getBottom(), cbWidth - 5, labelHeight);
+
+    //specialEquationLabel.setBounds(0, asymEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
+    //specialEquationComboBox.setBounds(specialEquationLabel.getX() + pixelSpace, specialEquationLabel.getBottom(), cbWidth - 5, labelHeight);
 
     waveShaperScope.setBounds(sigmoidEquationComboBox.getRight() + pixelSpace, pixelSpace, getHeight() - 2 * pixelSpace, getHeight() - 2 * pixelSpace);
 
-    distoProcFirstButton.setBounds(waveShaperScope.getRight() + pixelSpace, waveShaperScope.getY(), labelWidth, labelHeight);
 
-    bipolarOnOffButton.setBounds(distoProcFirstButton.getX(), distoProcFirstButton.getBottom() + 1, labelWidth, labelHeight);
+
+    bipolarOnOffButton.setBounds(waveShaperScope.getRight() + pixelSpace, waveShaperScope.getY(), labelWidth, labelHeight);
 
     //hybridModeOnOffButton.setBounds(bipolarOnOffButton.getX(), bipolarOnOffButton.getBottom(), labelWidth, labelHeight);
 
     deleteWSPointButton.setBounds(bipolarOnOffButton.getX(), bipolarOnOffButton.getBottom() + 1, labelWidth, labelHeight);
 
-    dcFilterOnOffButton.setBounds(deleteWSPointButton.getX(), deleteWSPointButton.getBottom() + 1, labelWidth, labelHeight);
-
-    resetWSButton.setBounds(dcFilterOnOffButton.getX(), dcFilterOnOffButton.getBottom() + 1, labelWidth, labelHeight);
+    resetWSButton.setBounds(deleteWSPointButton.getX(), deleteWSPointButton.getBottom() + 1, labelWidth, labelHeight);
 
     sampleRemapperCurveComboBox.setBounds(resetWSButton.getX(), resetWSButton.getBottom() + 1, labelWidth, labelHeight);
 
-    resetAllButton.setBounds(sampleRemapperCurveComboBox.getX(), sampleRemapperCurveComboBox.getBottom() + 1, labelWidth, labelHeight);
+
 
     //waveShaperScope.setCentrePosition(waveShaperScope.getRight() / 2, waveShaperScope.getBottom() / 2);
 
@@ -292,45 +321,49 @@ void DistortionSliderComponent::comboBoxChanged(juce::ComboBox* comboBox)
         int curveID = dataStruct.getSelectedCurveID(stageID, distortionUnitID);
         dataStruct.setPointCurveType(stageID, distortionUnitID, curveID, curveType);
     }
-    else if (comboBox == getSigmoidEquationComboBox())
+    else if (comboBox == &eqaTypeComboBox)
     {
-        int equationType = DistortionConstants::DistortionUnit<float>::EquationType::sigmoid;
-        int equationID = comboBox->getSelectedId() - 1;
-        getSymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getAsymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getSpecialEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
+        switchComboBox();
     }
-    else if (comboBox == getSymetricEquationComboBox())
-    {
-        int equationType = DistortionConstants::DistortionUnit<float>::EquationType::symetric;
-        int equationID = comboBox->getSelectedId() - 1;
-        getSigmoidEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getAsymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getSpecialEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //else if (comboBox == getSigmoidEquationComboBox())
+    //{
+    //    int equationType = DistortionCircuitConstants::Processor<float>::EquationType::sigmoid;
+    //    int equationID = comboBox->getSelectedId() - 1;
+    //    getSymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getAsymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getSpecialEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
+    //}
+    //else if (comboBox == getSymetricEquationComboBox())
+    //{
+    //    int equationType = DistortionCircuitConstants::Processor<float>::EquationType::symetric;
+    //    int equationID = comboBox->getSelectedId() - 1;
+    //    getSigmoidEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getAsymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getSpecialEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
 
-        dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
-    }
-    else if (comboBox == getAsymetricEquationComboBox())
-    {
-        int equationType = DistortionConstants::DistortionUnit<float>::EquationType::asymetric;
-        int equationID = comboBox->getSelectedId() - 1;
-        getSigmoidEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getSymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getSpecialEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
+    //}
+    //else if (comboBox == getAsymetricEquationComboBox())
+    //{
+    //    int equationType = DistortionCircuitConstants::Processor<float>::EquationType::asymetric;
+    //    int equationID = comboBox->getSelectedId() - 1;
+    //    getSigmoidEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getSymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getSpecialEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
 
-        dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
-    }
-    else if (comboBox == getSpecialEquationComboBox())
-    {
-        int equationType = DistortionConstants::DistortionUnit<float>::EquationType::special;
-        int equationID = comboBox->getSelectedId() - 1;
-        getSigmoidEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getSymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
-        getAsymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
+    //}
+    //else if (comboBox == getSpecialEquationComboBox())
+    //{
+    //    int equationType = DistortionCircuitConstants::Processor<float>::EquationType::special;
+    //    int equationID = comboBox->getSelectedId() - 1;
+    //    getSigmoidEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getSymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
+    //    getAsymetricEquationComboBox()->setSelectedId(0, juce::dontSendNotification);
 
-        dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
-    }
+    //    dataStruct.setDistortionCircuitEquation(stageID, distortionUnitID, equationType, equationID);
+    //}
 }
 
 //void DistortionSliderComponent::updateOnOffButton(juce::Button* button, juce::String addedString = "")
@@ -341,36 +374,99 @@ void DistortionSliderComponent::comboBoxChanged(juce::ComboBox* comboBox)
 //    button->setButtonText(addedString + stateString);
 //}
 
-void DistortionSliderComponent::setUI(int circuitID, int circuitType)
+void DistortionSliderComponent::switchComboBox()
 {
-    switch (circuitType)
+    switch (eqaTypeComboBox.getSelectedId() - 1)
     {
-        case DistortionConstants::DistortionUnit<float>::EquationType::sigmoid :
-            sigmoidEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
-            symEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            asymEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            specialEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            break;
-        case DistortionConstants::DistortionUnit<float>::EquationType::symetric:
-            sigmoidEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            symEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
-            asymEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            specialEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            break;
-        case DistortionConstants::DistortionUnit<float>::EquationType::asymetric:
-            sigmoidEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            symEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            asymEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
-            specialEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            break;
-        case DistortionConstants::DistortionUnit<float>::EquationType::special:
-            sigmoidEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            symEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            asymEquationComboBox.setSelectedId(0, juce::dontSendNotification);
-            specialEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
-            break;
-        default:
+    case DistortionCircuitConstants::Processor<float>::EquationType::sigmoid:
+        getSigmoidEquationComboBox()->setVisible(true);
+        getSymetricEquationComboBox()->setVisible(false);
+        getAsymetricEquationComboBox()->setVisible(false);
+        getSpecialEquationComboBox()->setVisible(false);
 
+        sigmoidEquationLabel.setVisible(true);
+        symEquationLabel.setVisible(false);
+        asymEquationLabel.setVisible(false);
+        specialEquationLabel.setVisible(false);
+        break;
+    case DistortionCircuitConstants::Processor<float>::EquationType::symetric:
+        getSigmoidEquationComboBox()->setVisible(false);
+        getSymetricEquationComboBox()->setVisible(true);
+        getAsymetricEquationComboBox()->setVisible(false);
+        getSpecialEquationComboBox()->setVisible(false);
+
+        sigmoidEquationLabel.setVisible(false);
+        symEquationLabel.setVisible(true);
+        asymEquationLabel.setVisible(false);
+        specialEquationLabel.setVisible(false);
+        break;
+    case DistortionCircuitConstants::Processor<float>::EquationType::asymetric:
+        getSigmoidEquationComboBox()->setVisible(false);
+        getSymetricEquationComboBox()->setVisible(false);
+        getAsymetricEquationComboBox()->setVisible(true);
+        getSpecialEquationComboBox()->setVisible(false);
+
+        sigmoidEquationLabel.setVisible(false);
+        symEquationLabel.setVisible(false);
+        asymEquationLabel.setVisible(true);
+        specialEquationLabel.setVisible(false);
+        break;
+    case DistortionCircuitConstants::Processor<float>::EquationType::special:
+        getSigmoidEquationComboBox()->setVisible(false);
+        getSymetricEquationComboBox()->setVisible(false);
+        getAsymetricEquationComboBox()->setVisible(false);
+        getSpecialEquationComboBox()->setVisible(true);
+
+        sigmoidEquationLabel.setVisible(false);
+        symEquationLabel.setVisible(false);
+        asymEquationLabel.setVisible(false);
+        specialEquationLabel.setVisible(true);
+        break;
+    default:
+        getSigmoidEquationComboBox()->setVisible(true);
+        getSymetricEquationComboBox()->setVisible(false);
+        getAsymetricEquationComboBox()->setVisible(false);
+        getSpecialEquationComboBox()->setVisible(false);
+
+        sigmoidEquationLabel.setVisible(true);
+        symEquationLabel.setVisible(false);
+        asymEquationLabel.setVisible(false);
+        specialEquationLabel.setVisible(false);
         break;
     }
+}
+
+void DistortionSliderComponent::setUI(int circuitID, int circuitType)
+{
+    switchComboBox();
+    //switch (circuitType)
+    //{
+    //    case DistortionCircuitConstants::Processor<float>::EquationType::sigmoid :
+    //        sigmoidEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
+    //        symEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        asymEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        specialEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        break;
+    //    case DistortionCircuitConstants::Processor<float>::EquationType::symetric:
+    //        sigmoidEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        symEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
+    //        asymEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        specialEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        break;
+    //    case DistortionCircuitConstants::Processor<float>::EquationType::asymetric:
+    //        sigmoidEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        symEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        asymEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
+    //        specialEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        break;
+    //    case DistortionCircuitConstants::Processor<float>::EquationType::special:
+    //        sigmoidEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        symEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        asymEquationComboBox.setSelectedId(0, juce::dontSendNotification);
+    //        specialEquationComboBox.setSelectedId(circuitID + 1, juce::dontSendNotification);
+    //        break;
+    //    default:
+
+    //    break;
+    //}
 }

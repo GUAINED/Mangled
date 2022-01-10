@@ -20,7 +20,8 @@
 #include "UIComponent/ScopeUIComponent/ScopeComponent.h"
 #include "UIComponent/EQUIComponent/EQComponent.h"
 #include "UIComponent/DistortionUIComponent/DistortionComponent.h"
-
+#include "UIComponent/Controls/MangledSlider.h"
+#include "UIComponent/Controls/MangledDualStateButton.h"
 //==============================================================================
 /**
 */
@@ -33,7 +34,8 @@ class MangledAudioProcessorEditor
 public:
     enum RadioButtonIds
     {
-        LayerButtons = 1001
+        LayerButtons = 1001,
+        StateButtons = 1002
     };
 
     MangledAudioProcessorEditor (MangledAudioProcessor&);
@@ -58,7 +60,7 @@ public:
 
     //Timer
     void timerCallback() override;
-
+    void updateUI(int stageID, int distortionUnitID);
     std::atomic<double>& bpm;
     std::atomic<double>& ppq;
     std::atomic<juce::int64>& ppqSample;
@@ -72,14 +74,17 @@ private:
     void linkPhaserParametersAttachment(juce::AudioProcessorValueTreeState& apvts, StageComponent* pStageComponent, int stageID);
     void linkDistortionParametersAttachment(juce::AudioProcessorValueTreeState& apvts, StageComponent* pStageComponent, int stageID);
 
-
     MainMenuTabComponent mainMenuTab;
 
     juce::TextButton undoButton;
     juce::TextButton redoButton;
 
-    juce::Slider masterGainSlider;
-
+    juce::OwnedArray<juce::TextButton> stateButton;
+    //juce::TextButton stateAButton;
+    //juce::TextButton stateBButton;
+    juce::Label masterGainLabel;
+    //juce::Slider masterGainSlider;
+    MangledSlider masterGainSlider;
     OnOffButton masterLimiterOnOffButton;
 
     juce::TextButton masterResetButton;
@@ -103,6 +108,6 @@ private:
     MangledAudioProcessor& audioProcessor;
 
     bool shouldDrag = false;
-
+    bool editorLoadingDone = false;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MangledAudioProcessorEditor)
 };

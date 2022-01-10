@@ -1,11 +1,11 @@
 /*
   ==============================================================================
 
-    EQProcessor.cpp
-    Created: 29 Dec 2021 5:14:06pm
+    MangledSlider.cpp
+    Created: 7 Jan 2022 10:37:34pm
     Author:  CookiMonstor
 
   ==============================================================================
 */
 
-#include "EQProcessor.h"
+#include "MangledSlider.h"

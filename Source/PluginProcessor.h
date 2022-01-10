@@ -74,13 +74,58 @@ public:
     //double getPPQ() { return ppq.load(); };
     //juce::int64 getPPQSample() { return ppqSample.load(); };
     //int getBufferSize() { return bufferSize.load(); };
+    void saveState(int stateID)
+    {
+        //switch (stateID)
+        //{
+        //case AudioEngineConstants::Processor<float>::StateID::A:
+
+        //    break;
+
+        //case AudioEngineConstants::Processor<float>::StateID::B:
+
+        //    break;
+
+        //case AudioEngineConstants::Processor<float>::StateID::C:
+
+        //    break;
+        //}
+
+        juce::ValueTree apvtsState = mainLayerDataStruct.getAPVTSMainLayer().copyState();
+        state[stateID]->removeAllChildren(nullptr);
+        state[stateID]->addChild(apvtsState, 0, nullptr);
+
+        juce::ValueTree rootVT = juce::ValueTree(mainLayerDataStruct.getRoot().getType());
+        rootVT.copyPropertiesAndChildrenFrom(mainLayerDataStruct.getRoot(), nullptr);
+        state[stateID]->addChild(rootVT, 1, nullptr);
+    }
+
+    void loadState(int stateID)
+    {
+        if (state[stateID]->getNumChildren() != 0)
+        {
+            juce::ValueTree apvtsVT = state[stateID]->getChildWithName(mainLayerDataStruct.getAPVTSMainLayer().state.getType());
+            mainLayerDataStruct.getAPVTSMainLayer().replaceState(apvtsVT);
+            
+            //mainLayerDataStruct.trigListener();
+            
+            juce::ValueTree rootVT = state[stateID]->getChildWithName(mainLayerDataStruct.getRoot().getType());
+
+            mainLayerDataStruct.getRoot().copyPropertiesAndChildrenFrom(rootVT, nullptr);
+
+            //setParams();
+        }
+    }
 private:
-    int count = 0;
+    //int count = 0;
     //==============================================================================
     MainLayerDataStruct mainLayerDataStruct;
 
     hostInformation hostInformation;
     AudioEngine<float> audioEngine;
+
+    juce::OwnedArray<juce::ValueTree, juce::CriticalSection> state;
+    //juce::ValueTree stateB;
 
     //std::atomic<double> bpm{ 120.0 };
     //std::atomic<double> ppq{ 0.0 };

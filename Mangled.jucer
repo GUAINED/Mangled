@@ -7,6 +7,8 @@
   <MAINGROUP id="d9GTZU" name="Mangled">
     <GROUP id="{7E81A842-43CF-64B6-2F22-ABF8A7D180CA}" name="Source">
       <GROUP id="{B4924EAF-7D26-9B9A-7462-C163FC89D9BD}" name="DataStructure">
+        <FILE id="zhGLcd" name="SampleFifo.cpp" compile="1" resource="0" file="Source/DataStructure/SampleFifo.cpp"/>
+        <FILE id="wAbCq2" name="SampleFifo.h" compile="0" resource="0" file="Source/DataStructure/SampleFifo.h"/>
         <FILE id="NhUpg6" name="Conversion.cpp" compile="1" resource="0" file="Source/DataStructure/Conversion.cpp"/>
         <FILE id="I0ZjnM" name="Conversion.h" compile="0" resource="0" file="Source/DataStructure/Conversion.h"/>
         <FILE id="ksCw54" name="MangledIdentifiers.cpp" compile="1" resource="0"
@@ -40,6 +42,8 @@
                 file="Source/Processor/StageProcessor/StageProcessorBase.h"/>
         </GROUP>
         <GROUP id="{AF059E72-1C91-F0CB-5CD2-605CE59628BF}" name="UnitProcessor">
+          <FILE id="MvSaCY" name="EQProcessor.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.cpp"/>
+          <FILE id="I04KFN" name="EQProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.h"/>
           <FILE id="xm06mC" name="RMSProcessor.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/RMSProcessor.cpp"/>
           <FILE id="xLS7Cr" name="RMSProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/RMSProcessor.h"/>
@@ -75,8 +79,6 @@
                 file="Source/Processor/UnitProcessor/DistortionProcessor.cpp"/>
           <FILE id="TK2zLg" name="DistortionProcessor.h" compile="0" resource="0"
                 file="Source/Processor/UnitProcessor/DistortionProcessor.h"/>
-          <FILE id="JDT8ym" name="EQProcessor.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.cpp"/>
-          <FILE id="mRMYm7" name="EQProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.h"/>
           <FILE id="a63Akl" name="PhaserProcessor.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/PhaserProcessor.cpp"/>
           <FILE id="ezNHnx" name="PhaserProcessor.h" compile="0" resource="0"
@@ -153,28 +155,49 @@
           <FILE id="smUsmf" name="StereoRMSMeterComponent.h" compile="0" resource="0"
                 file="Source/UIComponent/StageUIComponent/StereoRMSMeterComponent.h"/>
         </GROUP>
+        <GROUP id="{C7C218AA-0EA6-9853-8D47-1A5A09ABE3F1}" name="MainLayerComponent">
+          <FILE id="dY6IHW" name="MainLayerMenuComponent.cpp" compile="1" resource="0"
+                file="Source/UIComponent/MainLayer/MainLayerMenuComponent.cpp"/>
+          <FILE id="LfAghF" name="MainLayerMenuComponent.h" compile="0" resource="0"
+                file="Source/UIComponent/MainLayer/MainLayerMenuComponent.h"/>
+        </GROUP>
         <GROUP id="{AB2458F2-09C1-B5AB-F8BD-37F172F9C95C}" name="GeneralUIComponent">
-          <FILE id="XfOzmr" name="DiStateButton.cpp" compile="1" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/DiStateButton.cpp"/>
-          <FILE id="z1aIlA" name="DiStateButton.h" compile="0" resource="0" file="Source/UIComponent/GeneralUIComponent/DiStateButton.h"/>
-          <FILE id="BFsbi8" name="LookAndFeel_V4_ComboBox.cpp" compile="1" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_ComboBox.cpp"/>
-          <FILE id="GwXpWf" name="LookAndFeel_V4_ComboBox.h" compile="0" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_ComboBox.h"/>
-          <FILE id="hFcudP" name="LookAndFeel_V4_Gradient.cpp" compile="1" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_Gradient.cpp"/>
-          <FILE id="UFnyDc" name="LookAndFeel_V4_Gradient.h" compile="0" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/LookAndFeel_V4_Gradient.h"/>
+          <GROUP id="{AB94EA69-25A5-4B3C-F5A6-DCFAE26D30C7}" name="Controls">
+            <FILE id="DCDlb5" name="DiStateButton.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/Controls/DiStateButton.cpp"/>
+            <FILE id="iH2XSs" name="DiStateButton.h" compile="0" resource="0" file="Source/UIComponent/Controls/DiStateButton.h"/>
+            <FILE id="GWWJBE" name="MangledComboBox.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/Controls/MangledComboBox.cpp"/>
+            <FILE id="uf5ETi" name="MangledComboBox.h" compile="0" resource="0"
+                  file="Source/UIComponent/Controls/MangledComboBox.h"/>
+            <FILE id="b5kGiK" name="MangledDualStateButton.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/Controls/MangledDualStateButton.cpp"/>
+            <FILE id="YMJPvs" name="MangledDualStateButton.h" compile="0" resource="0"
+                  file="Source/UIComponent/Controls/MangledDualStateButton.h"/>
+            <FILE id="kHeO1c" name="MangledSlider.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/Controls/MangledSlider.cpp"/>
+            <FILE id="HbaSdQ" name="MangledSlider.h" compile="0" resource="0" file="Source/UIComponent/Controls/MangledSlider.h"/>
+            <FILE id="yHadb6" name="OnOffButton.cpp" compile="1" resource="0" file="Source/UIComponent/Controls/OnOffButton.cpp"/>
+            <FILE id="qFW138" name="OnOffButton.h" compile="0" resource="0" file="Source/UIComponent/Controls/OnOffButton.h"/>
+          </GROUP>
+          <GROUP id="{1CDEF870-7530-A86D-247E-0139384101B0}" name="LookAndFeel">
+            <FILE id="blZUpW" name="LookAndFeel_V4_ComboBox.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/LookAndFeel/LookAndFeel_V4_ComboBox.cpp"/>
+            <FILE id="qEZpsh" name="LookAndFeel_V4_ComboBox.h" compile="0" resource="0"
+                  file="Source/UIComponent/LookAndFeel/LookAndFeel_V4_ComboBox.h"/>
+            <FILE id="mWpQEv" name="LookAndFeel_V4_Gradient.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/LookAndFeel/LookAndFeel_V4_Gradient.cpp"/>
+            <FILE id="zjTQlY" name="LookAndFeel_V4_Gradient.h" compile="0" resource="0"
+                  file="Source/UIComponent/LookAndFeel/LookAndFeel_V4_Gradient.h"/>
+            <FILE id="NezVZl" name="LookAndFeel_V4_NeonGreen.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/LookAndFeel/LookAndFeel_V4_NeonGreen.cpp"/>
+            <FILE id="vQI48x" name="LookAndFeel_V4_NeonGreen.h" compile="0" resource="0"
+                  file="Source/UIComponent/LookAndFeel/LookAndFeel_V4_NeonGreen.h"/>
+          </GROUP>
           <FILE id="vyK8xR" name="SelectablePointDragger.cpp" compile="1" resource="0"
                 file="Source/UIComponent/GeneralUIComponent/SelectablePointDragger.cpp"/>
           <FILE id="rfJggX" name="SelectablePointDragger.h" compile="0" resource="0"
                 file="Source/UIComponent/GeneralUIComponent/SelectablePointDragger.h"/>
-          <FILE id="ffwwPD" name="OnOffButton.cpp" compile="1" resource="0" file="Source/UIComponent/GeneralUIComponent/OnOffButton.cpp"/>
-          <FILE id="qOEWBz" name="OnOffButton.h" compile="0" resource="0" file="Source/UIComponent/GeneralUIComponent/OnOffButton.h"/>
-          <FILE id="ZvsMXe" name="MainLayerMenuComponent.cpp" compile="1" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/MainLayerMenuComponent.cpp"/>
-          <FILE id="PVzRu2" name="MainLayerMenuComponent.h" compile="0" resource="0"
-                file="Source/UIComponent/GeneralUIComponent/MainLayerMenuComponent.h"/>
           <FILE id="TOw8Ay" name="MainMenuComponent.cpp" compile="1" resource="0"
                 file="Source/UIComponent/GeneralUIComponent/MainMenuComponent.cpp"/>
           <FILE id="SigUBn" name="MainMenuComponent.h" compile="0" resource="0"

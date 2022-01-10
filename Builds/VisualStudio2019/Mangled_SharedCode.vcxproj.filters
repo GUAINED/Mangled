@@ -26,6 +26,15 @@
     <Filter Include="Mangled\Source\UIComponent\StageUIComponent">
       <UniqueIdentifier>{7C60707F-5DE3-606B-088E-0841833D30EB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mangled\Source\UIComponent\MainLayerComponent">
+      <UniqueIdentifier>{4289761A-0ED1-08DC-6D2E-202DA54664DE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\UIComponent\GeneralUIComponent\Controls">
+      <UniqueIdentifier>{1873A2EC-281C-C8EC-61C0-BFF101A2EF04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel">
+      <UniqueIdentifier>{9B563F7E-7B17-3ED7-AC3C-1DAEB7EA4368}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Mangled\Source\UIComponent\GeneralUIComponent">
       <UniqueIdentifier>{D206BC87-AFA4-4115-EA6C-5AAAD98684A8}</UniqueIdentifier>
     </Filter>
@@ -508,6 +517,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\DataStructure\SampleFifo.cpp">
+      <Filter>Mangled\Source\DataStructure</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\DataStructure\Conversion.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
@@ -528,6 +540,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.cpp">
       <Filter>Mangled\Source\Processor\StageProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
@@ -557,9 +572,6 @@
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionProcessor.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.cpp">
@@ -616,22 +628,34 @@
     <ClCompile Include="..\..\Source\UIComponent\StageUIComponent\StereoRMSMeterComponent.cpp">
       <Filter>Mangled\Source\UIComponent\StageUIComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\DiStateButton.cpp">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
+    <ClCompile Include="..\..\Source\UIComponent\MainLayer\MainLayerMenuComponent.cpp">
+      <Filter>Mangled\Source\UIComponent\MainLayerComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_ComboBox.cpp">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\DiStateButton.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_Gradient.cpp">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledComboBox.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledDualStateButton.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledSlider.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\OnOffButton.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_ComboBox.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_Gradient.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_NeonGreen.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\SelectablePointDragger.cpp">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\OnOffButton.cpp">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\MainLayerMenuComponent.cpp">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\UIComponent\GeneralUIComponent\MainMenuComponent.cpp">
@@ -2886,6 +2910,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\DataStructure\SampleFifo.h">
+      <Filter>Mangled\Source\DataStructure</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\DataStructure\Conversion.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
@@ -2909,6 +2936,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.h">
       <Filter>Mangled\Source\Processor\StageProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
@@ -2938,9 +2968,6 @@
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionProcessor.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.h">
@@ -2997,22 +3024,34 @@
     <ClInclude Include="..\..\Source\UIComponent\StageUIComponent\StereoRMSMeterComponent.h">
       <Filter>Mangled\Source\UIComponent\StageUIComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\DiStateButton.h">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
+    <ClInclude Include="..\..\Source\UIComponent\MainLayer\MainLayerMenuComponent.h">
+      <Filter>Mangled\Source\UIComponent\MainLayerComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_ComboBox.h">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\DiStateButton.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\LookAndFeel_V4_Gradient.h">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledComboBox.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledDualStateButton.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledSlider.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\OnOffButton.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_ComboBox.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_Gradient.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\LookAndFeel\LookAndFeel_V4_NeonGreen.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\LookAndFeel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\SelectablePointDragger.h">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\OnOffButton.h">
-      <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\MainLayerMenuComponent.h">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\UIComponent\GeneralUIComponent\MainMenuComponent.h">

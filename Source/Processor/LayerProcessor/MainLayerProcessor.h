@@ -92,6 +92,47 @@ public:
 
     StageProcessorBase<SampleType>* getStageProcessor(int stageID) { return (stageID >=  4) ? stageProcessorVector[3] : stageProcessorVector[stageID]; };
 
+    static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int nbOfStages, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto)
+    {
+        juce::String paramString = MainLayerConstants::ParamStringID::GetParamStringID::isBypassed();
+        juce::String automationParamString = MainLayerConstants::AutomationString::GetString::isBypassed();
+
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+            automationParamString,
+            MainLayerConstants::Processor<float>::isBypassedStartValue));
+
+        //Main Layer Stage Attachement========================================================================================================================================================
+        //paramString = getPostProcessingOnOffParamString();
+        //automationParamString = getPostProcessingOnOffParamAutomationString();
+        //plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+        //    automationParamString,
+        //    true));
+
+        //Main Layer All Stage All Parameters Layout==========================================================================================================================================
+        for (int stageID = 0; stageID < nbOfStages; ++stageID)
+        {
+            StageProcessorBase<SampleType>::createParametersLayout(plugInParameters, stageID, nbOfFiltersPerEQ, nbOfDistoUnitPerDisto);
+        }
+    };
+
+    static void createValueTree(juce::ValueTree& vt, juce::UndoManager* undoManager)
+    {
+        //vt.removeAllChildren(nullptr);
+        juce::ValueTree vtMainLayer(MainLayerConstants::ParamStringID::mainLayer);
+        //vt.setProperty("IsOpening", true, nullptr);
+        vt.addChild(vtMainLayer, -1, nullptr);
+
+        vtMainLayer.setProperty(juce::Identifier("Name"), MainLayerConstants::ParamStringID::mainLayer, nullptr);
+        //vt.setProperty(AudioEngineConstants,0, nullptr);
+        vtMainLayer.setProperty(StageConstants::ParamStringID::selectedStageID, 0, nullptr);
+
+        for (int stage = 0; stage < 4; ++stage)
+        {
+            StageProcessorBase<SampleType>::createValueTree(vtMainLayer, stage, undoManager);
+        }
+
+    }
+
 private:
 
     juce::OwnedArray<StageProcessorBase<SampleType>> stageProcessorVector;

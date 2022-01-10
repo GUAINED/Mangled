@@ -34,7 +34,7 @@ EQComponent::EQComponent(MainLayerDataStruct& mlDataStruct)
 
     filterIdDownEQButton.setButtonText("Down");
     filterIdDownEQButton.addListener(this);
-    addAndMakeVisible(filterIdDownEQButton);
+    addChildComponent(filterIdDownEQButton);
     //filterIdDownEQButton.setEnabled(false);
 
     //filterOnOffEQButton.setButtonText("Off");
@@ -46,7 +46,7 @@ EQComponent::EQComponent(MainLayerDataStruct& mlDataStruct)
 
     filterIdUpEQButton.setButtonText("Up");
     filterIdUpEQButton.addListener(this);
-    addAndMakeVisible(filterIdUpEQButton);
+    addChildComponent(filterIdUpEQButton);
 
     //eqSlider.add(new EQSliderComponent);
     //addAndMakeVisible(eqSlider[0]);
@@ -185,8 +185,13 @@ void EQComponent::buttonClicked(juce::Button* button)
     }
     else if (button == eqSlider[filterID]->getFilterIsActiveEQTextButton())
     {
-        eqSlider[filterID]->setVisible(false);
-        dataStruct.setEQFilterType(stageID, filterID, 0);
+        eqSlider[filterID]->setVisible(!eqSlider[filterID]->getFilterIsActiveEQTextButton()->getToggleState());
+        if (eqSlider[filterID]->getFilterIsActiveEQTextButton()->getToggleState())
+        {
+            dataStruct.remodeActiveFilterCount(stageID);
+            dataStruct.setEQFilterType(stageID, filterID, 0);
+        }
+
         //dataStruct.setSelectedFilterID(stageID, -1);
         //int newFilterID = dataStruct.findNextActiveFilterUp(stageID);
         //dataStruct.setSelectedFilterID(stageID, newFilterID);
@@ -194,16 +199,25 @@ void EQComponent::buttonClicked(juce::Button* button)
     }
     else if (button == &filterIdUpEQButton)
     {
-        int filterID = dataStruct.findNextActiveFilterUp(stageID);
-        dataStruct.setSelectedFilterID(stageID, filterID);
-        switchToEQSliderMenu(filterID);
+        int selectedFilterID = dataStruct.findNextActiveFilterUp(stageID);
+        if(selectedFilterID == -1)
+        {
+            return;
+        }
+
+        dataStruct.setSelectedFilterID(stageID, selectedFilterID);
+        switchToEQSliderMenu(selectedFilterID);
     }
     //EQ Filter ID Down
     else if (button == &filterIdDownEQButton)
     {
-        int filterID = dataStruct.findNextActiveFilterDown(stageID);
-        dataStruct.setSelectedFilterID(stageID, filterID);
-        switchToEQSliderMenu(filterID);
+        int selectedFilterID = dataStruct.findNextActiveFilterDown(stageID);
+        if (selectedFilterID == -1)
+        {
+            return;
+        }
+        dataStruct.setSelectedFilterID(stageID, selectedFilterID);
+        switchToEQSliderMenu(selectedFilterID);
     }
 }
 
@@ -215,35 +229,35 @@ void EQComponent::updateOnOffButton(juce::Button* button, juce::String addedStri
     button->setButtonText(addedString + stateString);
 }
 
-void EQComponent::addFilter()
-{
-    //isAnyActiveFilter
-    nbOfActiveFilter += 1;
-}
+//void EQComponent::addFilter()
+//{
+//    //isAnyActiveFilter
+//    nbOfActiveFilter += 1;
+//}
 
-void EQComponent::removeFilter()
-{
-    nbOfActiveFilter -= 1;
-
-    if(nbOfActiveFilter < 0)
-        nbOfActiveFilter = 0;
-
-    if (nbOfActiveFilter == 0)
-    {
-        updateFilterLabelForNoFilter();
-
-    }
-    else if (nbOfActiveFilter > EQConstants::Processor<float>::nbOfFilterMax)
-    {
-        nbOfActiveFilter = EQConstants::Processor<float>::nbOfFilterMax;
-    }
-    else
-    {
-        //filterIdEQLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
-        //filterIdEQLabel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::white);
-        //filterIdEQLabel.setText("Filter number: " + (juce::String)(currentEQSliderVisible + 1) + "/" + (juce::String)nbOfActiveFilter, juce::dontSendNotification);
-    }
-}
+//void EQComponent::removeFilter()
+//{
+//    nbOfActiveFilter -= 1;
+//
+//    if(nbOfActiveFilter < 0)
+//        nbOfActiveFilter = 0;
+//
+//    if (nbOfActiveFilter == 0)
+//    {
+//        updateFilterLabelForNoFilter();
+//
+//    }
+//    else if (nbOfActiveFilter > EQConstants::Processor<float>::nbOfFilterMax)
+//    {
+//        nbOfActiveFilter = EQConstants::Processor<float>::nbOfFilterMax;
+//    }
+//    else
+//    {
+//        //filterIdEQLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
+//        //filterIdEQLabel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::white);
+//        //filterIdEQLabel.setText("Filter number: " + (juce::String)(currentEQSliderVisible + 1) + "/" + (juce::String)nbOfActiveFilter, juce::dontSendNotification);
+//    }
+//}
 
 void EQComponent::updateFilterLabelForNoFilter()
 {

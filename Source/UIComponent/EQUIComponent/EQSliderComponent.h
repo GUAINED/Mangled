@@ -13,7 +13,8 @@
 #include <JuceHeader.h>
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
-#include "../GeneralUIComponent/OnOffButton.h"
+#include "../Controls/OnOffButton.h"
+#include "../Controls/MangledSlider.h"
 //==============================================================================
 /*
 */
@@ -34,9 +35,9 @@ public:
     void setLargeGradient();
     void setSmallGradient();
     //Get Function
-    juce::Slider*     getFilterCutoffEQSlider()       { return &filterCutoffEQSlider; };
-    juce::Slider*     getFilterQEQSlider()            { return &filterQEQSlider; };
-    juce::Slider*     getFilterGainEQSlider()         { return &filterGainEQSlider; };
+    MangledSlider*     getFilterCutoffEQSlider()       { return &filterCutoffEQSlider; };
+    MangledSlider*     getFilterQEQSlider()            { return &filterQEQSlider; };
+    MangledSlider*     getFilterGainEQSlider()         { return &filterGainEQSlider; };
     juce::ComboBox*   getFilterTypeEQComboBox()       { return &filterTypeEQComboBox; };
     juce::ComboBox*   getFilterOrderEQComboBox()      { return &filterOrderEQComboBox; };
     OnOffButton*      getFilterOnOffEQTextButton()    { return &filterOnOffEQButton; };
@@ -46,13 +47,13 @@ private:
     juce::ColourGradient colourGradient;
 
     juce::Label filterCutoffEQLabel;
-    juce::Slider filterCutoffEQSlider;
+    MangledSlider filterCutoffEQSlider;
 
     juce::Label filterQEQLabel;
-    juce::Slider filterQEQSlider;
+    MangledSlider filterQEQSlider;
 
     juce::Label filterGainEQLabel;
-    juce::Slider filterGainEQSlider;
+    MangledSlider filterGainEQSlider;
 
     juce::Label filterTypeEQLabel;
     juce::ComboBox filterTypeEQComboBox;

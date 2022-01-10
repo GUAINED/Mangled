@@ -28,6 +28,42 @@ public:
         //dryWet.setMixingRule(juce::dsp::DryWetMixingRule::linear);
     }
 
+    struct Parameters
+    {
+        int equationType;
+        int equationID;
+        SampleType drive;
+        SampleType warp;
+
+        inline Parameters& operator=(const Parameters& other)
+        {
+            // Guard self assignment
+            if (this == &other)
+                return *this;
+
+            this->equationType = other.equationType;
+            this->equationID = other.equationID;
+            this->drive = other.drive;
+            this->warp = other.warp;
+
+            return *this;
+        }
+
+        inline bool operator==(const Parameters& rhs)
+        {
+            return ((equationType == rhs.equationType) &&
+                (equationID == rhs.equationID) &&
+                (drive == rhs.drive) &&
+                (warp == rhs.warp)
+                );
+        };
+
+        inline bool operator!=(const Parameters& rhs)
+        {
+            return !(*this == rhs);
+        };
+    };
+
     //==============================================================================
     void prepare(const juce::dsp::ProcessSpec& spec)
     {
@@ -144,14 +180,14 @@ public:
 
     /** Set the Equation of the waveShaper.
     */
-    void setDistortionEquationParam(const int newDistortionEquationType, const int newDistortionEquationID)//newDistortionEquation, const int newDistortionEquationForNegativeValue);
+    void setEquation(const int newEquationType, const int newEquationID)//newDistortionEquation, const int newDistortionEquationForNegativeValue);
     {
-        equationTypeToEquationID(newDistortionEquationType, newDistortionEquationID);
+        equationTypeToEquationID(newEquationType, newEquationID);
     }
 
     /** Sets the Drive of the waveShaper.
     */
-    void setDriveParam(SampleType newDrive)
+    void setDrive(SampleType newDrive)
     {
         //drive = newDrive;
         drive.setTargetValue(newDrive);
@@ -159,11 +195,12 @@ public:
 
     /** Sets the Drive of the waveShaper.
     */
-    void setWarpParam(SampleType newWarp)
+    void setWarp(SampleType newWarp)
     {
         //drive = newDrive;
         warp.setTargetValue(newWarp);
     }
+
     /** Sets the amount of dry and wet signal in the output of the WaveShaper (between 0
     for full dry and 1 for full wet).
     */
@@ -182,6 +219,15 @@ public:
         isBypassed = newIsBypassed;
     }
 
+    /** Set the Parameters
+    */
+    void setParams(const Parameters& params)
+    {
+        setEquation(params.equationType, params.equationID);
+        setDrive(params.drive);
+        setWarp(params.warp);
+    };
+
     void smoothedValuesSkip(int numSamplesToSkip)
     {
         drive.skip(numSamplesToSkip);
@@ -192,16 +238,16 @@ public:
     {
         switch (eqaType)
         {
-            case DistortionConstants::DistortionUnit<SampleType>::EquationType::sigmoid :
+            case DistortionCircuitConstants::Processor<SampleType>::EquationType::sigmoid :
                 distortionEquation = sigmoidIDToEquation(eqaID);
                 break;
-            case DistortionConstants::DistortionUnit<SampleType>::EquationType::symetric :
+            case DistortionCircuitConstants::Processor<SampleType>::EquationType::symetric :
                 distortionEquation = symetricIDToEquation(eqaID);
                 break;
-            case DistortionConstants::DistortionUnit<SampleType>::EquationType::asymetric :
+            case DistortionCircuitConstants::Processor<SampleType>::EquationType::asymetric :
                 distortionEquation = asymetricIDToEquation(eqaID);
                 break;
-            case DistortionConstants::DistortionUnit<SampleType>::EquationType::special :
+            case DistortionCircuitConstants::Processor<SampleType>::EquationType::special :
                 distortionEquation = specialIDToEquation(eqaID);
                 break;
             default:
@@ -214,34 +260,34 @@ public:
     {
         switch (equationID)
         {
-        //case DistortionConstants::DistortionUnit::SigmoidEquationID::identity :
-        //    return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::identity(x, drive, warp); };
-        //    break;
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::none :
+            return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::identity(x, drive, warp); };
+            break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::tanh:
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::tanh:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::tanh(x, drive, warp); };
             break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::parabolic :
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::parabolic :
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::parabolic(x, drive, warp); };
             break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::hyperbolic :
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::hyperbolic :
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::hyperbolic(x, drive, warp); };
             break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::asinh:
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::asinh:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::asinh(x, drive, warp); };
             break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::unbSat1 :
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::unbSat1 :
                 return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::unbSat1(x, drive, warp); };
             break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::fuzz :
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::fuzz :
                 return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::fuzz(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::SigmoidEquationID::softClipper:
+        case DistortionCircuitConstants::Processor<SampleType>::SigmoidEquationID::softClipper:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Sigmoid::softClipper(x, drive, warp); };
             break;
         default:
@@ -254,22 +300,25 @@ public:
     {
         switch (equationID)
         {
-        case DistortionConstants::DistortionUnit<SampleType>::SymetricEquationID::hardclip:
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::none:
+            return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::identity(x, drive, warp); };
+            break;
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::hardclip:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Symetric::hardclip(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::SymetricEquationID::sin:
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::sin:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Symetric::sin(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::SymetricEquationID::sinh:
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::sinh:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Symetric::sinh(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::SymetricEquationID::sinhAlt:
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::sinhAlt:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Symetric::sinhAlt(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::SymetricEquationID::tape:
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::tape:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Symetric::tape(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::SymetricEquationID::foldover:
+        case DistortionCircuitConstants::Processor<SampleType>::SymetricEquationID::foldover:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Symetric::foldover(x, drive, warp); };
             break;
         default:
@@ -282,16 +331,19 @@ public:
     {
         switch (equationID)
         {
-        case DistortionConstants::DistortionUnit<SampleType>::AsymetricEquationID::tubeSimulation:
+        case DistortionCircuitConstants::Processor<SampleType>::AsymetricEquationID::none:
+            return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::identity(x, drive, warp); };
+            break;
+        case DistortionCircuitConstants::Processor<SampleType>::AsymetricEquationID::tubeSimulation:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Asymetric::tubeSimulation(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::AsymetricEquationID::distortionSimulation:
+        case DistortionCircuitConstants::Processor<SampleType>::AsymetricEquationID::distortionSimulation:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Asymetric::distortionSimulation(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::AsymetricEquationID::diode :
+        case DistortionCircuitConstants::Processor<SampleType>::AsymetricEquationID::diode :
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Asymetric::diode(x, drive, warp); };
             break;
-        case DistortionConstants::DistortionUnit<SampleType>::AsymetricEquationID::diode2:
+        case DistortionCircuitConstants::Processor<SampleType>::AsymetricEquationID::diode2:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Asymetric::diode2(x, drive, warp); };
             break;
 
@@ -305,11 +357,14 @@ public:
     {
         switch (equationID)
         {
-        case DistortionConstants::DistortionUnit<SampleType>::SpecialEquationID::halfrect:
+        case DistortionCircuitConstants::Processor<SampleType>::SpecialEquationID::none:
+            return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::identity(x, drive, warp); };
+            break;
+        case DistortionCircuitConstants::Processor<SampleType>::SpecialEquationID::halfrect:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Special::halfrect(x, drive, warp); };
             break;
 
-        case DistortionConstants::DistortionUnit<SampleType>::SpecialEquationID::fullrect:
+        case DistortionCircuitConstants::Processor<SampleType>::SpecialEquationID::fullrect:
             return [](SampleType x, SampleType drive, SampleType warp) {return DistortionEquation<SampleType>::Special::fullrect(x, drive, warp); };
             break;
         default:
@@ -317,7 +372,17 @@ public:
             break;
         }
 
-    }
+    };
+
+    //static void createValueTree(juce::ValueTree& vt)//, int distortionUnitID)
+    //{
+    //    juce::ValueTree vtDistortionCircuit(DistortionCircuitConstants::ParamsID::distortionCircuit);
+    //    vt.addChild(vtDistortionCircuit, -1, nullptr);
+
+    //    vtDistortionCircuit.setProperty(DistortionCircuitConstants::ParamsID::equationType, 0, nullptr);
+    //    vtDistortionCircuit.setProperty(DistortionCircuitConstants::ParamsID::equationID, 0, nullptr);
+    //};
+
 private:
     //==============================================================================
     enum

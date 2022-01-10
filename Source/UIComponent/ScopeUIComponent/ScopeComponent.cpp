@@ -18,9 +18,9 @@ ScopeComponent::ScopeComponent(MainLayerDataStruct& mlDataStruct)
     , preEQOnOffButton("PreEQ", "On", ScopeConstants::Processor<float>::preEQIsBypassedStartValue)
     , postEQOnOffButton("PostEQ", "On", ScopeConstants::Processor<float>::postEQIsBypassedStartValue)
     , postDistoOnOffButton("PostDisto", "On", ScopeConstants::Processor<float>::postDistoIsBypassedStartValue)
-    , normalizeButton("Normalize", "On", ScopeConstants::Processor<float>::isNormalizedStartValue)
-    , subViewButton("Sub View", "Off", ScopeConstants::Processor<float>::subViewIsBypassedStartValue)
-    , monoViewButton("Mono View", "Off", ScopeConstants::Processor<float>::monoViewIsBypassedStartValue)
+    , normalizeButton("Normalize", "On", RMSConstants::Processor<float>::isNormalizedStartValue)
+    , subViewButton("Sub View", "Off", RMSConstants::Processor<float>::subViewIsBypassedStartValue)
+    , monoViewButton("Mono View", "Off", RMSConstants::Processor<float>::monoViewIsBypassedStartValue)
 {
     setInterceptsMouseClicks(false, true);
 

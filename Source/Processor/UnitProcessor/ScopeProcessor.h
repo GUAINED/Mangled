@@ -149,8 +149,6 @@ public:
 
             for (int ch = 0; ch < fftTimeBuffer.getNumChannels(); ++ch)
             {
-
-
                 //FFT Data
                 juce::FloatVectorOperations::multiply(fftTimeBuffer.getWritePointer(ch),
                     windowBuffer.getReadPointer(0),
@@ -221,6 +219,48 @@ public:
     int    getFFTSize()     const noexcept { return fft.getSize(); };
     double getSampleRate()  const noexcept { return sampleRate; };
     //int    getDataType() const noexcept { return dataType; };
+
+    static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID)
+    {
+        //Data Type
+        juce::String paramString = ScopeConstants::ParamStringID::GetParamStringID::dataType(stageID);
+        juce::String automationParamString = ScopeConstants::AutomationString::GetString::dataType(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterChoice>(paramString,
+            automationParamString,
+            ScopeConstants::UI::modeStringArray,
+            ScopeConstants::Processor<SampleType>::modeStartValue));
+
+        paramString = ScopeConstants::ParamStringID::GetParamStringID::preEQIsBypassed(stageID);
+        automationParamString = ScopeConstants::AutomationString::GetString::preEQIsBypassed(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+            automationParamString,
+            ScopeConstants::Processor<SampleType>::preEQIsBypassedStartValue));
+
+        paramString = ScopeConstants::ParamStringID::GetParamStringID::postEQIsBypassed(stageID);
+        automationParamString = ScopeConstants::AutomationString::GetString::postEQIsBypassed(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+            automationParamString,
+            ScopeConstants::Processor<SampleType>::postEQIsBypassedStartValue));
+
+        paramString = ScopeConstants::ParamStringID::GetParamStringID::postDistoIsBypassed(stageID);
+        automationParamString = ScopeConstants::AutomationString::GetString::postDistoIsBypassed(stageID);
+        plugInParameters->push_back(std::make_unique<juce::AudioParameterBool>(paramString,
+            automationParamString,
+            ScopeConstants::Processor<SampleType>::postDistoIsBypassedStartValue));
+
+
+    };
+
+    static void createValueTree(juce::ValueTree& vt)
+    {
+        juce::ValueTree vtScope(ScopeConstants::ParamStringID::scope);
+        vt.addChild(vtScope, -1, nullptr);
+
+        vtScope.setProperty(ScopeConstants::ParamStringID::zoom, -1, nullptr);
+        //vtScope.setProperty(ScopeConstants::ParamStringID::scope::preEQIsBypassed, false, nullptr);
+        //vtScope.setProperty(ScopeConstants::ParamStringID::scope::postEQIsBypassed, false, nullptr);
+        //vtScope.setProperty(ScopeConstants::ParamStringID::scope::postDistoIsBypassed, false, nullptr);
+    }
 
 private:
     std::atomic<bool> isBypassed;

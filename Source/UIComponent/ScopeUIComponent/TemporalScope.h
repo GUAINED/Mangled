@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "TemporalScopeDisplay.h"
-#include "../GeneralUIComponent/OnOffButton.h"
+#include "../Controls/OnOffButton.h"
 //==============================================================================
 /*
 */

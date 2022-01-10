@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "RMSMeter.h"
+#include "../Controls/MangledSlider.h"
 //==============================================================================
 /*
 */
@@ -78,7 +79,7 @@ public:
 
     RMSMeter* getLeftRMSMeter() { return &leftRMSMeter; };
     RMSMeter* getRightRMSMeter() { return &rightRMSMeter; };
-    juce::Slider* getGainSlider() { return &gainSlider; };
+    MangledSlider* getGainSlider() { return &gainSlider; };
 
 private:
     juce::Label gainLabel;
@@ -92,7 +93,7 @@ private:
     RMSMeter leftRMSMeter;
     RMSMeter rightRMSMeter;
 
-    juce::Slider gainSlider;
+    MangledSlider gainSlider;
 
     juce::ColourGradient gradient;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StereoRMSMeterComponent)
