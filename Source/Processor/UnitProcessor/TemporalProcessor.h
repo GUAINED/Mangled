@@ -16,10 +16,10 @@
 #include "IIRBiquadFilter.h"
 
 template <typename SampleType>
-class RMSProcessor
+class TemporalProcessor
 {
 public:
-    RMSProcessor() 
+    TemporalProcessor() 
         //: rmsFifo(2, 1000)
     {
         lowpassFilter.add(new IIRBiquadFilter<SampleType>(0));

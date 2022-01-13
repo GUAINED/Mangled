@@ -1,11 +1,11 @@
 /*
   ==============================================================================
 
-    ScopeProcessor.cpp
-    Created: 19 May 2021 4:41:13pm
+    RMSProcessor.cpp
+    Created: 18 Nov 2021 8:02:44pm
     Author:  CookiMonstor
 
   ==============================================================================
 */
 
-#include "ScopeProcessor.h"
+#include "TemporalProcessor.h"

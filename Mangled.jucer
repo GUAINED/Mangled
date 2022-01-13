@@ -7,6 +7,9 @@
   <MAINGROUP id="d9GTZU" name="Mangled">
     <GROUP id="{7E81A842-43CF-64B6-2F22-ABF8A7D180CA}" name="Source">
       <GROUP id="{B4924EAF-7D26-9B9A-7462-C163FC89D9BD}" name="DataStructure">
+        <FILE id="Qd90FS" name="MangledState.cpp" compile="1" resource="0"
+              file="Source/DataStructure/MangledState.cpp"/>
+        <FILE id="wKpP39" name="MangledState.h" compile="0" resource="0" file="Source/DataStructure/MangledState.h"/>
         <FILE id="zhGLcd" name="SampleFifo.cpp" compile="1" resource="0" file="Source/DataStructure/SampleFifo.cpp"/>
         <FILE id="wAbCq2" name="SampleFifo.h" compile="0" resource="0" file="Source/DataStructure/SampleFifo.h"/>
         <FILE id="NhUpg6" name="Conversion.cpp" compile="1" resource="0" file="Source/DataStructure/Conversion.cpp"/>
@@ -44,9 +47,10 @@
         <GROUP id="{AF059E72-1C91-F0CB-5CD2-605CE59628BF}" name="UnitProcessor">
           <FILE id="MvSaCY" name="EQProcessor.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.cpp"/>
           <FILE id="I04KFN" name="EQProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.h"/>
-          <FILE id="xm06mC" name="RMSProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/RMSProcessor.cpp"/>
-          <FILE id="xLS7Cr" name="RMSProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/RMSProcessor.h"/>
+          <FILE id="xm06mC" name="TemporalProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/TemporalProcessor.cpp"/>
+          <FILE id="xLS7Cr" name="TemporalProcessor.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/TemporalProcessor.h"/>
           <FILE id="tsedzw" name="GainProcessor.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/GainProcessor.cpp"/>
           <FILE id="G4sBKt" name="GainProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/GainProcessor.h"/>
@@ -61,10 +65,6 @@
                 file="Source/Processor/UnitProcessor/IIRBiquadFilter.cpp"/>
           <FILE id="IxxD5i" name="IIRBiquadFilter.h" compile="0" resource="0"
                 file="Source/Processor/UnitProcessor/IIRBiquadFilter.h"/>
-          <FILE id="eRoYWc" name="AllUnitProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/AllUnitProcessor.cpp"/>
-          <FILE id="fjiuGJ" name="AllUnitProcessor.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/AllUnitProcessor.h"/>
           <FILE id="pSWOTa" name="DCFilter.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/DCFilter.cpp"/>
           <FILE id="X9J0KX" name="DCFilter.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/DCFilter.h"/>
           <FILE id="ZBZeWV" name="DistortionCircuit.cpp" compile="1" resource="0"
@@ -90,10 +90,9 @@
                 file="Source/Processor/UnitProcessor/SampleRemapper.cpp"/>
           <FILE id="Rhg5nQ" name="SampleRemapper.h" compile="0" resource="0"
                 file="Source/Processor/UnitProcessor/SampleRemapper.h"/>
-          <FILE id="YPyK57" name="ScopeProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/ScopeProcessor.cpp"/>
-          <FILE id="blbTxp" name="ScopeProcessor.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/ScopeProcessor.h"/>
+          <FILE id="YPyK57" name="FFTProcessor.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/FFTProcessor.cpp"/>
+          <FILE id="blbTxp" name="FFTProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/FFTProcessor.h"/>
           <FILE id="JEciGJ" name="SampleRemapperBin.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/SampleRemapperBin.cpp"/>
           <FILE id="lq34oE" name="SampleRemapperBin.h" compile="0" resource="0"

@@ -137,6 +137,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\DataStructure\MangledState.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\SampleFifo.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\Conversion.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\MangledIdentifiers.cpp"/>
@@ -146,12 +147,11 @@
     <ClCompile Include="..\..\Source\Operation\Operation.cpp"/>
     <ClCompile Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp"/>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.cpp"/>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\TemporalProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\GainProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaseShifterFilter.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\CurveEquation.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\IIRBiquadFilter.cpp"/>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\AllUnitProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DCFilter.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionCircuit.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionEquation.cpp"/>
@@ -159,7 +159,7 @@
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\ProcessorBase.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\SampleRemapper.cpp"/>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\ScopeProcessor.cpp"/>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\FFTProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\SampleRemapperBin.cpp"/>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionUnitProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processor\LayerProcessor\AllLayerProcessor.cpp"/>
@@ -2259,6 +2259,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\DataStructure\MangledState.h"/>
     <ClInclude Include="..\..\Source\DataStructure\SampleFifo.h"/>
     <ClInclude Include="..\..\Source\DataStructure\Conversion.h"/>
     <ClInclude Include="..\..\Source\DataStructure\MangledIdentifiers.h"/>
@@ -2269,12 +2270,11 @@
     <ClInclude Include="..\..\Source\Operation\Operation.h"/>
     <ClInclude Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h"/>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.h"/>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\TemporalProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\GainProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaseShifterFilter.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\CurveEquation.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\IIRBiquadFilter.h"/>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\AllUnitProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DCFilter.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionCircuit.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionEquation.h"/>
@@ -2282,7 +2282,7 @@
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\ProcessorBase.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\SampleRemapper.h"/>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\ScopeProcessor.h"/>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\FFTProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\SampleRemapperBin.h"/>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionUnitProcessor.h"/>
     <ClInclude Include="..\..\Source\Processor\LayerProcessor\AllLayerProcessor.h"/>

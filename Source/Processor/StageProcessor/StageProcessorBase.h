@@ -11,18 +11,21 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../UnitProcessor/AllUnitProcessor.h"
+#include "../UnitProcessor/EQProcessor.h"
+#include "../UnitProcessor/DistortionProcessor.h"
+#include "../UnitProcessor/FFTProcessor.h"
+#include "../UnitProcessor/PhaserProcessor.h"
 #include "../UnitProcessor/GainProcessor.h"
-#include "../UnitProcessor/RMSProcessor.h"
+#include "../UnitProcessor/TemporalProcessor.h"
 //==============================================================================
 template <typename SampleType>
 class StageProcessorBase //: //public juce::AudioProcessor//public ProcessorBase
 {
 public:
     StageProcessorBase(int nbOfChannels) :
-        preEQScopeProcessor(44100.0),
-        postEQScopeProcessor(44100.0),
-        postDistoScopeProcessor(44100.0),
+        preEQFFTProcessor(44100.0),
+        postEQFFTProcessor(44100.0),
+        postDistoFFTProcessor(44100.0),
         eqProcessor(nbOfChannels, 44100.0)
     {
         inputGainProcessor.setGainDecibels(static_cast<SampleType>(0.0));
@@ -61,18 +64,18 @@ public:
         //rmsCalculationBuffer.setSize(spec.numChannels, static_cast<int>(spec.sampleRate) + 1);
 
         inputGainProcessor.prepare(spec);
-        inputRMSProcessor.prepare(spec);
+        inputTemporalProcessor.prepare(spec);
 
-        preEQScopeProcessor.prepare(spec);
+        preEQFFTProcessor.prepare(spec);
         eqProcessor.prepare(spec);
-        postEQScopeProcessor.prepare(spec);
+        postEQFFTProcessor.prepare(spec);
 
         phaserProcessor.prepare(spec);
         distortionProcessor.prepare(spec);
-        postDistoScopeProcessor.prepare(spec);
+        postDistoFFTProcessor.prepare(spec);
 
         outputGainProcessor.prepare(spec);
-        outputRMSProcessor.prepare(spec);
+        outputTemporalProcessor.prepare(spec);
     }
 
     template <typename ProcessContext>
@@ -84,19 +87,19 @@ public:
         inputGainProcessor.process(context);
 
         //rmsFifo.push(context);
-        inputRMSProcessor.process(context);
+        inputTemporalProcessor.process(context);
 
-        preEQScopeProcessor.processBlock(context);
+        preEQFFTProcessor.processBlock(context);
         eqProcessor.process(context);
-        postEQScopeProcessor.processBlock(context);
+        postEQFFTProcessor.processBlock(context);
 
         phaserProcessor.process(context);
 
         distortionProcessor.process(context);
-        postDistoScopeProcessor.processBlock(context);
+        postDistoFFTProcessor.processBlock(context);
 
         outputGainProcessor.process(context);
-        outputRMSProcessor.process(context);
+        outputTemporalProcessor.process(context);
 
     }
 
@@ -108,19 +111,19 @@ public:
         //fxChain.process(context);
         //juce::AudioBuffer<float> postEQBuffer;
         
-        preEQScopeProcessor.process(buffer);
+        preEQFFTProcessor.process(buffer);
         eqProcessor.processBuffer(buffer);
-        postEQScopeProcessor.process(buffer);
+        postEQFFTProcessor.process(buffer);
         //phaserProcessor.processBuffer(buffer);
         distortionProcessor.processBuffer(buffer);
-        postDistoScopeProcessor.process(buffer);
+        postDistoFFTProcessor.process(buffer);
     }
 
     void reset() //override
     {
         //fxChain.reset();
         inputGainProcessor.reset();
-        inputRMSProcessor.reset();
+        inputTemporalProcessor.reset();
         preEQScopeProcessor.reset();
         eqProcessor.reset();
         postEQScopeProcessor.reset();
@@ -130,7 +133,7 @@ public:
         postDistoScopeProcessor.reset();
 
         outputGainProcessor.reset();
-        outputRMSProcessor.reset();
+        outputTemporalProcessor.reset();
     }
 
     //SampleType getRmsLevel(const int channel)
@@ -168,14 +171,14 @@ public:
 
     const juce::String getName() const { return "Stage Processor Base"; };
 
-    RMSProcessor<SampleType>* getInputRMSProcessor() { return &inputRMSProcessor; };
-    ScopeProcessor<SampleType>*      getPreEQScopeProcessor()  { return &preEQScopeProcessor; };
-    EQProcessor<SampleType>*         getEQProcessor()          { return &eqProcessor; };
-    ScopeProcessor<SampleType>*      getPostEQScopeProcessor() { return &postEQScopeProcessor; };
-    CustomPhaser<SampleType>*        getPhaserProcessor()      { return &phaserProcessor; };
-    DistortionProcessor<SampleType>* getDistortionProcessor()  { return &distortionProcessor; };
-    ScopeProcessor<SampleType>*      getPostDistoScopeProcessor() { return &postDistoScopeProcessor; };
-    RMSProcessor<SampleType>* getOutputRMSProcessor() { return &outputRMSProcessor; };
+    TemporalProcessor<SampleType>*   getInputTemporalProcessor()  { return &inputTemporalProcessor; };
+    FFTProcessor<SampleType>*        getPreEQFFTProcessor()       { return &preEQFFTProcessor; };
+    EQProcessor<SampleType>*         getEQProcessor()             { return &eqProcessor; };
+    FFTProcessor<SampleType>*        getPostEQFFTProcessor()      { return &postEQFFTProcessor; };
+    CustomPhaser<SampleType>*        getPhaserProcessor()         { return &phaserProcessor; };
+    DistortionProcessor<SampleType>* getDistortionProcessor()     { return &distortionProcessor; };
+    FFTProcessor<SampleType>*        getPostDistoFFTProcessor()   { return &postDistoFFTProcessor; };
+    TemporalProcessor<SampleType>*   getOutputTemporalProcessor() { return &outputTemporalProcessor; };
 
     static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfFiltersPerEQ, int nbOfDistoUnitPerDisto)
     {
@@ -208,10 +211,10 @@ public:
             StageConstants::Processor<SampleType>::gainStartValue));
 
         //RMS=====================================================================================================
-        RMSProcessor<SampleType>::createParametersLayout(plugInParameters, stageID);
+        TemporalProcessor<SampleType>::createParametersLayout(plugInParameters, stageID);
 
         //Scope===================================================================================================
-        ScopeProcessor<SampleType>::createParametersLayout(plugInParameters, stageID);
+        FFTProcessor<SampleType>::createParametersLayout(plugInParameters, stageID);
 
         //EQ======================================================================================================
         EQProcessor<SampleType>::createParametersLayout(plugInParameters, stageID, nbOfFiltersPerEQ);
@@ -231,7 +234,7 @@ public:
 
         vtStage.setProperty(StageConstants::ParamStringID::displayedProcessor, StageConstants::Processor<SampleType>::ProcessorID::distortion, nullptr);
 
-        ScopeProcessor<SampleType>::createValueTree(vtStage);
+        FFTProcessor<SampleType>::createValueTree(vtStage);
         EQProcessor<SampleType>::createValueTree(vtStage);
         DistortionProcessor<SampleType>::createValueTree(vtStage, undoManager);
         //Need to Add Phaser.
@@ -239,18 +242,18 @@ public:
 
 private:
     GainProcessor<SampleType> inputGainProcessor;
-    RMSProcessor<SampleType> inputRMSProcessor;
+    TemporalProcessor<SampleType> inputTemporalProcessor;
 
-    ScopeProcessor<SampleType> preEQScopeProcessor;
+    FFTProcessor<SampleType> preEQFFTProcessor;
     EQProcessor<SampleType> eqProcessor;
-    ScopeProcessor<SampleType> postEQScopeProcessor;
+    FFTProcessor<SampleType> postEQFFTProcessor;
 
     CustomPhaser<SampleType> phaserProcessor;
     DistortionProcessor<SampleType> distortionProcessor;
-    ScopeProcessor<SampleType> postDistoScopeProcessor;
+    FFTProcessor<SampleType> postDistoFFTProcessor;
 
     GainProcessor<SampleType> outputGainProcessor;
-    RMSProcessor<SampleType> outputRMSProcessor;
+    TemporalProcessor<SampleType> outputTemporalProcessor;
     bool isBypassed = true;
 
     //RMSFifo<SampleType> rmsFifo;

@@ -226,11 +226,20 @@ juce::AudioProcessorEditor* MangledAudioProcessor::createEditor()
     int selectedStageID = mainLayerDataStruct.getSelectedStageID();
     int distortionUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
 
-    editor->updateUI(0, 0);
+    //editor->updateUI(0, 0);
 
+    for (int stgID = 0; stgID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stgID)
+    {
+        editor->updateScope(stgID);
+        editor->updateRMSMeter(stgID);
+        for (int duID = 0; duID < DistortionConstants::Processor<float>::nbOfDUMax; ++duID)
+        {
+            editor->updateDistortion(stgID, duID);
+        }
+    }
 
     editor->setUI();
-    
+
     return editor;
     //return new MangledAudioProcessorEditor (*this);
 }
@@ -450,39 +459,39 @@ void MangledAudioProcessor::setScopeParams(juce::AudioProcessorValueTreeState& a
 
     paramString = ScopeConstants::ParamStringID::GetParamStringID::preEQIsBypassed(stageID);
     auto& preEQIsBypassed = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPreEQScopeProcessor()->setIsBypassed((preEQIsBypassed || dataMask) || stageMask);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPreEQFFTProcessor()->setIsBypassed((preEQIsBypassed || dataMask) || stageMask);
     
     paramString = ScopeConstants::ParamStringID::GetParamStringID::postEQIsBypassed(stageID);
     auto& postEQIsBypassed = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPostEQScopeProcessor()->setIsBypassed((postEQIsBypassed || dataMask) || stageMask);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPostEQFFTProcessor()->setIsBypassed((postEQIsBypassed || dataMask) || stageMask);
     
     paramString = ScopeConstants::ParamStringID::GetParamStringID::postDistoIsBypassed(stageID);
     auto& postDistoIsBypassed = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPostDistoScopeProcessor()->setIsBypassed((postDistoIsBypassed || dataMask) || stageMask);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getPostDistoFFTProcessor()->setIsBypassed((postDistoIsBypassed || dataMask) || stageMask);
     
     paramString = RMSConstants::ParamStringID::GetParamStringID::isNormalized(stageID);
     auto& isNormalized = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setIsNormalized(isNormalized);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setIsNormalized(isNormalized);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputTemporalProcessor()->setIsNormalized(isNormalized);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputTemporalProcessor()->setIsNormalized(isNormalized);
 
     paramString = RMSConstants::ParamStringID::GetParamStringID::subViewIsBypassed(stageID);
     auto& subViewIsBypassed = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setSubViewIsBypassed(subViewIsBypassed);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setSubViewIsBypassed(subViewIsBypassed);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputTemporalProcessor()->setSubViewIsBypassed(subViewIsBypassed);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputTemporalProcessor()->setSubViewIsBypassed(subViewIsBypassed);
 
     paramString = RMSConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
     auto& monoViewIsBypassed = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setMonoViewIsBypassed(monoViewIsBypassed);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setMonoViewIsBypassed(monoViewIsBypassed);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputTemporalProcessor()->setMonoViewIsBypassed(monoViewIsBypassed);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputTemporalProcessor()->setMonoViewIsBypassed(monoViewIsBypassed);
 
     paramString = RMSConstants::ParamStringID::GetParamStringID::subViewCutoff(stageID);
     auto& subViewCutoff = *apvts.getRawParameterValue(paramString);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setSubViewCutoff(subViewCutoff);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setSubViewCutoff(subViewCutoff);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputTemporalProcessor()->setSubViewCutoff(subViewCutoff);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputTemporalProcessor()->setSubViewCutoff(subViewCutoff);
 
 
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputRMSProcessor()->setIsBypassed(stageMask);
-    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputRMSProcessor()->setIsBypassed(stageMask);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getInputTemporalProcessor()->setIsBypassed(stageMask);
+    audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getOutputTemporalProcessor()->setIsBypassed(stageMask);
 
 }
 
@@ -532,11 +541,7 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
 
         newEQFilterParams.id = filterID;
 
-        //if (&newEQFilterParams != &(stageProcessor->getEQProcessor()->getFilterWholeParams(filter)))
-        //{
         pEQProcessor->setEQFilterParams(newEQFilterParams);
-        //}
-
     }
 
     int selectedFilterID = mainLayerDataStruct.getSelectedFilterID(stageID);

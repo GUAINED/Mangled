@@ -627,8 +627,8 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
     //pScopeDisplay->ppq = ppq;
     //juce::AudioBuffer<float>* pRMSBuffer = pScopeDisplay->getTemporalBuffer();
     //int nbSampleToPull = 1470;
-    //pStageProcessor->getInputRMSProcessor()->pushRMSFifo(pRMSBuffer);
-    //pStageProcessor->getOutputRMSProcessor()->pushRMSFifo(pRMSBuffer);
+    //pStageProcessor->getInputTemporalProcessor()->pushRMSFifo(pRMSBuffer);
+    //pStageProcessor->getOutputTemporalProcessor()->pushRMSFifo(pRMSBuffer);
     //float rms = juce::Decibels::gainToDecibels(pRMSBuffer->getRMSLevel(0, 0, nbSampleToPull));
     //pStageComponent->getInputRMSMeter()->setLeftRMSValue(rms);
     //rms = juce::Decibels::gainToDecibels(pRMSBuffer->getRMSLevel(1, 0, nbSampleToPull));
@@ -651,9 +651,9 @@ void MangledAudioProcessorEditor::updateScope(int stageID)
     StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
     ScopeDisplay* pScopeDisplay = pStageComponent->getScope()->getScopeDisplay();
 
-    ScopeProcessor<float>* scopeProcessorPreEQ = pStageProcessor->getPreEQScopeProcessor();
-    ScopeProcessor<float>* scopeProcessorPostEQ = pStageProcessor->getPostEQScopeProcessor();
-    ScopeProcessor<float>* scopeProcessorPostDisto = pStageProcessor->getPostDistoScopeProcessor();
+    FFTProcessor<float>* fftProcessorPreEQ = pStageProcessor->getPreEQFFTProcessor();
+    FFTProcessor<float>* fftProcessorPostEQ = pStageProcessor->getPostEQFFTProcessor();
+    FFTProcessor<float>* fftProcessorPostDisto = pStageProcessor->getPostDistoFFTProcessor();
 
     juce::String paramString = ScopeConstants::ParamStringID::GetParamStringID::dataType(stageID);
     int dataType = (int)*mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString);
@@ -661,9 +661,9 @@ void MangledAudioProcessorEditor::updateScope(int stageID)
     if (dataType == 0)
     {
 
-        scopeProcessorPreEQ->readBufferFromResult(*(pScopeDisplay->getPreEQFFTBuffer())); //Return a Value but fuck it
-        scopeProcessorPostEQ->readBufferFromResult(*(pScopeDisplay->getPostEQFFTBuffer())); //Return a Value but fuck it
-        scopeProcessorPostDisto->readBufferFromResult(*(pScopeDisplay->getPostDistoFFTBuffer()));
+        fftProcessorPreEQ->readBufferFromResult(*(pScopeDisplay->getPreEQFFTBuffer())); //Return a Value but fuck it
+        fftProcessorPostEQ->readBufferFromResult(*(pScopeDisplay->getPostEQFFTBuffer())); //Return a Value but fuck it
+        fftProcessorPostDisto->readBufferFromResult(*(pScopeDisplay->getPostDistoFFTBuffer()));
 
         //pScopeDisplay->computeFFTPath();
 
@@ -708,8 +708,8 @@ void MangledAudioProcessorEditor::updateScope(int stageID)
         juce::AudioBuffer<float>* pInputBuffer = pTempScope->getInputTemporalBuffer();
         juce::AudioBuffer<float>* pOutputBuffer = pTempScope->getOutputTemporalBuffer();
 
-        pStageProcessor->getInputRMSProcessor()->pushRMSFifo(pInputBuffer, nbSampleToPull);
-        pStageProcessor->getOutputRMSProcessor()->pushRMSFifo(pOutputBuffer, nbSampleToPull);
+        pStageProcessor->getInputTemporalProcessor()->pushRMSFifo(pInputBuffer, nbSampleToPull);
+        pStageProcessor->getOutputTemporalProcessor()->pushRMSFifo(pOutputBuffer, nbSampleToPull);
 
         paramString = RMSConstants::ParamStringID::GetParamStringID::monoViewIsBypassed(stageID);
         auto& monoView = *mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString);
@@ -770,8 +770,8 @@ void MangledAudioProcessorEditor::updateRMSMeter(int stageID)
 
     StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
-    RMSProcessor<float>* pInputProc = pStageProcessor->getInputRMSProcessor();
-    RMSProcessor<float>* pOutputProc = pStageProcessor->getOutputRMSProcessor();
+    TemporalProcessor<float>* pInputProc = pStageProcessor->getInputTemporalProcessor();
+    TemporalProcessor<float>* pOutputProc = pStageProcessor->getOutputTemporalProcessor();
 
     pStageComponent->getInputRMSMeter()->setLeftRMSValue(pInputProc->getRmsLevel(0));
     pStageComponent->getInputRMSMeter()->setRightRMSValue(pInputProc->getRmsLevel(1));
@@ -927,31 +927,41 @@ void MangledAudioProcessorEditor::switchUI(int stageID, int processorID,int dist
         juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distoUID);
         int circuitType = *apvts.getRawParameterValue(paramString);
         int circuitID = 0;
-        switch (circuitType)
-        {
-        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::sigmoid):
-            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::sigmoidEQA(stageID, distoUID);
-            circuitID = *apvts.getRawParameterValue(paramString);
-            break;
-        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::symetric):
-            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::symetricEQA(stageID, distoUID);
-            circuitID = *apvts.getRawParameterValue(paramString);
-            break;
-        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::asymetric):
-            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::asymetricEQA(stageID, distoUID);
-            circuitID = *apvts.getRawParameterValue(paramString);
-            break;
-        case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::special):
-            paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distoUID);
-            circuitID = *apvts.getRawParameterValue(paramString);
-            break;
-        default:
-            //paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distortionUnitID);
-            circuitID = 0;
-            break;
-        }
+        //switch (circuitType)
+        //{
+        //case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::sigmoid):
+        //    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::sigmoidEQA(stageID, distoUID);
+        //    circuitID = *apvts.getRawParameterValue(paramString);
+        //    break;
+        //case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::symetric):
+        //    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::symetricEQA(stageID, distoUID);
+        //    circuitID = *apvts.getRawParameterValue(paramString);
+        //    break;
+        //case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::asymetric):
+        //    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::asymetricEQA(stageID, distoUID);
+        //    circuitID = *apvts.getRawParameterValue(paramString);
+        //    break;
+        //case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::special):
+        //    paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distoUID);
+        //    circuitID = *apvts.getRawParameterValue(paramString);
+        //    break;
+        //default:
+        //    //paramString = DistoUnitConstants::ParamStringID::GetParamStringID::specialEQA(stageID, distortionUnitID);
+        //    circuitID = 0;
+        //    break;
+        //}
 
         pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType);
+        
+    }
+
+    for (int stgID = 0; stgID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stgID)
+    {
+        updateScope(stgID);
+        for (int duID = 0; duID < DistortionConstants::Processor<float>::nbOfDUMax; ++duID)
+        {
+            updateDistortion(stgID, duID);
+        }
     }
 }
 

@@ -66,6 +66,10 @@ public:
     std::atomic<juce::int64>& ppqSample;
     std::atomic<int>& bufferSize;
     void setUI();
+
+    void updateScope(int stageID);
+    void updateDistortion(int stageID, int distortionUnitID);
+    void updateRMSMeter(int stageID);
 private:
     void linkParametersAttachment(juce::AudioProcessorValueTreeState& apvts);
     void linkStageParametersAttachment(juce::AudioProcessorValueTreeState& apvts, int stageID);
@@ -77,9 +81,7 @@ private:
     void switchToSelectedID();
     void switchUI(int stageID, int processorID, int distortionUnitID);
 
-    void updateScope(int stageID);
-    void updateDistortion(int stageID, int distortionUnitID);
-    void updateRMSMeter(int stageID);
+
 
     MainMenuTabComponent mainMenuTab;
 

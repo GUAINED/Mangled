@@ -16,10 +16,10 @@
 
 
 template <typename SampleType>
-class ScopeProcessor
+class FFTProcessor
 {
 public:
-    ScopeProcessor(double sampleRate, int numOfAverages = 8, int fftOrder = 12, int numOfChannels = 2)
+    FFTProcessor(double sampleRate, int numOfAverages = 8, int fftOrder = 12, int numOfChannels = 2)
         : isBypassed(ScopeConstants::Processor<SampleType>::preEQIsBypassedStartValue)
         , sampleRate(sampleRate)
         , fft(fftOrder)
@@ -298,5 +298,5 @@ private:
         return resultsBufferFifo.writeSamplesToFifo(buffer);
     }
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ScopeProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FFTProcessor)
 };

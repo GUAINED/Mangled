@@ -517,6 +517,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\DataStructure\MangledState.cpp">
+      <Filter>Mangled\Source\DataStructure</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\DataStructure\SampleFifo.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
@@ -544,7 +547,7 @@
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.cpp">
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\TemporalProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\GainProcessor.cpp">
@@ -557,9 +560,6 @@
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\IIRBiquadFilter.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\AllUnitProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\DCFilter.cpp">
@@ -583,7 +583,7 @@
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\SampleRemapper.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\ScopeProcessor.cpp">
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\FFTProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\SampleRemapperBin.cpp">
@@ -2910,6 +2910,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\DataStructure\MangledState.h">
+      <Filter>Mangled\Source\DataStructure</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\DataStructure\SampleFifo.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
@@ -2940,7 +2943,7 @@
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\RMSProcessor.h">
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\TemporalProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\GainProcessor.h">
@@ -2953,9 +2956,6 @@
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\IIRBiquadFilter.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\AllUnitProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\DCFilter.h">
@@ -2979,7 +2979,7 @@
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\SampleRemapper.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\ScopeProcessor.h">
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\FFTProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\SampleRemapperBin.h">
