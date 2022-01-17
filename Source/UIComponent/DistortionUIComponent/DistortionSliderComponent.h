@@ -37,7 +37,7 @@ class DistortionSliderComponent
     , public juce::Button::Listener
 {
 public:
-    DistortionSliderComponent(MainLayerDataStruct& mlDataStruct);
+    DistortionSliderComponent(AudioEngineState<float>& mlDataStruct);
     ~DistortionSliderComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -155,7 +155,7 @@ public:
 
     void switchComboBox();
 
-    void setUI(int circuitID, int circuitType);
+    void setUI(int circuitID, int circuitType, bool isBipolar);
 
     //Get Function
     juce::ComboBox*   getEquationTypeComboBox()      { return &eqaTypeComboBox; };
@@ -200,6 +200,7 @@ private:
     //juce::ComboBox distortionEquationForNegativeValueWaveShaperComboBox;
 
     OnOffButton bipolarOnOffButton;
+    //juce::TextButton bipolarOnOffButton;
 
     //juce::TextButton hybridModeOnOffButton;
 
@@ -232,7 +233,7 @@ private:
 
     juce::TextButton resetAllButton;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
 
     bool shouldDrag = false;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionSliderComponent)

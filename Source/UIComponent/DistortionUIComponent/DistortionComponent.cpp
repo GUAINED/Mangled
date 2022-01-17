@@ -12,7 +12,7 @@
 #include "DistortionComponent.h"
 
 //==============================================================================
-DistortionComponent::DistortionComponent(MainLayerDataStruct& mlDataStruct)
+DistortionComponent::DistortionComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
 {
 

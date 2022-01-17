@@ -138,7 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\DataStructure\MangledState.cpp"/>
-    <ClCompile Include="..\..\Source\DataStructure\SampleFifo.cpp"/>
+    <ClCompile Include="..\..\Source\DataStructure\NoReadLockAudioSampleFifo.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\Conversion.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\MangledIdentifiers.cpp"/>
     <ClCompile Include="..\..\Source\DataStructure\AudioSampleFifo.cpp"/>
@@ -2260,7 +2260,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\DataStructure\MangledState.h"/>
-    <ClInclude Include="..\..\Source\DataStructure\SampleFifo.h"/>
+    <ClInclude Include="..\..\Source\DataStructure\NoReadLockAudioSampleFifo.h"/>
     <ClInclude Include="..\..\Source\DataStructure\Conversion.h"/>
     <ClInclude Include="..\..\Source\DataStructure\MangledIdentifiers.h"/>
     <ClInclude Include="..\..\Source\DataStructure\AudioSampleFifo.h"/>

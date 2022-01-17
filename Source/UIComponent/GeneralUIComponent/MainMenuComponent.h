@@ -20,7 +20,7 @@
 class MainMenuComponent  : public juce::Component
 {
 public:
-    MainMenuComponent(MainLayerDataStruct& mlDataStruct);
+    MainMenuComponent(AudioEngineState<float>& mlDataStruct);
     ~MainMenuComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -42,7 +42,7 @@ private:
     //PunchMenuComponent punchMenu;
     //TailMenuComponent tailMenu;
     //MainClipperMenuComponent mainClipperMenu;
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainMenuComponent)
 };

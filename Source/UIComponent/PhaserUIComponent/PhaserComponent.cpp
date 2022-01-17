@@ -12,7 +12,7 @@
 #include "PhaserComponent.h"
 
 //==============================================================================
-PhaserComponent::PhaserComponent(MainLayerDataStruct& mlDataStruct)
+PhaserComponent::PhaserComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
     , phaserOnOffButton("", "On", PhaserConstants::Processor<float>::isBypassedStartValue)
     , resetButton("Reset")

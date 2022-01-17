@@ -12,7 +12,7 @@
 #include "MainLayerMenuComponent.h"
 
 //==============================================================================
-MainLayerMenuComponent::MainLayerMenuComponent(MainLayerDataStruct& mlDataStruct)
+MainLayerMenuComponent::MainLayerMenuComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
 {
     setInterceptsMouseClicks(false, true);

@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 #include "../../DataStructure/MangledIdentifiers.h"
-#include "../../DataStructure/SampleFifo.h"
+#include "../../DataStructure/NoReadLockAudioSampleFifo.h"
 #include "../../DataStructure/AudioSampleFifo.h"
 #include "CurveEquation.h"
 

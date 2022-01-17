@@ -29,7 +29,7 @@ class StageComponent : public juce::Component
                      , public juce::ComboBox::Listener
 {
 public:
-    StageComponent(MainLayerDataStruct& mlDataStruct);
+    StageComponent(AudioEngineState<float>& mlDataStruct);
     ~StageComponent() override;
 
     enum RadioButtonIds
@@ -167,6 +167,6 @@ private:
 
     bool shouldDrag = false;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StageComponent)
 };

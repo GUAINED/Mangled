@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
+#include "../../DataStructure/MangledState.h"
 #include "../Controls/OnOffButton.h"
 #include "../Controls/MangledSlider.h"
 //==============================================================================
@@ -23,7 +24,7 @@ class EQSliderComponent : public juce::Component
                         , public juce::ComboBox::Listener
 {
 public:
-    EQSliderComponent(MainLayerDataStruct& mlDataStruct, juce::Colour initBackgroundColour);
+    EQSliderComponent(AudioEngineState<float>& mlDataStruct, juce::Colour initBackgroundColour);
     ~EQSliderComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -65,6 +66,6 @@ private:
 
     juce::TextButton filterIsActiveEQButton;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQSliderComponent)
 };

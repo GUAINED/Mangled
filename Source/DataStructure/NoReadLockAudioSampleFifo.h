@@ -11,10 +11,10 @@
 #pragma once
 #include <JuceHeader.h>
 
-class AbstractWriter
+class NoReadLockAbstractWriter
 {
 public:
-    AbstractWriter() = default;
+    NoReadLockAbstractWriter() = default;
 
     void reset(int capacity, int samplesToRead) noexcept
     {
@@ -89,11 +89,11 @@ private:
     std::atomic <int> readSize;
     std::atomic <int> writePos;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AbstractWriter)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NoReadLockAbstractWriter)
 };
 
 template <typename SampleType>
-class SampleFifo
+class NoReadLockAudioSampleFifo
 {
 public:
     void reset(int numberOfChannels, int capacity)
@@ -218,7 +218,7 @@ public:
             std::copy_n(source + start2, size2, destination + size1);
     }
 private:
-    AbstractWriter fifo;
+    NoReadLockAbstractWriter fifo;
     
     //juce::AbstractFifo fifo;
     juce::AudioBuffer<SampleType> buffer;

@@ -12,6 +12,7 @@
 #include "DataStructure/hostInformation.h"
 #include "DataStructure/UnitProcessorAttachmentStructure.h"
 #include "DataStructure/MainLayerDataStruct.h"
+#include "DataStructure/MangledState.h"
 #include "Processor/AudioEngine.h"
 #include "UIComponent/ScopeUIComponent/ScopeDisplay.h"
 
@@ -62,8 +63,8 @@ public:
 
     hostInformation& getHostInfo() { return hostInformation; };
     AudioEngine<float>* getAudioEngine() { return &audioEngine; };
-    MainLayerDataStruct& getMainLayerDataStruct() { return mainLayerDataStruct; };
-
+    //MainLayerDataStruct& getMainLayerDataStruct() { return mainLayerDataStruct; };
+    AudioEngineState<float>& getMainLayerDataStruct() { return mainLayerDataStruct; };
     std::atomic<double> bpm{ 120.0 };
     std::atomic<double> ppq{ 0.0 };
     std::atomic<juce::int64> ppqSample{ 0 };
@@ -75,21 +76,6 @@ public:
     //int getBufferSize() { return bufferSize.load(); };
     void saveState(int stateID)
     {
-        //switch (stateID)
-        //{
-        //case AudioEngineConstants::Processor<float>::StateID::A:
-
-        //    break;
-
-        //case AudioEngineConstants::Processor<float>::StateID::B:
-
-        //    break;
-
-        //case AudioEngineConstants::Processor<float>::StateID::C:
-
-        //    break;
-        //}
-
         juce::ValueTree apvtsState = mainLayerDataStruct.getAPVTSMainLayer().copyState();
         state[stateID]->removeAllChildren(nullptr);
         state[stateID]->addChild(apvtsState, 0, nullptr);
@@ -118,8 +104,8 @@ public:
 private:
     //int count = 0;
     //==============================================================================
-    MainLayerDataStruct mainLayerDataStruct;
-
+    //MainLayerDataStruct mainLayerDataStruct;
+    AudioEngineState<float> mainLayerDataStruct;
     hostInformation hostInformation;
     AudioEngine<float> audioEngine;
 

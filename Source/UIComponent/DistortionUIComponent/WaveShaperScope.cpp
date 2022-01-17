@@ -12,7 +12,7 @@
 #include "WaveShaperScope.h"
 
 //==============================================================================
-WaveShaperScope::WaveShaperScope(MainLayerDataStruct& mlDataStruct)
+WaveShaperScope::WaveShaperScope(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
 {   
     setInterceptsMouseClicks(false, false);
@@ -258,15 +258,15 @@ void WaveShaperScope::setWaveShaperTensionIsSelected(int selectedCurveID)
     tensionDraggerVector[selectedCurveID]->setColour(DistortionConstants::UI::Colour::selectedTension);
 }
 
-void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, int distortionUnitID, SampleRemapper<float>* pSM)
+void WaveShaperScope::updateUI(int distortionUnitID, SampleRemapper<float>* pSM)
 {
-    int selectedStageID = mainLayerDataStruct.getSelectedStageID();
-    //int selectedDistoUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
+    int selectedStageID = dataStruct.getSelectedStageID();
+    //int selectedDistoUnitID = dataStruct.getSelectedDistoUnitID();
     int selectedDistoUnitID = distortionUnitID;
-    int selectedPointID = mainLayerDataStruct.getSelectedPointID(selectedStageID, selectedDistoUnitID);
-    int selectedCurveID = mainLayerDataStruct.getSelectedCurveID(selectedStageID, selectedDistoUnitID);
+    int selectedPointID = dataStruct.getSelectedPointID(selectedStageID, selectedDistoUnitID);
+    int selectedCurveID = dataStruct.getSelectedCurveID(selectedStageID, selectedDistoUnitID);
 
-    int nbOfPoints = mainLayerDataStruct.getNbOfPoints(selectedStageID, selectedDistoUnitID);
+    int nbOfPoints = dataStruct.getNbOfPoints(selectedStageID, selectedDistoUnitID);
 
     bool pointVisible = true;
     bool tensionVisible;
@@ -288,7 +288,7 @@ void WaveShaperScope::updateUI(MainLayerDataStruct& mainLayerDataStruct, int dis
 
     setWaveShaperPointIsSelected(selectedPointID);
 
-    bool isBipolar = mainLayerDataStruct.getIsBipolar(selectedStageID, selectedDistoUnitID);
+    bool isBipolar = dataStruct.getIsBipolar(selectedStageID, selectedDistoUnitID);
 
     if (isBipolar)
     {

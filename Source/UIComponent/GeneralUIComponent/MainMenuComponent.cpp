@@ -12,7 +12,7 @@
 #include "MainMenuComponent.h"
 
 //==============================================================================
-MainMenuComponent::MainMenuComponent(MainLayerDataStruct& mlDataStruct)
+MainMenuComponent::MainMenuComponent(AudioEngineState<float>& mlDataStruct)
     : mainLayerMenu(mlDataStruct)
     , dataStruct(mlDataStruct)
 {

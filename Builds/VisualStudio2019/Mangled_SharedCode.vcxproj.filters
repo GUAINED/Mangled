@@ -520,7 +520,7 @@
     <ClCompile Include="..\..\Source\DataStructure\MangledState.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\DataStructure\SampleFifo.cpp">
+    <ClCompile Include="..\..\Source\DataStructure\NoReadLockAudioSampleFifo.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\DataStructure\Conversion.cpp">
@@ -2913,7 +2913,7 @@
     <ClInclude Include="..\..\Source\DataStructure\MangledState.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\DataStructure\SampleFifo.h">
+    <ClInclude Include="..\..\Source\DataStructure\NoReadLockAudioSampleFifo.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DataStructure\Conversion.h">

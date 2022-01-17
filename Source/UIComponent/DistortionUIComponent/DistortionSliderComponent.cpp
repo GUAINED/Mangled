@@ -12,7 +12,7 @@
 #include "DistortionSliderComponent.h"
 
 //==============================================================================
-DistortionSliderComponent::DistortionSliderComponent(MainLayerDataStruct& mlDataStruct)
+DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& mlDataStruct)
     : distoProcFirstButton("Routing", "On", true)
     , bipolarOnOffButton("Bipolar", "Off", false)
     , dcFilterOnOffButton("DC Filter", "On", true)
@@ -296,7 +296,7 @@ void DistortionSliderComponent::buttonClicked(juce::Button* button)
     //WaveShaper Button
     else if (button == getBipolarOnOffButton()) //Display Main Clipper Menu
     {
-        bool isBipolar = getBipolarOnOffButton()->getToggleState();
+        bool isBipolar = ! getBipolarOnOffButton()->getToggleState();
         dataStruct.setIsBipolar(stageID, distortionUnitID, isBipolar);
 
     }
@@ -436,9 +436,10 @@ void DistortionSliderComponent::switchComboBox()
     }
 }
 
-void DistortionSliderComponent::setUI(int circuitID, int circuitType)
+void DistortionSliderComponent::setUI(int circuitID, int circuitType, bool isBipolar)
 {
     switchComboBox();
+    getBipolarOnOffButton()->setToggleState(! isBipolar, juce::dontSendNotification);
     //switch (circuitType)
     //{
     //    case DistortionCircuitConstants::Processor<float>::EquationType::sigmoid :

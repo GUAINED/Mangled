@@ -12,7 +12,7 @@
 #include "ScopeComponent.h"
 
 //==============================================================================
-ScopeComponent::ScopeComponent(MainLayerDataStruct& mlDataStruct)
+ScopeComponent::ScopeComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
     , scopeDisplay(mlDataStruct)
     , preEQOnOffButton("PreEQ", "On", ScopeConstants::Processor<float>::preEQIsBypassedStartValue)

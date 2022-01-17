@@ -10,8 +10,10 @@
         <FILE id="Qd90FS" name="MangledState.cpp" compile="1" resource="0"
               file="Source/DataStructure/MangledState.cpp"/>
         <FILE id="wKpP39" name="MangledState.h" compile="0" resource="0" file="Source/DataStructure/MangledState.h"/>
-        <FILE id="zhGLcd" name="SampleFifo.cpp" compile="1" resource="0" file="Source/DataStructure/SampleFifo.cpp"/>
-        <FILE id="wAbCq2" name="SampleFifo.h" compile="0" resource="0" file="Source/DataStructure/SampleFifo.h"/>
+        <FILE id="zhGLcd" name="NoReadLockAudioSampleFifo.cpp" compile="1"
+              resource="0" file="Source/DataStructure/NoReadLockAudioSampleFifo.cpp"/>
+        <FILE id="wAbCq2" name="NoReadLockAudioSampleFifo.h" compile="0" resource="0"
+              file="Source/DataStructure/NoReadLockAudioSampleFifo.h"/>
         <FILE id="NhUpg6" name="Conversion.cpp" compile="1" resource="0" file="Source/DataStructure/Conversion.cpp"/>
         <FILE id="I0ZjnM" name="Conversion.h" compile="0" resource="0" file="Source/DataStructure/Conversion.h"/>
         <FILE id="ksCw54" name="MangledIdentifiers.cpp" compile="1" resource="0"

@@ -12,7 +12,7 @@
 #include "EQComponent.h"
 
 //==============================================================================
-EQComponent::EQComponent(MainLayerDataStruct& mlDataStruct) 
+EQComponent::EQComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
     , onOffButton("", "On", true)
 {
@@ -181,7 +181,10 @@ void EQComponent::buttonClicked(juce::Button* button)
     int filterID = dataStruct.getSelectedFilterID(stageID);
     if (button == getResetButton())
     {
+        dataStruct.setSelectedFilterID(stageID, -1);
+        dataStruct.setNbOfActiveFilter(stageID, 0);
         dataStruct.resetEQParam(stageID);
+
     }
     else if (button == eqSlider[filterID]->getFilterIsActiveEQTextButton())
     {

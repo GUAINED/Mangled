@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "../../DataStructure/MainLayerDataStruct.h"
+#include "../../DataStructure/MangledState.h"
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../Controls/OnOffButton.h"
 #include "../Controls/MangledSlider.h"
@@ -24,7 +25,7 @@ class PhaserComponent  : public juce::Component
                        , public juce::Button::Listener
 {
 public:
-    PhaserComponent(MainLayerDataStruct& mlDataStruct);
+    PhaserComponent(AudioEngineState<float>& mlDataStruct);
     ~PhaserComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -67,6 +68,6 @@ private:
 
     juce::TextButton resetButton;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PhaserComponent)
 };

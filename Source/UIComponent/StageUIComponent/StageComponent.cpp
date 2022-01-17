@@ -12,7 +12,7 @@
 #include "StageComponent.h"
 
 //==============================================================================
-StageComponent::StageComponent(MainLayerDataStruct& mlDataStruct)
+StageComponent::StageComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
     , scope(mlDataStruct)
     , eqComponent(mlDataStruct)

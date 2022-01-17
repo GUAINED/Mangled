@@ -25,6 +25,7 @@ MangledAudioProcessor::MangledAudioProcessor()
                         EQConstants::Processor<float>::nbOfFilterMax,
                         DistortionConstants::Processor<float>::nbOfDUMax)
     , audioEngine(2)
+    //, eqState(mainLayerDataStruct.getAPVTSMainLayer())
 
 #endif
 {
@@ -32,6 +33,7 @@ MangledAudioProcessor::MangledAudioProcessor()
     {
         state.add(new juce::ValueTree(AudioEngineConstants::UI::stateString[i]));
     }
+
 }
 
 MangledAudioProcessor::~MangledAudioProcessor()
@@ -539,6 +541,14 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
         newEQFilterParams.isActive ? newEQFilterParams.biquadParams.type = (int)*apvts.getRawParameterValue(paramString)
             : newEQFilterParams.biquadParams.type = -1;
 
+        //AudioEngineState<float>::EQState& eqstate = mainLayerDataStruct.getEQState();
+        //newEQFilterParams.biquadParams.cutoff = eqstate.getFilterCutoff(stageID, filterID);
+        //newEQFilterParams.biquadParams.q = eqstate.getFilterQ(stageID, filterID);
+        //newEQFilterParams.biquadParams.gain = juce::Decibels::decibelsToGain(eqstate.getFilterGain(stageID, filterID));
+        //newEQFilterParams.nbOfBiquads = eqstate.getFilterOrder(stageID, filterID);
+        //newEQFilterParams.biquadParams.type = eqstate.getFilterType(stageID, filterID);
+        //newEQFilterParams.isActive = eqstate.getFilterIsActive(stageID, filterID);
+        //newEQFilterParams.isBypassed = eqstate.getFilterIsBypassed(stageID, filterID);
         newEQFilterParams.id = filterID;
 
         pEQProcessor->setEQFilterParams(newEQFilterParams);

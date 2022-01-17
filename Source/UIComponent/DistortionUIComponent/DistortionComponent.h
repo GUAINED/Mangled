@@ -23,7 +23,7 @@ class DistortionComponent : public juce::Component
                           , public juce::Button::Listener
 {
 public:
-    DistortionComponent(MainLayerDataStruct& mlDataStruct);
+    DistortionComponent(AudioEngineState<float>& mlDataStruct);
     ~DistortionComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -47,6 +47,6 @@ private:
 
     juce::OwnedArray<DistortionSliderComponent> distortionSliderComponent;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionComponent)
 };

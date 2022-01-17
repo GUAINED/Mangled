@@ -12,7 +12,7 @@
 #include "ScopeDisplay.h"
 
 //==============================================================================
-ScopeDisplay::ScopeDisplay(MainLayerDataStruct& dataStruct)
+ScopeDisplay::ScopeDisplay(AudioEngineState<float>& dataStruct)
     : preEQFFTBuffer(2, 4096)
     , postEQFFTBuffer(2, 4096)
     , postDistoFFTBuffer(2, 4096)
@@ -362,11 +362,11 @@ void ScopeDisplay::computeFrequencyAndXAxisValueForFilterMagnitude()
     }
 }
 
-void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLayerDataStruct, int filterID) //const float* filterMagnitudeValue,
+void ScopeDisplay::computeEQFilterFrequencyResponse(int filterID) //const float* filterMagnitudeValue,
 {
-    int stageID = mainLayerDataStruct.getSelectedStageID();
+    int stageID = dataStruct.getSelectedStageID();
 
-    filterDrawingBank[filterID].isActive = mainLayerDataStruct.getEQFilterIsActive(stageID, filterID);
+    filterDrawingBank[filterID].isActive = dataStruct.getEQFilterIsActive(stageID, filterID);
 
     if (! filterDrawingBank[filterID].isActive)
     {
@@ -388,12 +388,12 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
     //float remappedMag = juce::jmap(filterMagnitudeValue[0], gainMin, gainMax, scopeHeight, 0.0f);
     float remappedMag = juce::jmap(filterMagBuffer.getReadPointer(filterID)[0], gainMin, gainMax, scopeHeight, 0.0f);
 
-    bool filterIsBypassed = mainLayerDataStruct.getEQFilterIsBypassed(stageID, filterID);
-    float filterCutOff = mainLayerDataStruct.getEQFilterCutoff(stageID, filterID);
+    bool filterIsBypassed = dataStruct.getEQFilterIsBypassed(stageID, filterID);
+    float filterCutOff = dataStruct.getEQFilterCutoff(stageID, filterID);
 
     filterDrawingBank[filterID].filterPath.clear();
     filterDrawingBank[filterID].filterPath.startNewSubPath(xAxisForFilterMagnitude[0], remappedMag);
-    filterDrawingBank[filterID].type = mainLayerDataStruct.getEQFilterType(stageID, filterID);
+    filterDrawingBank[filterID].type = dataStruct.getEQFilterType(stageID, filterID);
     filterDrawingBank[filterID].isBypassed = filterIsBypassed;
     filterDrawingBank[filterID].opacity = filterIsBypassed ? EQConstants::UI::opacityOff_f : EQConstants::UI::opacityOn_f;
 
@@ -414,13 +414,13 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
 
     xPos -= 0.5f * draggerDiameter;
 
-    int filterType = mainLayerDataStruct.getEQFilterType(stageID, filterID);
+    int filterType = dataStruct.getEQFilterType(stageID, filterID);
 
     if (filterType == EQConstants::BiquadConstants<float>::Types::peak || 
         filterType == EQConstants::BiquadConstants<float>::Types::lowshelf || 
         filterType == EQConstants::BiquadConstants<float>::Types::highshelf)
     {
-        float gain = mainLayerDataStruct.getEQFilterGain(stageID, filterID);
+        float gain = dataStruct.getEQFilterGain(stageID, filterID);
 
         //float gainMin = 0.0f;
         //float gainMax = 0.0f;
@@ -498,7 +498,7 @@ void ScopeDisplay::computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLay
             break;
         }
         
-        yPos = Conversion<float>::fromQToYPositon(mainLayerDataStruct.getEQFilterQ(stageID, filterID), qMin, qMax, scopeHeight - scopeHeight / 14.0f, 0.0f + scopeHeight / 14.0f);
+        yPos = Conversion<float>::fromQToYPositon(dataStruct.getEQFilterQ(stageID, filterID), qMin, qMax, scopeHeight - scopeHeight / 14.0f, 0.0f + scopeHeight / 14.0f);
         yPos -= 0.5f * draggerDiameter;
     }
 
@@ -767,16 +767,16 @@ bool ScopeDisplay::isMouseOnScope(const juce::MouseEvent& e)
     return isMouseOnScope;
 }
 
-int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct)
+int ScopeDisplay::updateUI()
 {
-    int stageID = mainLayerDataStruct.getSelectedStageID();
+    int stageID = dataStruct.getSelectedStageID();
     bool isAnyActiveFilter = false;
     int nbOfActiveFilter = 0;
-    int selectedFilterID = mainLayerDataStruct.getSelectedFilterID(stageID);
+    int selectedFilterID = dataStruct.getSelectedFilterID(stageID);
 
     setSelectedFilterDragger(selectedFilterID);
     juce::String paramString = ScopeConstants::ParamStringID::GetParamStringID::preEQIsBypassed(stageID);
-    if (*mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString))
+    if (*dataStruct.getAPVTSMainLayer().getRawParameterValue(paramString))
     {
         fftPreEQPath.clear();
     }
@@ -785,7 +785,7 @@ int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct)
         computeFFTPath(&preEQFFTBuffer, &fftPreEQPath);
     }
     paramString = ScopeConstants::ParamStringID::GetParamStringID::postEQIsBypassed(stageID);
-    if (*mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString))
+    if (*dataStruct.getAPVTSMainLayer().getRawParameterValue(paramString))
     {
         fftPostEQPath.clear();
     }
@@ -794,7 +794,7 @@ int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct)
         computeFFTPath(&postEQFFTBuffer, &fftPostEQPath);
     }
     paramString = ScopeConstants::ParamStringID::GetParamStringID::postDistoIsBypassed(stageID);
-    if (*mainLayerDataStruct.getAPVTSMainLayer().getRawParameterValue(paramString))
+    if (*dataStruct.getAPVTSMainLayer().getRawParameterValue(paramString))
     {
         fftPostDistoPath.clear();
     }
@@ -806,12 +806,12 @@ int ScopeDisplay::updateUI(MainLayerDataStruct& mainLayerDataStruct)
 
     for (int filterID = 0; filterID < EQConstants::Processor<float>::nbOfFilterMax; ++filterID)
     {
-        computeEQFilterFrequencyResponse(mainLayerDataStruct, filterID);
+        computeEQFilterFrequencyResponse(filterID);
 
-        if (mainLayerDataStruct.getEQFilterIsActive(stageID, filterID))
+        if (dataStruct.getEQFilterIsActive(stageID, filterID))
             nbOfActiveFilter += 1;
 
-        isAnyActiveFilter = isAnyActiveFilter || mainLayerDataStruct.getEQFilterIsActive(stageID, filterID);
+        isAnyActiveFilter = isAnyActiveFilter || dataStruct.getEQFilterIsActive(stageID, filterID);
     }
 
     computeEQFilterSumFrequencyResponse(isAnyActiveFilter);

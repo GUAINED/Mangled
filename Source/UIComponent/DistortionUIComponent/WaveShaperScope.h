@@ -18,6 +18,7 @@
 #include "../../Processor/UnitProcessor/SampleRemapperBin.h"
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
+#include "../../DataStructure/MangledState.h"
 #include "../GeneralUIComponent/SelectablePointDragger.h"
 //#include "../../DataStructure/ValueTreeWs.h"
 
@@ -27,13 +28,13 @@
 class WaveShaperScope  : public juce::Component
 {
 public:
-    WaveShaperScope(MainLayerDataStruct& mlDataStruct);
+    WaveShaperScope(AudioEngineState<float>& mlDataStruct);
     ~WaveShaperScope() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void updateUI(MainLayerDataStruct& mainLayerDataStruct, int distortionUnitID, SampleRemapper<float>* pSM);
+    void updateUI(int distortionUnitID, SampleRemapper<float>* pSM);
 
     //Set function================================================================================================================================================================
     void setWaveShaperPointIsSelected(int selectedPointID);
@@ -69,6 +70,6 @@ private:
 
     juce::Colour bipolarColour = juce::Colours::darkgrey;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveShaperScope)
 };

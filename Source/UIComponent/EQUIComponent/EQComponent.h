@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "EQSliderComponent.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
+#include "../../DataStructure/MangledState.h"
 #include "../../Processor/UnitProcessor/EQProcessor.h"
 #include "../Controls/OnOffButton.h"
 #include "../Controls/MangledSlider.h"
@@ -23,7 +24,7 @@ class EQComponent  : public juce::Component,
     public juce::Button::Listener
 {
 public:
-    EQComponent(MainLayerDataStruct& mlDataStruct);
+    EQComponent(AudioEngineState<float>& mlDataStruct);
     ~EQComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -66,6 +67,6 @@ private:
 
     juce::OwnedArray<EQSliderComponent> eqSlider;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQComponent)
 };

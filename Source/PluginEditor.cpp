@@ -644,7 +644,7 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
 
 void MangledAudioProcessorEditor::updateScope(int stageID)
 {
-    MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
+    AudioEngineState<float>& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
 
     StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
 
@@ -678,7 +678,7 @@ void MangledAudioProcessorEditor::updateScope(int stageID)
         juce::AudioBuffer<float>& filterSumMag = pScopeDisplay->getFilterMagSumBuffer();
         pEQProcessor->pullFilterMagFifo(filterMag);
         pEQProcessor->pullFilterSumMagFifo(filterSumMag);
-        int nbOfActiveFilter = pScopeDisplay->updateUI(mainLayerDataStruct);
+        int nbOfActiveFilter = pScopeDisplay->updateUI();
 
         //pStageComponent->getEQComponent()->setNbOfActiveFilter(nbOfActiveFilter);
 
@@ -747,13 +747,13 @@ void MangledAudioProcessorEditor::updateScope(int stageID)
 
 void MangledAudioProcessorEditor::updateDistortion(int stageID, int distortionUnitID)
 {
-    MainLayerDataStruct& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
+    //AudioEngineState<float>& mainLayerDataStruct = audioProcessor.getMainLayerDataStruct();
     StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
     StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
     SampleRemapper<float>* pSM = pStageProcessor->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper();
     WaveShaperScope* pWaveShaperScope = pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getScope();
-    pWaveShaperScope->updateUI(mainLayerDataStruct, distortionUnitID, pSM);
+    pWaveShaperScope->updateUI(distortionUnitID, pSM);
 
     int pointID = audioProcessor.getMainLayerDataStruct().getSelectedCurveID(stageID, distortionUnitID);
     bool deleteEnable = audioProcessor.getMainLayerDataStruct().getHorizontalDragOn(stageID, distortionUnitID, pointID);
@@ -865,7 +865,11 @@ void MangledAudioProcessorEditor::setUI()
 
            //circuitType = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationType(stageID, distoUID);
            //circuitID = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationID(stageID, distoUID);
-           pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(0,0);// circuitID, circuitType);
+           bool isBipolar = audioProcessor.getMainLayerDataStruct().getIsBipolar(stageID, distoUID);
+
+           pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(0,0, isBipolar);// circuitID, circuitType);
+           //bool isBipolar = audioProcessor.getMainLayerDataStruct().getIsBipolar(stageID, distoUID);
+
        }
     }
 }
@@ -950,9 +954,10 @@ void MangledAudioProcessorEditor::switchUI(int stageID, int processorID,int dist
         //    circuitID = 0;
         //    break;
         //}
+        bool isBipolar = audioProcessor.getMainLayerDataStruct().getIsBipolar(stageID, distoUID);
 
-        pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType);
-        
+        pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType, isBipolar);
+        //pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->
     }
 
     for (int stgID = 0; stgID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stgID)

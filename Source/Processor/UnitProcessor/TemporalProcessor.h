@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 #include "../../DataStructure/AudioSampleFifo.h"
-#include "../../DataStructure/SampleFifo.h"
+#include "../../DataStructure/NoReadLockAudioSampleFifo.h"
 #include "IIRBiquadFilter.h"
 
 template <typename SampleType>
@@ -243,7 +243,7 @@ public:
     };
 private:
     juce::OwnedArray<IIRBiquadFilter<SampleType>> lowpassFilter;
-    SampleFifo<SampleType> rmsFifo;
+    NoReadLockAudioSampleFifo<SampleType> rmsFifo;
     //AudioSampleFifo<SampleType> rmsFifo;
 
     juce::AudioBuffer<SampleType> rmsCalculationBuffer;

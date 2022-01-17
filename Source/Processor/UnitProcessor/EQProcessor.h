@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 #include "IIRBiquadFilter.h"
 #include "../../DataStructure/AudioSampleFifo.h"
-#include "../../DataStructure/SampleFifo.h"
+#include "../../DataStructure/NoReadLockAudioSampleFifo.h"
 //#include "../../DataStructure/MangledIdentifiers.h"
 
 template <typename SampleType>

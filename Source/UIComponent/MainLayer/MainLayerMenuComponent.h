@@ -35,7 +35,7 @@ public:
     {
         StageButtons = 1001
     };
-    MainLayerMenuComponent(MainLayerDataStruct& mlDataStruct);
+    MainLayerMenuComponent(AudioEngineState<float>& mlDataStruct);
     ~MainLayerMenuComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -54,6 +54,6 @@ private:
     juce::OwnedArray<MangledDualStateButton> stageIDButtonVector;
     juce::OwnedArray<StageComponent> stageComponentVector;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainLayerMenuComponent)
 };

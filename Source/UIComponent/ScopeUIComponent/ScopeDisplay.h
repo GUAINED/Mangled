@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 //#include "../../DataStructure/hostInformation.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
+#include "../../DataStructure/MangledState.h"
 #include "../../DataStructure/Conversion.h"
 #include "../../Processor/UnitProcessor/EQProcessor.h"
 #include "../GeneralUIComponent/SelectablePointDragger.h"
@@ -25,7 +26,7 @@ class ScopeDisplay : public juce::Component
                    , public juce::ComboBox::Listener
 {
 public:
-    ScopeDisplay(MainLayerDataStruct& dataStruct);
+    ScopeDisplay(AudioEngineState<float>& dataStruct);
     ~ScopeDisplay() override;
 
     void paint (juce::Graphics&) override;
@@ -46,7 +47,7 @@ public:
     //Compute the filter response from the coefficient at the freqForFilterMagnitude.
     void computeFrequencyAndXAxisValueForFilterMagnitude();
     
-    void computeEQFilterFrequencyResponse(MainLayerDataStruct& mainLayerDataStruct, int filterID); //, const float* filterMagnitudeValue
+    void computeEQFilterFrequencyResponse(int filterID); //, const float* filterMagnitudeValue
     void computeEQFilterSumFrequencyResponse(bool isAnyActiveFilter); //const float* filterSumMagnitudeValue, 
     void closeFilterAreaOfEffectPath(int filterType, int filterID);
     
@@ -77,7 +78,7 @@ public:
 
     void setGainLim(int zoomID);
 
-    int updateUI(MainLayerDataStruct& mainLayerDataStruct);
+    int updateUI();
 
     //Get function
     juce::AudioBuffer<float>* getPreEQFFTBuffer() { return &preEQFFTBuffer; };
@@ -129,7 +130,7 @@ private:
     float gainMax = 0.0f;
     float gainLabelInc = 0.0f;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
     LookAndFeel_V4_ComboBox lafComboBox;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopeDisplay)
 };

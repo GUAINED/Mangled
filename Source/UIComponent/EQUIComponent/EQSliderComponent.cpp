@@ -12,7 +12,7 @@
 #include "EQSliderComponent.h"
 
 //==============================================================================
-EQSliderComponent::EQSliderComponent(MainLayerDataStruct& mlDataStruct, juce::Colour initBackgroundColour)
+EQSliderComponent::EQSliderComponent(AudioEngineState<float>& mlDataStruct, juce::Colour initBackgroundColour)
     : dataStruct(mlDataStruct)
     , filterOnOffEQButton("", "Off", EQConstants::BiquadConstants<float>::isBypassedStartValue)
     , backgroundColour(initBackgroundColour)

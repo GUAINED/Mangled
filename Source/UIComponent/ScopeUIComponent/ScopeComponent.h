@@ -23,7 +23,7 @@ class ScopeComponent : public juce::Component
                      , public juce::ComboBox::Listener
 {
 public:
-    ScopeComponent(MainLayerDataStruct& mlDataStruct);
+    ScopeComponent(AudioEngineState<float>& mlDataStruct);
     ~ScopeComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -66,7 +66,7 @@ private:
 
     juce::Slider subViewSlider;
 
-    MainLayerDataStruct& dataStruct;
+    AudioEngineState<float>& dataStruct;
 
     LookAndFeel_V4_Gradient lafGradient;
 
