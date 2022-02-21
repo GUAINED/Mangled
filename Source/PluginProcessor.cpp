@@ -551,7 +551,7 @@ void MangledAudioProcessor::setEQParams(juce::AudioProcessorValueTreeState& apvt
         //newEQFilterParams.isBypassed = eqstate.getFilterIsBypassed(stageID, filterID);
         newEQFilterParams.id = filterID;
 
-        pEQProcessor->setEQFilterParams(newEQFilterParams);
+        pEQProcessor->setFilterParams(newEQFilterParams);
     }
 
     int selectedFilterID = mainLayerDataStruct.getSelectedFilterID(stageID);
@@ -700,29 +700,29 @@ void MangledAudioProcessor::setDistortionParams(juce::AudioProcessorValueTreeSta
 
         pDistortionDU->setDistortionUnitParams(newDistortionUnitProcessorParams);
 
-        SampleRemapper<float>* pSampleRemapper = pDistortionDU->getSampleRemapper();
+        PiecewiseFunction<float>* pPWF = pDistortionDU->getPiecewiseFunction();
 
         int nbOfPoints = mainLayerDataStruct.getNbOfPoints(stageID, distortionUnitID);
-        pSampleRemapper->setNbOfActiveBins(nbOfPoints - 1);
+        pPWF->setNbOfActiveBins(nbOfPoints - 1);
 
         juce::Point<float> leftPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, 0);
         juce::Point<float> rightPoint(0.0f, 0.0f);
         //float tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, 0);
         //int curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, 0);
-        SampleRemapperBin<float>* pSRBin = nullptr;
+        PiecewiseFunctionBin<float>* pPwFBin = nullptr;
 
         for (int binID = 0; binID < nbOfPoints - 1; ++binID)
         {
-            pSRBin = pSampleRemapper->getBin(binID);
-            SampleRemapperBin<float>::BinParams srBinParams;
-            srBinParams.leftPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID + 1);
-            srBinParams.rightPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID);
-            srBinParams.tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, binID);
-            srBinParams.curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, binID);
+            pPwFBin = pPWF->getBin(binID);
+            PiecewiseFunctionBin<float>::BinParams pwfBinParams;
+            pwfBinParams.leftPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID + 1);
+            pwfBinParams.rightPoint = mainLayerDataStruct.getPoint(stageID, distortionUnitID, binID);
+            pwfBinParams.tension = mainLayerDataStruct.getTension(stageID, distortionUnitID, binID);
+            pwfBinParams.curveID = mainLayerDataStruct.getPointCurveType(stageID, distortionUnitID, binID);
 
             //if (srBinParams != pSRBin->getBinParams())
             //{
-                pSRBin->setBinParam(srBinParams);
+                pPwFBin->setBinParam(pwfBinParams);
             //}
             pDistortionDU->computeDistortionEQAPathData(binID);
         }//SR Bin Loop

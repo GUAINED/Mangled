@@ -16,8 +16,9 @@ class PhaseShifterFilter
 {
 public:
     PhaseShifterFilter()
+        : nbOfFilters(2)
     {
-        nbOfFilters = 2;
+        //nbOfFilters = 2;
         for (auto filterID = 0; filterID < nbOfFilters; ++filterID)
         {
             allPassFilters.add(new juce::dsp::FirstOrderTPTFilter<SampleType>());
@@ -66,9 +67,9 @@ public:
 
         for (int filterID = 0; filterID < allPassFilters.size(); ++filterID)
         {
-            jassert(filterID <= allPassFilters.size());
+            jassert(filterID < allPassFilters.size());
             //SampleType yolo = allPassFilters[filterID]->processSample(channelID, output);
-            jassert(channelID <= 2);
+            jassert(channelID < 2);
             output = allPassFilters[filterID]->processSample(channelID, output);
         }
 

@@ -250,7 +250,7 @@ public:
 
     /** Sets the parameters for a given filterID of the EQ.
     */
-    void setEQFilterParams(typename IIRBiquadFilter<SampleType>::FilterParams filterParams)//EQProcessor<SampleType>::FilterParamsForUpdate
+    void setFilterParams(typename IIRBiquadFilter<SampleType>::FilterParams filterParams)//EQProcessor<SampleType>::FilterParamsForUpdate
     {
         int filterID = filterParams.id;
 
@@ -282,27 +282,64 @@ public:
 
                     filterMagnitudedB = filterBank[0][filterID]->getFilterMagnitude(freq);
 
-                    filterSumMagnitudeValue.getWritePointer(0)[i] -= filterMagnitudeValue.getWritePointer(filterID)[i];
+                    //filterSumMagnitudeValue.getWritePointer(0)[i] -= filterMagnitudeValue.getWritePointer(filterID)[i];
 
                     filterMagnitudeValue.getWritePointer(filterID)[i] = filterMagnitudedB;
 
+                }
+
+                if (! filterBank[0][filterID]->getMagHasBeenRemoved())
+                {
+                    for (int i = 0; i < EQConstants::UI::filterMagnitudeSize; ++i)
+                    {
+                        //freq = freqForFilterMagnitude.getReadPointer(0)[i];
+
+                        //filterMagnitudedB = filterMagnitudeValue.getSample(filterID, i);
+
+                        filterSumMagnitudeValue.getWritePointer(0)[i] -= filterMagnitudeValue.getWritePointer(filterID)[i];
+
+                        //filterMagnitudeValue.getWritePointer(filterID)[i] = filterMagnitudedB;
+
+                    }
+
+                    filterBank[0][filterID]->setMagHasBeenRemoved(true);
                 }
             }
             else
             {
-                for (int i = 0; i < EQConstants::UI::filterMagnitudeSize; ++i)
+                if (filterBank[0][filterID]->getMagHasBeenRemoved())
                 {
-                    freq = freqForFilterMagnitude.getReadPointer(0)[i];
+                    for (int i = 0; i < EQConstants::UI::filterMagnitudeSize; ++i)
+                    {
+                        freq = freqForFilterMagnitude.getReadPointer(0)[i];
 
-                    filterMagnitudedB = filterBank[0][filterID]->getFilterMagnitude(freq);
+                        filterMagnitudedB = filterBank[0][filterID]->getFilterMagnitude(freq);
 
-                    filterSumMagnitudeValue.getWritePointer(0)[i] += filterMagnitudedB - filterMagnitudeValue.getWritePointer(filterID)[i];
+                        filterSumMagnitudeValue.getWritePointer(0)[i] += filterMagnitudedB;// -filterMagnitudeValue.getWritePointer(filterID)[i];
 
-                    filterMagnitudeValue.getWritePointer(filterID)[i] = filterMagnitudedB;
+                        filterMagnitudeValue.getWritePointer(filterID)[i] = filterMagnitudedB;
 
+                    }
                 }
-            }
+                else
+                {
+                    for (int i = 0; i < EQConstants::UI::filterMagnitudeSize; ++i)
+                    {
+                        freq = freqForFilterMagnitude.getReadPointer(0)[i];
 
+                        filterMagnitudedB = filterBank[0][filterID]->getFilterMagnitude(freq);
+
+                        filterSumMagnitudeValue.getWritePointer(0)[i] += filterMagnitudedB - filterMagnitudeValue.getWritePointer(filterID)[i];
+
+                        filterMagnitudeValue.getWritePointer(filterID)[i] = filterMagnitudedB;
+
+                    }
+                }
+                   
+
+
+                filterBank[0][filterID]->setMagHasBeenRemoved(false);
+            }
         }
         else
         {

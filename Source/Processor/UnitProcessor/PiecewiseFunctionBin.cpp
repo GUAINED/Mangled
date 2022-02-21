@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "SampleRemapperBin.h"
+#include "PiecewiseFunctionBin.h"
 
 //template <typename SampleType>
 //void WaveShaperPointProcessor<SampleType>::computeCurvePath()

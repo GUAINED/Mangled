@@ -143,7 +143,7 @@ void WaveShaperScope::drawIsBipolarRectangle()
     isBipolarPath.addRectangle(recX, recY, recWidth, recHeight);
 }
 
-void WaveShaperScope::drawSampleRemapperPath(juce::Path* path, const float* binXData, const float* binYData)//, float* eqBinYData)
+void WaveShaperScope::drawPiecewiseFunctionPath(juce::Path* path, const float* binXData, const float* binYData)//, float* eqBinYData)
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -170,13 +170,13 @@ void WaveShaperScope::drawSampleRemapperPath(juce::Path* path, const float* binX
 
 void WaveShaperScope::drawUnipolarPath(const float* binXData, const float* binYData)
 {
-    drawSampleRemapperPath(&unipolarSampleRemapPath, binXData, binYData);
+    drawPiecewiseFunctionPath(&unipolarSampleRemapPath, binXData, binYData);
 
 }
 
 void WaveShaperScope::drawBipolarPath(const float* binXData, const float* binYData)
 {
-    drawSampleRemapperPath(&bipolarSampleRemapPath, binXData, binYData);
+    drawPiecewiseFunctionPath(&bipolarSampleRemapPath, binXData, binYData);
 }
 
 void WaveShaperScope::drawSelectedCurvePath(const float* binXData, const float* binYData)
@@ -258,7 +258,7 @@ void WaveShaperScope::setWaveShaperTensionIsSelected(int selectedCurveID)
     tensionDraggerVector[selectedCurveID]->setColour(DistortionConstants::UI::Colour::selectedTension);
 }
 
-void WaveShaperScope::updateUI(int distortionUnitID, SampleRemapper<float>* pSM)
+void WaveShaperScope::updateUI(int distortionUnitID, PiecewiseFunction<float>* pSM)
 {
     int selectedStageID = dataStruct.getSelectedStageID();
     //int selectedDistoUnitID = dataStruct.getSelectedDistoUnitID();
@@ -403,9 +403,9 @@ void WaveShaperScope::updateUI(int distortionUnitID, SampleRemapper<float>* pSM)
 
     for (int i = 0; i < (nbOfPoints - 1); ++i)
     {
-        //drawSampleRemapperPath(&equationDistortionPath, pSM->getBin(i)->getBinPathData().getReadPointer(0), pSM->getBin(i)->getBinPathData().getReadPointer(2));
+        //drawPiecewiseFunctionPath(&equationDistortionPath, pSM->getBin(i)->getBinPathData().getReadPointer(0), pSM->getBin(i)->getBinPathData().getReadPointer(2));
     
-        drawSampleRemapperPath(&equationDistortionPath, binPathData[i]->getReadPointer(0), binPathData[i]->getReadPointer(2));
+        drawPiecewiseFunctionPath(&equationDistortionPath, binPathData[i]->getReadPointer(0), binPathData[i]->getReadPointer(2));
     }
 
     //setPointAndTension(nbOfPoints - 1,

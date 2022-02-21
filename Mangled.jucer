@@ -88,17 +88,17 @@
           <FILE id="e883ET" name="ProcessorBase.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/ProcessorBase.cpp"/>
           <FILE id="Z5Uxjr" name="ProcessorBase.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/ProcessorBase.h"/>
-          <FILE id="Og0Qq5" name="SampleRemapper.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/SampleRemapper.cpp"/>
-          <FILE id="Rhg5nQ" name="SampleRemapper.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/SampleRemapper.h"/>
+          <FILE id="Og0Qq5" name="PiecewiseFunction.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/PiecewiseFunction.cpp"/>
+          <FILE id="Rhg5nQ" name="PiecewiseFunction.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/PiecewiseFunction.h"/>
           <FILE id="YPyK57" name="FFTProcessor.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/FFTProcessor.cpp"/>
           <FILE id="blbTxp" name="FFTProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/FFTProcessor.h"/>
-          <FILE id="JEciGJ" name="SampleRemapperBin.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/SampleRemapperBin.cpp"/>
-          <FILE id="lq34oE" name="SampleRemapperBin.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/SampleRemapperBin.h"/>
+          <FILE id="JEciGJ" name="PiecewiseFunctionBin.cpp" compile="1" resource="0"
+                file="Source/Processor/UnitProcessor/PiecewiseFunctionBin.cpp"/>
+          <FILE id="lq34oE" name="PiecewiseFunctionBin.h" compile="0" resource="0"
+                file="Source/Processor/UnitProcessor/PiecewiseFunctionBin.h"/>
           <FILE id="Ok3dLh" name="DistortionUnitProcessor.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/DistortionUnitProcessor.cpp"/>
           <FILE id="TwBkkp" name="DistortionUnitProcessor.h" compile="0" resource="0"

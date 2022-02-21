@@ -15,7 +15,7 @@
 #include "../../Processor/UnitProcessor/DistortionCircuit.h"
 #include "WaveShaperPointDragger.h"
 #include "WaveShaperTensionDragger.h"
-#include "../../Processor/UnitProcessor/SampleRemapperBin.h"
+#include "../../Processor/UnitProcessor/PiecewiseFunctionBin.h"
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../DataStructure/MangledState.h"
@@ -34,12 +34,12 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void updateUI(int distortionUnitID, SampleRemapper<float>* pSM);
+    void updateUI(int distortionUnitID, PiecewiseFunction<float>* pSM);
 
     //Set function================================================================================================================================================================
     void setWaveShaperPointIsSelected(int selectedPointID);
     void setWaveShaperTensionIsSelected(int selectedCurveID);
-    void drawSampleRemapperPath(juce::Path* path, const float* binXData, const float* binYData);// , float* eqBinYData);
+    void drawPiecewiseFunctionPath(juce::Path* path, const float* binXData, const float* binYData);// , float* eqBinYData);
     void drawUnipolarPath(const float* binXData, const float* binYData);
     void drawBipolarPath(const float* binXData, const float* binYData);
     void drawSelectedCurvePath(const float* binXData, const float* binYData);

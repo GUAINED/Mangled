@@ -918,7 +918,7 @@ public:
                 //, distortionUnitState(mangledAPVTS)
                 //, root(distortionUnitValueTreeRoot)
             {
-                //create the Value tree for the SampleRemapper;
+                //create the Value tree for the PiecewiseFunction;
             };
 
             ~DistortionUnitState()
@@ -1107,7 +1107,7 @@ public:
                 juce::ValueTree vtDistortionUnit(id);
                 vt.addChild(vtDistortionUnit, -1, nullptr);
 
-                SampleRemapper<SampleType>::createValueTree(vtDistortionUnit, undoManager);
+                PiecewiseFunction<SampleType>::createValueTree(vtDistortionUnit, undoManager);
 
                 //DistortionCircuit<SampleType>::createValueTree(vtDistortionUnit);
             };
@@ -1289,9 +1289,9 @@ public:
     }
     void valueTreeChildAdded(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenAdded) override
     {
-        if (parentTree.getType() == juce::Identifier(SampleRemapperConstants::ParamStringID::srPoints))
+        if (parentTree.getType() == juce::Identifier(PiecewiseFunctionConstants::ParamStringID::srPoints))
         {
-            if (parentTree.getParent().getProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::isBipolar)))
+            if (parentTree.getParent().getProperty(juce::Identifier(PiecewiseFunctionConstants::ParamStringID::isBipolar)))
             {
                 shouldUpdate = true;
             }
@@ -1306,13 +1306,13 @@ public:
     }
     void valueTreeChildRemoved(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved) override
     {
-        if (parentTree.getType() == juce::Identifier(SampleRemapperConstants::ParamStringID::srPoints))
+        if (parentTree.getType() == juce::Identifier(PiecewiseFunctionConstants::ParamStringID::srPoints))
         {
             int nbOfChild = parentTree.getNumChildren();
             if (nbOfChild == 0)
                 return;
 
-            if (parentTree.getParent().getProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::isBipolar)))
+            if (parentTree.getParent().getProperty(juce::Identifier(PiecewiseFunctionConstants::ParamStringID::isBipolar)))
             {
                 shouldUpdate = true;
             }
@@ -1347,15 +1347,15 @@ public:
     //Create ValueTree============================================================================================================================
     juce::ValueTree createPointNoListener(float pointX, float pointY, float tension, int curveID, bool horizontalDragOn)
     {
-        juce::ValueTree vt(SampleRemapperConstants::ParamStringID::point);
+        juce::ValueTree vt(PiecewiseFunctionConstants::ParamStringID::point);
 
-        vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointX, pointX, &undoManager);
-        vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointY, pointY, &undoManager);
+        vt.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::pointX, pointX, &undoManager);
+        vt.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::pointY, pointY, &undoManager);
 
-        vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, tension, &undoManager);
-        vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::horizontalDragOn, horizontalDragOn, &undoManager);
+        vt.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::tension, tension, &undoManager);
+        vt.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::horizontalDragOn, horizontalDragOn, &undoManager);
 
-        vt.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveID, &undoManager);
+        vt.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::curveType, curveID, &undoManager);
 
         return vt;
     };
@@ -1938,7 +1938,7 @@ public:
         apvtsValue = PhaserConstants::Processor<float>::isBypassedStartValue;
     }
 
-    //Set function SampleRemapper====================================================================================================================
+    //Set function PiecewiseFunction====================================================================================================================
     void resetDistortionParam(int stageID)
     {
         //Distortion Mix
@@ -1995,7 +1995,7 @@ public:
         apvtsValue = DistoUnitConstants::Processor<float>::warpStartValue;
 
         //Is Bipolar. Has to be done that way. OtherWise the undoManager Will begin a new transaction.
-        getSampleRemapperVT(stageID, distortionUnitID).setProperty(SampleRemapperConstants::ParamStringID::isBipolar, false, &undoManager);
+        getPiecewiseFunctionVT(stageID, distortionUnitID).setProperty(PiecewiseFunctionConstants::ParamStringID::isBipolar, false, &undoManager);
 
         //DU DCFilterOn
         paramString = DistoUnitConstants::ParamStringID::GetParamStringID::dcFilterIsBypassed(stageID, distortionUnitID);
@@ -2007,13 +2007,13 @@ public:
         apvtsValue = apvts.getParameterAsValue(paramString);
         apvtsValue = DistoUnitConstants::Processor<float>::mixStartValue;
 
-        resetSampleRemapper(stageID, distortionUnitID);
+        resetPiecewiseFunction(stageID, distortionUnitID);
     }
     
-    //SampleRemapper Function
+    //PiecewiseFunction Function
     void switchFromUnipolarToBipolar(int stageID, int distortionUnitID)
     {
-        juce::ValueTree vtWS = getSampleRemapperPointsVT(stageID, distortionUnitID);
+        juce::ValueTree vtWS = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
         int nbOfPoints = getNbOfPoints(stageID, distortionUnitID);
 
         int pointID = nbOfPoints - 1;
@@ -2059,11 +2059,11 @@ public:
             setSelectedIDCurve(stageID, distortionUnitID, pointID);
         }
 
-        vtWS.sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
+        vtWS.sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::tension);
     }
     void switchFromBipolarToUnipolar(int stageID, int distortionUnitID)
     {
-        juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID);
+        juce::ValueTree vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
         int nbOfPoints = getNbOfPoints(stageID, distortionUnitID);
         int zeroCrossingPointID = 0;
         float zeroCPointX = getPointX(stageID, distortionUnitID, zeroCrossingPointID);
@@ -2124,10 +2124,10 @@ public:
         tension = 0.0f;
         vtWSPoints.addChild(createPointNoListener(pointX, pointY, tension, 0, true), -1, &undoManager);
 
-        vtWSPoints.sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
+        vtWSPoints.sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::tension);
     }
 
-    //Value Tree Add/Remove point from SampleRemapper================================================================================================
+    //Value Tree Add/Remove point from PiecewiseFunction================================================================================================
     void setMouseAddPointWS(juce::MouseEvent& e, float scopeWidth, float scopeHeight)
     {
         int stageID = getSelectedStageID();
@@ -2189,7 +2189,7 @@ public:
             }
         }
 
-        //getWaveShaperPointsVT(stageID, distortionUnitID).getChild(tensionID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
+        //getWaveShaperPointsVT(stageID, distortionUnitID).getChild(tensionID).sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::tension);
 
 
     }
@@ -2198,7 +2198,7 @@ public:
     }
     void addPoint(int stageID, int distortionUnitID, float pointX, float pointY)
     {
-        juce::ValueTree vtWS = getSampleRemapperPointsVT(stageID, distortionUnitID);
+        juce::ValueTree vtWS = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
 
         int nbOfChild = vtWS.getNumChildren();
         if (nbOfChild == DistortionConstants::WaveShaper<float>::nbOfPointMax)
@@ -2241,14 +2241,14 @@ public:
         }
 
         setSelectedIDCurve(stageID, distortionUnitID, childID);
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(childID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::selectedCurveID);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(childID).sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::selectedCurveID);
     }
     void deleteSelectedPoint(int stageID, int distortionUnitID)
     {
         int selectedID = getSelectedPointID(stageID, distortionUnitID);
         //int nbOfPoints = getNbOfPoints(stageID, distortionUnitID);
-        juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID);
-        int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 1;
+        juce::ValueTree vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
+        int nbOfChildren = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getNumChildren() - 1;
         bool horzDragOn = getHorizontalDragOn(stageID, distortionUnitID, selectedID);
 
         //if (selectedID == -1 || selectedID == 0 || selectedID == (nbOfPoints - 1))
@@ -2284,11 +2284,11 @@ public:
         }
         //undoManager.beginNewTransaction
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(selectedID - 1).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(selectedID - 1).sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::tension);
     }
-    void resetSampleRemapper(int stageID, int distortionUnitID)
+    void resetPiecewiseFunction(int stageID, int distortionUnitID)
     {
-        juce::ValueTree vtWS = getSampleRemapperVT(stageID, distortionUnitID);
+        juce::ValueTree vtWS = getPiecewiseFunctionVT(stageID, distortionUnitID);
 
         undoManager.beginNewTransaction();
 
@@ -2301,11 +2301,11 @@ public:
 
         if (isBipolar)
         {
-            SampleRemapper<float>::createValueTreePointBipolar(vtWS, &undoManager);
+            PiecewiseFunction<float>::createValueTreePointBipolar(vtWS, &undoManager);
         }
         else
         {
-            SampleRemapper<float>::createValueTreePointUnipolar(vtWS, &undoManager);
+            PiecewiseFunction<float>::createValueTreePointUnipolar(vtWS, &undoManager);
         }
 
     }
@@ -2321,7 +2321,7 @@ public:
     void setPoint(int stageID, int distortionUnitID, int pointID, juce::Point<float> newPoint)
     {
         //int everyPointButFirst = 0;
-        juce::ValueTree vtWSPoint = getSampleRemapperPointsVT(stageID, distortionUnitID);
+        juce::ValueTree vtWSPoint = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
         int nbOfChildren = vtWSPoint.getNumChildren() - 1;
 
         float pointX = newPoint.getX();
@@ -2351,7 +2351,7 @@ public:
         }
 
         setPointY(stageID, distortionUnitID, pointID, pointY);
-        //vtWSPoint.sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::pointY); NoListener
+        //vtWSPoint.sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::pointY); NoListener
     }
     void setPointX(int stageID, int distortionUnitID, int pointID, float newPointX)
     {
@@ -2360,7 +2360,7 @@ public:
             newPointX
         );
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(SampleRemapperConstants::ParamStringID::pointX, newPointX, &undoManager);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(PiecewiseFunctionConstants::ParamStringID::pointX, newPointX, &undoManager);
     }
     void setPointY(int stageID, int distortionUnitID, int pointID, float newPointY)
     {
@@ -2369,7 +2369,7 @@ public:
             newPointY
         );
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(SampleRemapperConstants::ParamStringID::pointY, newPointY, &undoManager);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).setProperty(PiecewiseFunctionConstants::ParamStringID::pointY, newPointY, &undoManager);
     }
     void setPointXNoListener(int stageID, int distortionUnitID, int pointID, float newPointX)
     {
@@ -2378,7 +2378,7 @@ public:
             newPointX
         );
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointX, newPointX, &undoManager);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::pointX, newPointX, &undoManager);
     }
     void setPointYNoListener(int stageID, int distortionUnitID, int pointID, float newPointY)
     {
@@ -2387,7 +2387,7 @@ public:
             newPointY
         );
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::pointY, newPointY, &undoManager);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::pointY, newPointY, &undoManager);
     }
     void setSelectedPoint(int stageID, int distortionUnitID, juce::Point<float> newPoint)
     {
@@ -2396,13 +2396,13 @@ public:
     }
     void setTension(int stageID, int distortionUnitID, int pointID, float newTension)
     {
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, newTension, &undoManager);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::tension, newTension, &undoManager);
 
         bool isBipolar = getIsBipolar(stageID, distortionUnitID);
 
         if (!isBipolar)
         {
-            int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
+            int nbOfChildren = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
             int mirrorID = nbOfChildren - pointID;
             int curveType = getPointCurveType(stageID, distortionUnitID, pointID);
             float tension = 1.0f;
@@ -2417,20 +2417,20 @@ public:
                 tension = newTension;
             }
 
-            getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, tension, &undoManager);
+            getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::tension, tension, &undoManager);
         }
 
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::tension);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::tension);
     }
     void setTensionNoListener(int stageID, int distortionUnitID, int pointID, float newTension)
     {
-        getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, newTension, &undoManager);
+        getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::tension, newTension, &undoManager);
 
         bool isBipolar = getIsBipolar(stageID, distortionUnitID);
 
         if (!isBipolar)
         {
-            int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
+            int nbOfChildren = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
             int mirrorID = nbOfChildren - pointID;
             int curveType = getPointCurveType(stageID, distortionUnitID, pointID);
             float tension = 1.0f;
@@ -2444,7 +2444,7 @@ public:
                 tension = newTension;
             }
 
-            getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::tension, tension, &undoManager);
+            getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(mirrorID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::tension, tension, &undoManager);
         }
     }
     void setSelectedTension(int stageID, int distortionUnitID, float newTension)
@@ -2454,24 +2454,24 @@ public:
     }
     void setHorizontalDragOn(int stageID, int distortionUnitID, int pointID, bool horizontalDragOn)
     {
-        juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID);
+        juce::ValueTree vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID);
 
-        vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::horizontalDragOn, horizontalDragOn, nullptr);
+        vtWSPoints.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::horizontalDragOn, horizontalDragOn, nullptr);
     }
     void setPointCurveType(int stageID, int distortionUnitID, int pointID, int curveType)
     {
         if (pointID >= 0)
         {
-            juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID);
+            juce::ValueTree vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID);
 
-            vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
+            vtWSPoints.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::curveType, curveType, &undoManager);
 
             if (!getIsBipolar(stageID, distortionUnitID))
             {
-                int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
+                int nbOfChildren = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
                 int mirrorID = nbOfChildren - pointID;
-                vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID);
-                vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
+                vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(mirrorID);
+                vtWSPoints.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::curveType, curveType, &undoManager);
 
                 float tension = getTension(stageID, distortionUnitID, pointID);
                 setTensionNoListener(stageID, distortionUnitID, mirrorID, tension);
@@ -2482,7 +2482,7 @@ public:
                 float tension = getTension(stageID, distortionUnitID, pointID);
                 setTensionNoListener(stageID, distortionUnitID, pointID, -tension);
             }
-            getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::curveType);
+            getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::curveType);
             undoManager.beginNewTransaction();
         }
     }
@@ -2490,18 +2490,18 @@ public:
     {
         if (pointID >= 0)
         {
-            juce::ValueTree vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID);
+            juce::ValueTree vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID);
 
-            vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
+            vtWSPoints.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::curveType, curveType, &undoManager);
 
             //float tension = getTension(stageID, distortionUnitID, pointID);
 
             if (!getIsBipolar(stageID, distortionUnitID))
             {
-                int nbOfChildren = getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
+                int nbOfChildren = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getNumChildren() - 2;
                 int mirrorID = nbOfChildren - pointID;
-                vtWSPoints = getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(mirrorID);
-                vtWSPoints.setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::curveType, curveType, &undoManager);
+                vtWSPoints = getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(mirrorID);
+                vtWSPoints.setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::curveType, curveType, &undoManager);
             }
         }
     }
@@ -2509,7 +2509,7 @@ public:
     {
         undoManager.beginNewTransaction();
 
-        getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::isBipolar, isBipolar, &undoManager);
+        getPiecewiseFunctionVT(stageID, distortionUnitID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::isBipolar, isBipolar, &undoManager);
 
         isBipolar ? switchFromUnipolarToBipolar(stageID, distortionUnitID) : switchFromBipolarToUnipolar(stageID, distortionUnitID);
 
@@ -2521,21 +2521,21 @@ public:
 
         if (isBipolar)
         {
-            getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedPointID, pointID, &undoManager);
+            getPiecewiseFunctionVT(stageID, distortionUnitID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::selectedPointID, pointID, &undoManager);
             //saveSelectedPoint();
         }
         else
         {
             if ((pointID < nbOfPoint / 2))
             {
-                getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedPointID, pointID, &undoManager);
+                getPiecewiseFunctionVT(stageID, distortionUnitID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::selectedPointID, pointID, &undoManager);
                 //saveSelectedPoint();
             }
         }
     }
     void setSelectedIDTension(int stageID, int distortionUnitID, int tensionID)
     {
-        getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedTensionID, tensionID, &undoManager);
+        getPiecewiseFunctionVT(stageID, distortionUnitID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::selectedTensionID, tensionID, &undoManager);
     }
     void setSelectedIDCurve(int stageID, int distortionUnitID, int curveID)
     {
@@ -2551,7 +2551,7 @@ public:
         if (curveID < 0)
             curveID = 0;
 
-        getSampleRemapperVT(stageID, distortionUnitID).setPropertyExcludingListener(this, SampleRemapperConstants::ParamStringID::selectedCurveID, curveID, &undoManager);
+        getPiecewiseFunctionVT(stageID, distortionUnitID).setPropertyExcludingListener(this, PiecewiseFunctionConstants::ParamStringID::selectedCurveID, curveID, &undoManager);
     }
     void setPointAndTensionID(int stageID, int distortionUnitID, int pointID, int tensionID)
     {
@@ -2569,7 +2569,7 @@ public:
             setSelectedIDCurve(stageID, distortionUnitID, tensionID);
         }
 
-        //getWaveShaperVT(stageID, distortionUnitID).sendPropertyChangeMessage(SampleRemapperConstants::ParamStringID::selectedCurveID);
+        //getWaveShaperVT(stageID, distortionUnitID).sendPropertyChangeMessage(PiecewiseFunctionConstants::ParamStringID::selectedCurveID);
     }
     void setPointAndTensionIDNoTransaction(int stageID, int distortionUnitID, int pointID, int tensionID)
     {
@@ -2640,17 +2640,17 @@ public:
 
         return distoVT.getChild(selectedDistoUnit);
     }
-    inline juce::ValueTree getSampleRemapperVT(int stageID, int distortionUnitID)
+    inline juce::ValueTree getPiecewiseFunctionVT(int stageID, int distortionUnitID)
     {
-        return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(SampleRemapperConstants::ParamStringID::sampleRemapper);
+        return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(PiecewiseFunctionConstants::ParamStringID::piecewiseFunction);
     }
     inline juce::ValueTree getDistortionCircuitVT(int stageID, int distortionUnitID)
     {
         return getDistoUnitVT(stageID, distortionUnitID).getChildWithName(DistortionCircuitConstants::ParamsID::distortionCircuit);
     }
-    inline juce::ValueTree getSampleRemapperPointsVT(int stageID, int distortionUnitID)
+    inline juce::ValueTree getPiecewiseFunctionPointsVT(int stageID, int distortionUnitID)
     {
-        return getSampleRemapperVT(stageID, distortionUnitID).getChildWithName(SampleRemapperConstants::ParamStringID::srPoints);
+        return getPiecewiseFunctionVT(stageID, distortionUnitID).getChildWithName(PiecewiseFunctionConstants::ParamStringID::srPoints);
     }
 
     //Get Function Audio Engine
@@ -2715,15 +2715,15 @@ public:
     }
     int getNbOfPoints(int stageID, int distortionUnitID)
     {
-        return getSampleRemapperPointsVT(stageID, distortionUnitID).getNumChildren();
+        return getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getNumChildren();
     }
     float getPointX(int stageID, int distortionUnitID, int pointID)
     {
-        return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty("PointX");
+        return getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty("PointX");
     }
     float getPointY(int stageID, int distortionUnitID, int pointID)
     {
-        return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty("PointY");
+        return getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty("PointY");
     }
     juce::Point<float> getPoint(int stageID, int distortionUnitID, int pointID)
     {
@@ -2741,32 +2741,32 @@ public:
     }
     float getTension(int stageID, int distortionUnitID, int pointID)
     {
-        return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(SampleRemapperConstants::ParamStringID::tension);
+        return getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(PiecewiseFunctionConstants::ParamStringID::tension);
     }
     int getSelectedPointID(int stageID, int distortionUnitID)
     {
-        return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::selectedPointID);
+        return getPiecewiseFunctionVT(stageID, distortionUnitID).getProperty(PiecewiseFunctionConstants::ParamStringID::selectedPointID);
     }
     int getSelectedTensionID(int stageID, int distortionUnitID)
     {
 
-        return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::selectedTensionID);
+        return getPiecewiseFunctionVT(stageID, distortionUnitID).getProperty(PiecewiseFunctionConstants::ParamStringID::selectedTensionID);
     }
     int getSelectedCurveID(int stageID, int distortionUnitID)
     {
-        return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::selectedCurveID);
+        return getPiecewiseFunctionVT(stageID, distortionUnitID).getProperty(PiecewiseFunctionConstants::ParamStringID::selectedCurveID);
     }
     bool getHorizontalDragOn(int stageID, int distortionUnitID, int pointID)
     {
-        return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(SampleRemapperConstants::ParamStringID::horizontalDragOn);
+        return getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(PiecewiseFunctionConstants::ParamStringID::horizontalDragOn);
     }
     int getPointCurveType(int stageID, int distortionUnitID, int pointID)
     {
-        return getSampleRemapperPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(SampleRemapperConstants::ParamStringID::curveType);
+        return getPiecewiseFunctionPointsVT(stageID, distortionUnitID).getChild(pointID).getProperty(PiecewiseFunctionConstants::ParamStringID::curveType);
     }
     bool getIsBipolar(int stageID, int distortionUnitID)
     {
-        return getSampleRemapperVT(stageID, distortionUnitID).getProperty(SampleRemapperConstants::ParamStringID::isBipolar);
+        return getPiecewiseFunctionVT(stageID, distortionUnitID).getProperty(PiecewiseFunctionConstants::ParamStringID::isBipolar);
     }
 
     //int getDistortionCircuitEquationType(int stageID, int distortionUnitID)

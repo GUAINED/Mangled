@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 #include "DistortionCircuit.h"
-#include "SampleRemapper.h"
+#include "PiecewiseFunction.h"
 #include "DCFilter.h"
 #include "GainProcessor.h"
 //==============================================================================
@@ -545,13 +545,13 @@ public:
         juce::ValueTree vtDistortionUnit(id);
         vt.addChild(vtDistortionUnit, -1, nullptr);
 
-        SampleRemapper<SampleType>::createValueTree(vtDistortionUnit, undoManager);
+        PiecewiseFunction<SampleType>::createValueTree(vtDistortionUnit, undoManager);
 
         //DistortionCircuit<SampleType>::createValueTree(vtDistortionUnit);
     };
 
     DCFilter<SampleType>* getDCFilter() { return &dcFilter; };
-    SampleRemapper<SampleType>* getSampleRemapper() { return &sampleRemapper; };
+    PiecewiseFunction<SampleType>* getPiecewiseFunction() { return &sampleRemapper; };
     DistortionCircuit<SampleType>* getDistortionCircuit() { return &distortionCircuit; };
 
 private:
@@ -560,7 +560,7 @@ private:
 
     //juce::dsp::Oversampling<SampleType> testout;
 
-    SampleRemapper<SampleType> sampleRemapper;
+    PiecewiseFunction<SampleType> sampleRemapper;
 
     DistortionCircuit<SampleType> distortionCircuit;
 

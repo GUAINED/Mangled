@@ -1932,11 +1932,11 @@ namespace DistoUnitConstants
     };
 };
 
-namespace SampleRemapperConstants
+namespace PiecewiseFunctionConstants
 {
     namespace ParamStringID
     {
-        static const juce::String sampleRemapper{ "SR" };
+        static const juce::String piecewiseFunction{ "SR" };
 
         static const juce::String selectedCurveID{ "SelectedCurveID" };
         static const juce::String selectedPointID{ "SelectedPointID" };
@@ -1956,7 +1956,7 @@ namespace SampleRemapperConstants
         //{
         //    static inline juce::Identifier sampleRemapper()
         //    {
-        //        juce::Identifier id(SampleRemapper)
+        //        juce::Identifier id(PiecewiseFunction)
         //        return isBipolar;
         //    };
         //};

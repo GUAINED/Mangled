@@ -751,9 +751,9 @@ void MangledAudioProcessorEditor::updateDistortion(int stageID, int distortionUn
     StageProcessorBase<float>* pStageProcessor = audioProcessor.getAudioEngine()->getMainLayerProcessor()->getStageProcessor(stageID);
     StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
-    SampleRemapper<float>* pSM = pStageProcessor->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getSampleRemapper();
+    PiecewiseFunction<float>* pPWF = pStageProcessor->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getPiecewiseFunction();
     WaveShaperScope* pWaveShaperScope = pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getScope();
-    pWaveShaperScope->updateUI(distortionUnitID, pSM);
+    pWaveShaperScope->updateUI(distortionUnitID, pPWF);
 
     int pointID = audioProcessor.getMainLayerDataStruct().getSelectedCurveID(stageID, distortionUnitID);
     bool deleteEnable = audioProcessor.getMainLayerDataStruct().getHorizontalDragOn(stageID, distortionUnitID, pointID);

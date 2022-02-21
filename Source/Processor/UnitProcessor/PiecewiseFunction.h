@@ -11,69 +11,69 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SampleRemapperBin.h"
+#include "PiecewiseFunctionBin.h"
 
 template <typename SampleType>
-class SampleRemapper
+class PiecewiseFunction
 {
 public:
-    SampleRemapper()
+    PiecewiseFunction()
     {
         SampleType zero = static_cast<SampleType>(0.0);
         SampleType one = static_cast<SampleType>(1.0);
         SampleType minusOne = -one;
 
-        //sampleRemapperBins.resize(DistortionConstants::WaveShaper<SampleType>::nbOfPointMax);
+        //pwfBins.resize(DistortionConstants::WaveShaper<SampleType>::nbOfPointMax);
         
         for (int binID = 0; binID < DistortionConstants::WaveShaper<SampleType>::nbOfPointMax; ++binID)
         {
-            sampleRemapperBins.add(new SampleRemapperBin<SampleType>());
+            pwfBins.add(new PiecewiseFunctionBin<SampleType>());
         }
 
-        sampleRemapperBins[0]->setLeftPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[0]->setRightPoint(juce::Point<SampleType>(one, one));
-        sampleRemapperBins[0]->setTension(zero);
-        sampleRemapperBins[0]->computePathData();
-        //sampleRemapperBins[0]->pushSampleIntoFifo();
+        pwfBins[0]->setLeftPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[0]->setRightPoint(juce::Point<SampleType>(one, one));
+        pwfBins[0]->setTension(zero);
+        pwfBins[0]->computePathData();
+        //pwfBins[0]->pushSampleIntoFifo();
 
-        sampleRemapperBins[1]->setLeftPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[1]->setRightPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[1]->setTension(zero);
-        sampleRemapperBins[1]->computePathData();
-        //sampleRemapperBins[1]->pushSampleIntoFifo();
+        pwfBins[1]->setLeftPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[1]->setRightPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[1]->setTension(zero);
+        pwfBins[1]->computePathData();
+        //pwfBins[1]->pushSampleIntoFifo();
 
-        sampleRemapperBins[2]->setLeftPoint(juce::Point<SampleType>(minusOne, minusOne));
-        sampleRemapperBins[2]->setRightPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[2]->setTension(zero);
-        sampleRemapperBins[2]->computePathData();
-        //sampleRemapperBins[2]->pushSampleIntoFifo();
+        pwfBins[2]->setLeftPoint(juce::Point<SampleType>(minusOne, minusOne));
+        pwfBins[2]->setRightPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[2]->setTension(zero);
+        pwfBins[2]->computePathData();
+        //pwfBins[2]->pushSampleIntoFifo();
 
         nbOfActiveBins = 3;
 
-        //sampleRemapperBins[0].setLeftPoint(juce::Point<SampleType>(one, one));
-        //sampleRemapperBins[0].setRightPoint(juce::Point<SampleType>(1000000.0f, 1000000.0f));
-        //sampleRemapperBins[0].setTension(one);
-        //sampleRemapperBins[0].computePathData();
+        //pwfBins[0].setLeftPoint(juce::Point<SampleType>(one, one));
+        //pwfBins[0].setRightPoint(juce::Point<SampleType>(1000000.0f, 1000000.0f));
+        //pwfBins[0].setTension(one);
+        //pwfBins[0].computePathData();
 
-        //sampleRemapperBins[1].setLeftPoint(juce::Point<SampleType>(zero, zero));
-        //sampleRemapperBins[1].setRightPoint(juce::Point<SampleType>(one, one));
-        //sampleRemapperBins[1].setTension(one);
-        //sampleRemapperBins[1].computePathData();
+        //pwfBins[1].setLeftPoint(juce::Point<SampleType>(zero, zero));
+        //pwfBins[1].setRightPoint(juce::Point<SampleType>(one, one));
+        //pwfBins[1].setTension(one);
+        //pwfBins[1].computePathData();
 
-        //sampleRemapperBins[2].setLeftPoint(juce::Point<SampleType>(zero, zero));
-        //sampleRemapperBins[2].setRightPoint(juce::Point<SampleType>(zero, zero));
-        //sampleRemapperBins[2].setTension(one);
-        //sampleRemapperBins[2].computePathData();
+        //pwfBins[2].setLeftPoint(juce::Point<SampleType>(zero, zero));
+        //pwfBins[2].setRightPoint(juce::Point<SampleType>(zero, zero));
+        //pwfBins[2].setTension(one);
+        //pwfBins[2].computePathData();
 
-        //sampleRemapperBins[3].setLeftPoint(juce::Point<SampleType>(minusOne, minusOne));
-        //sampleRemapperBins[3].setRightPoint(juce::Point<SampleType>(zero, zero));
-        //sampleRemapperBins[3].setTension(one);
-        //sampleRemapperBins[3].computePathData();
+        //pwfBins[3].setLeftPoint(juce::Point<SampleType>(minusOne, minusOne));
+        //pwfBins[3].setRightPoint(juce::Point<SampleType>(zero, zero));
+        //pwfBins[3].setTension(one);
+        //pwfBins[3].computePathData();
 
-        //sampleRemapperBins[4].setLeftPoint(juce::Point<SampleType>(-1000000.0f, -1000000.0f));
-        //sampleRemapperBins[4].setRightPoint(juce::Point<SampleType>(minusOne, minusOne));
-        //sampleRemapperBins[4].setTension(one);
-        //sampleRemapperBins[4].computePathData();
+        //pwfBins[4].setLeftPoint(juce::Point<SampleType>(-1000000.0f, -1000000.0f));
+        //pwfBins[4].setRightPoint(juce::Point<SampleType>(minusOne, minusOne));
+        //pwfBins[4].setTension(one);
+        //pwfBins[4].computePathData();
 
         //nbOfActiveBins = 3;
     };
@@ -83,13 +83,13 @@ public:
     {
         sampleRate = spec.sampleRate;
 
-        for (int bin = 0; bin < sampleRemapperBins.size(); ++bin)
+        for (int bin = 0; bin < pwfBins.size(); ++bin)
         {
-            sampleRemapperBins[bin]->prepare(spec);
+            pwfBins[bin]->prepare(spec);
             for (int fifo = 0; fifo < 5; ++fifo)
             {
-                sampleRemapperBins[bin]->pushSampleIntoFifo();
-                sampleRemapperBins[bin]->pullSampleFromFifo(sampleRemapperBins[bin]->getBinPathData());
+                pwfBins[bin]->pushSampleIntoFifo();
+                pwfBins[bin]->pullSampleFromFifo(pwfBins[bin]->getBinPathData());
             }
         }
 
@@ -148,7 +148,7 @@ public:
                 //input = juce::jlimit(-juce::Decibels::decibelsToGain(120.0f), juce::Decibels::decibelsToGain(120.0f), input);
 
                 auto output = processSample(input);
-                //jassert(binID < sampleRemapperBins.size());
+                //jassert(binID < pwfBins.size());
 
                 //Hard clip
                 //output = juce::jlimit(-xLimMax, xLimMax, output);
@@ -210,26 +210,26 @@ public:
                 if (inputSample < minusOne)
                 {
                     index = nbOfActiveCurves - 1;
-                    output = -sampleRemapperBins[index].remapSample(-inputSample);
+                    output = -pwfBins[index].remapSample(-inputSample);
 
                 }
                 else if (inputSample > one)
                 {
                     index = 0;
-                    output = sampleRemapperBins[index].remapSample(inputSample);
+                    output = pwfBins[index].remapSample(inputSample);
                 }
                 else
                 {
-                    while ((!(sampleRemapperBins[index].isSampleInRange(inputSample))) && index < nbOfActiveBins) //Check if it is NOT in range.
+                    while ((!(pwfBins[index].isSampleInRange(inputSample))) && index < nbOfActiveBins) //Check if it is NOT in range.
                     {
-                        jassert(index < sampleRemapperBins.size());
+                        jassert(index < pwfBins.size());
                         index++;
                     }
 
-                    output = sampleRemapperBins[index].remapSample(inputSample);
+                    output = pwfBins[index].remapSample(inputSample);
                 }
 
-                jassert(index < sampleRemapperBins.size());
+                jassert(index < pwfBins.size());
 
                 //Hard clip
                 //output = juce::jlimit(-xLimMax, xLimMax, output);
@@ -266,13 +266,13 @@ public:
         //}
         //else
         {
-            while ((!(sampleRemapperBins[binID]->isSampleInRange(sample))) && binID < nbOfActiveBins) //Check if it is NOT in range.
+            while ((!(pwfBins[binID]->isSampleInRange(sample))) && binID < nbOfActiveBins) //Check if it is NOT in range.
             {
-                jassert(binID < sampleRemapperBins.size());
+                jassert(binID < pwfBins.size());
                 binID++;
             }
 
-            output = sampleRemapperBins[binID]->remapSample(input);
+            output = pwfBins[binID]->remapSample(input);
         }
 
         return output;
@@ -285,29 +285,29 @@ public:
         SampleType one = static_cast<SampleType>(1.0);
         SampleType minusOne = -one;
 
-        //sampleRemapperBins.resize(DistortionConstants::WaveShaper<SampleType>::nbOfPointMax);
+        //pwfBins.resize(DistortionConstants::WaveShaper<SampleType>::nbOfPointMax);
         
-        sampleRemapperBins[0]->setLeftPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[0]->setRightPoint(juce::Point<SampleType>(one, one));
-        sampleRemapperBins[0]->setTension(zero);
+        pwfBins[0]->setLeftPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[0]->setRightPoint(juce::Point<SampleType>(one, one));
+        pwfBins[0]->setTension(zero);
 
-        sampleRemapperBins[1]->setLeftPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[1]->setRightPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[1]->setTension(zero);
+        pwfBins[1]->setLeftPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[1]->setRightPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[1]->setTension(zero);
 
-        sampleRemapperBins[2]->setLeftPoint(juce::Point<SampleType>(minusOne, minusOne));
-        sampleRemapperBins[2]->setRightPoint(juce::Point<SampleType>(zero, zero));
-        sampleRemapperBins[2]->setTension(zero);
+        pwfBins[2]->setLeftPoint(juce::Point<SampleType>(minusOne, minusOne));
+        pwfBins[2]->setRightPoint(juce::Point<SampleType>(zero, zero));
+        pwfBins[2]->setTension(zero);
 
         nbOfActiveBins = 3;
 
-        for (int bin = 0; bin < sampleRemapperBins.size(); ++bin)
+        for (int bin = 0; bin < pwfBins.size(); ++bin)
         {
-            sampleRemapperBins[bin]->reset();
+            pwfBins[bin]->reset();
             
             //for (int fifo = 0; fifo < 10; ++fifo)
             //{
-            //    sampleRemapperBins[bin]->pushSampleIntoFifo();
+            //    pwfBins[bin]->pushSampleIntoFifo();
             //}
 
 
@@ -318,7 +318,7 @@ public:
     {
         for (int binIndex = 0; binIndex < nbOfActiveBins; ++binIndex)
         {
-            sampleRemapperBins[binIndex]->smoothedValuesSkip(numSamplesToSkip);
+            pwfBins[binIndex]->smoothedValuesSkip(numSamplesToSkip);
         }
     }
 
@@ -329,8 +329,8 @@ public:
 
         for (int binIndex = 0; binIndex < nbOfActiveBins; ++binIndex)
         {
-            sampleRemapperBins[binIndex]->getNextPointValue();
-            sampleRemapperBins[binIndex]->getNextTensionValue();
+            pwfBins[binIndex]->getNextPointValue();
+            pwfBins[binIndex]->getNextTensionValue();
         }
 
         //binLimMinusOne.getNextPointValue();
@@ -339,60 +339,60 @@ public:
 
     static void createValueTree(juce::ValueTree& vt, juce::UndoManager* undoManager)//, int distortionUnitID)
     {
-        juce::Identifier id(SampleRemapperConstants::ParamStringID::sampleRemapper);
-        juce::ValueTree vtSampleRemapper(id);
-        vt.addChild(vtSampleRemapper, -1, nullptr);
+        juce::Identifier id(PiecewiseFunctionConstants::ParamStringID::piecewiseFunction);
+        juce::ValueTree vtPiecewiseFunction(id);
+        vt.addChild(vtPiecewiseFunction, -1, nullptr);
 
-        vtSampleRemapper.setProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::isBipolar), false, nullptr);
-        vtSampleRemapper.setProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::selectedCurveID), 0, nullptr);
-        vtSampleRemapper.setProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::selectedPointID), 0, nullptr);
-        vtSampleRemapper.setProperty(juce::Identifier(SampleRemapperConstants::ParamStringID::selectedTensionID), -1, nullptr);
+        vtPiecewiseFunction.setProperty(juce::Identifier(PiecewiseFunctionConstants::ParamStringID::isBipolar), false, nullptr);
+        vtPiecewiseFunction.setProperty(juce::Identifier(PiecewiseFunctionConstants::ParamStringID::selectedCurveID), 0, nullptr);
+        vtPiecewiseFunction.setProperty(juce::Identifier(PiecewiseFunctionConstants::ParamStringID::selectedPointID), 0, nullptr);
+        vtPiecewiseFunction.setProperty(juce::Identifier(PiecewiseFunctionConstants::ParamStringID::selectedTensionID), -1, nullptr);
 
-        createValueTreePointUnipolar(vtSampleRemapper, undoManager);
+        createValueTreePointUnipolar(vtPiecewiseFunction, undoManager);
     };
 
     static void createValueTreePointUnipolar(juce::ValueTree& vt, juce::UndoManager* undoManager)//, int distortionUnitID)
     {
-        juce::Identifier id(SampleRemapperConstants::ParamStringID::srPoints);
-        juce::ValueTree vtSampleRemapperPoint(id);
-        vt.addChild(vtSampleRemapperPoint, -1, undoManager);
+        juce::Identifier id(PiecewiseFunctionConstants::ParamStringID::srPoints);
+        juce::ValueTree vtPiecewiseFunctionPoint(id);
+        vt.addChild(vtPiecewiseFunctionPoint, -1, undoManager);
 
         SampleType zero = static_cast<SampleType>(0.0);
         SampleType one = static_cast<SampleType>(1.0);
 
-        vtSampleRemapperPoint.addChild(createPoint(one, one, zero, 0, false, undoManager), -1, undoManager);
-        vtSampleRemapperPoint.addChild(createPoint(zero, zero, zero, 0, false, undoManager), -1, undoManager);
-        vtSampleRemapperPoint.addChild(createPoint(zero, zero, zero, 0, false, undoManager), -1, undoManager);
-        vtSampleRemapperPoint.addChild(createPoint(-one, -one, zero, 0, false, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(one, one, zero, 0, false, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(zero, zero, zero, 0, false, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(zero, zero, zero, 0, false, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(-one, -one, zero, 0, false, undoManager), -1, undoManager);
     };
 
     static void createValueTreePointBipolar(juce::ValueTree& vt, juce::UndoManager* undoManager)//, int distortionUnitID)
     {
-        juce::Identifier id(SampleRemapperConstants::ParamStringID::srPoints);
-        juce::ValueTree vtSampleRemapperPoint(id);
-        vt.addChild(vtSampleRemapperPoint, -1, undoManager);
+        juce::Identifier id(PiecewiseFunctionConstants::ParamStringID::srPoints);
+        juce::ValueTree vtPiecewiseFunctionPoint(id);
+        vt.addChild(vtPiecewiseFunctionPoint, -1, undoManager);
 
         SampleType zero = static_cast<SampleType>(0.0);
         SampleType one = static_cast<SampleType>(1.0);
 
-        vtSampleRemapperPoint.addChild(createPoint(one, one, zero, 0, false, undoManager), -1, undoManager);
-        vtSampleRemapperPoint.addChild(createPoint(zero, zero, zero, 0, true, undoManager), -1, undoManager);
-        vtSampleRemapperPoint.addChild(createPoint(-one, -one, zero, 0, false, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(one, one, zero, 0, false, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(zero, zero, zero, 0, true, undoManager), -1, undoManager);
+        vtPiecewiseFunctionPoint.addChild(createPoint(-one, -one, zero, 0, false, undoManager), -1, undoManager);
     };
 
     static juce::ValueTree createPoint(float pointX, float pointY, float tension, int curveID, bool horizontalDragOn, juce::UndoManager* undoManager)
     {
-        juce::Identifier id(SampleRemapperConstants::ParamStringID::point);
+        juce::Identifier id(PiecewiseFunctionConstants::ParamStringID::point);
         juce::ValueTree vt(id);
         //juce::ValueTree vt(DistortionConstants::WaveShaperParamStringID::point);
 
-        vt.setProperty(SampleRemapperConstants::ParamStringID::pointX, pointX, undoManager);
-        vt.setProperty(SampleRemapperConstants::ParamStringID::pointY, pointY, undoManager);
+        vt.setProperty(PiecewiseFunctionConstants::ParamStringID::pointX, pointX, undoManager);
+        vt.setProperty(PiecewiseFunctionConstants::ParamStringID::pointY, pointY, undoManager);
 
-        vt.setProperty(SampleRemapperConstants::ParamStringID::tension, tension, undoManager);
-        vt.setProperty(SampleRemapperConstants::ParamStringID::horizontalDragOn, horizontalDragOn, undoManager);
+        vt.setProperty(PiecewiseFunctionConstants::ParamStringID::tension, tension, undoManager);
+        vt.setProperty(PiecewiseFunctionConstants::ParamStringID::horizontalDragOn, horizontalDragOn, undoManager);
 
-        vt.setProperty(SampleRemapperConstants::ParamStringID::curveType, curveID, undoManager);
+        vt.setProperty(PiecewiseFunctionConstants::ParamStringID::curveType, curveID, undoManager);
 
         return vt;
     };
@@ -402,14 +402,14 @@ public:
     void setNbOfActiveBins(const int newNbOfActiveBins) { nbOfActiveBins = newNbOfActiveBins; };
 
     //Get function
-    SampleRemapperBin<SampleType>* getBin(int binID) { return sampleRemapperBins[binID]; };
+    PiecewiseFunctionBin<SampleType>* getBin(int binID) { return pwfBins[binID]; };
     int getNbOfActiveBins() { return nbOfActiveBins; };
 
 private:
-    //SampleRemapperBin<SampleType> binLimPlusOne;
-    //std::vector< SampleRemapperBin<SampleType> > sampleRemapperBins;
-    juce::OwnedArray< SampleRemapperBin<SampleType> > sampleRemapperBins;
-    //SampleRemapperBin<SampleType> binLimMinusOne;
+    //PiecewiseFunctionBin<SampleType> binLimPlusOne;
+    //std::vector< PiecewiseFunctionBin<SampleType> > pwfBins;
+    juce::OwnedArray< PiecewiseFunctionBin<SampleType> > pwfBins;
+    //PiecewiseFunction<SampleType> binLimMinusOne;
 
     SampleType xLimMax = static_cast<SampleType>(DistortionConstants::WaveShaper<SampleType>::sampleLimitValue);
     

@@ -203,7 +203,7 @@ public:
             filter[0]->coefficients = juce::dsp::IIR::Coefficients<SampleType>::makePeakFilter(sampleRate,
                 biquadParams.cutoff,
                 biquadParams.q,
-                biquadParams.gain);
+                biquadParams.gain / filterParams.nbOfBiquads);
             break;
 
         case EQConstants::BiquadConstants<SampleType>::Types::lowpass : //Low Pass
@@ -276,11 +276,17 @@ public:
 
     FilterParams& getFilterParams() { return filterParams; };
 
+    void setMagHasBeenRemoved(bool newMagHasBeenRemoved) { magHasBeenRemoved = newMagHasBeenRemoved; };
+    bool getMagHasBeenRemoved() { return magHasBeenRemoved; };
+
 private:
     juce::OwnedArray<juce::dsp::IIR::Filter<SampleType>> filter;
 
     FilterParams filterParams;
 
     SampleType startingFreq = EQConstants::BiquadConstants<SampleType>::cutoffStartValue;
+
+    bool magHasBeenRemoved = false;
+
     double sampleRate = 44100.0;
 };

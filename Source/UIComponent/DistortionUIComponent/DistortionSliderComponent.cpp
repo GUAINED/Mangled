@@ -116,11 +116,11 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     resetWSButton.addListener(this);
     addAndMakeVisible(resetWSButton);
 
-    //SampleRemapper Curve Type
-    sampleRemapperCurveComboBox.addItemList(DistortionConstants::UI::curveStringArray, 1);
-    sampleRemapperCurveComboBox.setSelectedId(1, juce::dontSendNotification);
-    sampleRemapperCurveComboBox.addListener(this);
-    addAndMakeVisible(sampleRemapperCurveComboBox);
+    //PiecewiseFunction Curve Type
+    piecewiseFunctionCurveComboBox.addItemList(DistortionConstants::UI::curveStringArray, 1);
+    piecewiseFunctionCurveComboBox.setSelectedId(1, juce::dontSendNotification);
+    piecewiseFunctionCurveComboBox.addListener(this);
+    addAndMakeVisible(piecewiseFunctionCurveComboBox);
 
     //WaveShaper Scope
     addAndMakeVisible(waveShaperScope);
@@ -255,7 +255,7 @@ void DistortionSliderComponent::resized()
 
     resetWSButton.setBounds(deleteWSPointButton.getX(), deleteWSPointButton.getBottom() + 1, labelWidth, labelHeight);
 
-    sampleRemapperCurveComboBox.setBounds(resetWSButton.getX(), resetWSButton.getBottom() + 1, labelWidth, labelHeight);
+    piecewiseFunctionCurveComboBox.setBounds(resetWSButton.getX(), resetWSButton.getBottom() + 1, labelWidth, labelHeight);
 
 
 
@@ -306,7 +306,7 @@ void DistortionSliderComponent::buttonClicked(juce::Button* button)
     }
     else if (button == getResetWSButton()) //Display Main Clipper Menu
     {
-        dataStruct.resetSampleRemapper(stageID, distortionUnitID);
+        dataStruct.resetPiecewiseFunction(stageID, distortionUnitID);
     }
 }
 

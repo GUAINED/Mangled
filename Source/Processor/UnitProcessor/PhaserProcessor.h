@@ -194,13 +194,13 @@ public:
         //auto currentFrequency = allPassFilters[0]->getCutoffFrequency();
         dryWet.pushDrySamples(inputBlock);
 
-        for (int channel = 0; channel < numChannels; ++channel)
+        for (int channelID = 0; channelID < numChannels; ++channelID)
         {
             //counter = updateCounter;
             //int k = 0;
 
             //auto* inputSamples = inputBlock.getChannelPointer(channel);
-            auto* outputSamples = outputBlock.getChannelPointer(channel);
+            auto* outputSamples = outputBlock.getChannelPointer(channelID);
 
             //for (int n = 0; n < nbOfPhaseShifter; ++n)
             //{
@@ -210,8 +210,8 @@ public:
             for (int i = 0; i < numSamples; ++i)
             {
                 //auto input = inputSamples[i];
-                auto input = inputBlock.getSample(channel, i);
-                auto output = input - lastOutput[channel];
+                auto input = inputBlock.getSample(channelID, i);
+                auto output = input - lastOutput[channelID];
 
                 //if (i == 0 && counter != 0)
                 //    for (int n = 0; n < numStages; ++n)
@@ -227,12 +227,12 @@ public:
                 jassert(nbOfPhaseShifter <= phaseShifterFilters.size());
                 for (int n = 0; n < nbOfPhaseShifter; ++n)
                 {
-                    output = phaseShifterFilters[n]->processSample((int)channel, output);
+                    output = phaseShifterFilters[n]->processSample((int)channelID, output);
                 } 
 
                 outputSamples[i] = output;
                 //outputBlock.getChannelPointer(channel)[i] = output;
-                lastOutput[channel] = output * feedbackVolume[channel].getNextValue();
+                lastOutput[channelID] = output * feedbackVolume[channelID].getNextValue();
 
                 //counter++;
 

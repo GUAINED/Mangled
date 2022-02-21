@@ -114,19 +114,19 @@ public:
     void resetDistortionParam(int stageID);
     void resetDistortionDUParam(int stageID, int distortionUnitID);
 
-    //SampleRemapper Function
+    //PiecewiseFunction Function
     void switchFromUnipolarToBipolar(int stageID, int distortionUnitID);
     void switchFromBipolarToUnipolar(int stageID, int distortionUnitID);
 
-    //Value Tree Add/Remove point from SampleRemapper
+    //Value Tree Add/Remove point from PiecewiseFunction
     void setMouseAddPointWS(juce::MouseEvent& e, float scopeWidth, float scopeHeight);
     void setMouseDragEventWS(juce::MouseEvent& e, float scopeWidth, float scopeHeight);
     void setMouseUpWS();
     void addPoint(int stageID, int distortionUnitID, float pointX, float pointY);
     void deleteSelectedPoint(int stageID, int distortionUnitID);
-    void resetSampleRemapper(int stageID, int distortionUnitID);
+    void resetPiecewiseFunction(int stageID, int distortionUnitID);
 
-    //Set function SampleRemapper
+    //Set function PiecewiseFunction
     void setDistoUnitID(int stageID, int distortionUnitID);
     void setSelectedDistoUnitID(int distortionUnitID);
     void setPoint(int stageID, int distortionUnitID, int pointID, juce::Point<float> newPoint);
@@ -165,9 +165,9 @@ public:
     juce::ValueTree getDistortionVT(int stageID);
     juce::ValueTree getDistoUnitVT(int stageID, int distoUnitID);
     juce::ValueTree getSelectedDistoUnitVT();
-    juce::ValueTree getSampleRemapperVT(int stageID, int distortionUnitID);
+    juce::ValueTree getPiecewiseFunctionVT(int stageID, int distortionUnitID);
     juce::ValueTree getDistortionCircuitVT(int stageID, int distortionUnitID);
-    juce::ValueTree getSampleRemapperPointsVT(int stageID, int distortionUnitID);
+    juce::ValueTree getPiecewiseFunctionPointsVT(int stageID, int distortionUnitID);
     
     //Audio Engine
     int getSelectedStateID();

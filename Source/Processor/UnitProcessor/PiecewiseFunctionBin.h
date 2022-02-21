@@ -17,10 +17,10 @@
 #include "CurveEquation.h"
 
 template <typename SampleType>
-class SampleRemapperBin
+class PiecewiseFunctionBin
 {
 public:
-    SampleRemapperBin()
+    PiecewiseFunctionBin()
         : leftPoint(static_cast<SampleType>(0.0), static_cast<SampleType>(0.0))
         , rightPoint(static_cast<SampleType>(1.0), static_cast<SampleType>(1.0))
         , smoothedLeftX(static_cast<SampleType>(0.0))
@@ -43,7 +43,7 @@ public:
 
     }
 
-    SampleRemapperBin(SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY, SampleType tensionInit = static_cast<SampleType>(1.0), int curveTypeInit = 1)
+    PiecewiseFunctionBin(SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY, SampleType tensionInit = static_cast<SampleType>(1.0), int curveTypeInit = 1)
         : leftPoint(leftX, leftY)
         , rightPoint(rightX, rightY)
         , smoothedLeftX(leftX)

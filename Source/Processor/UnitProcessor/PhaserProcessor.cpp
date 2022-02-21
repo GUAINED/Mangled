@@ -221,7 +221,7 @@ void CustomPhaser<SampleType>::prepare(const juce::dsp::ProcessSpec& spec)
 
     sampleRate = spec.sampleRate;
 
-    for (auto n = 0; n < nbOfPhaseShifter; ++n)
+    for (auto n = 0; n < phaseShifterFilters.size(); ++n)
         phaseShifterFilters[n]->prepare(spec);
 
     dryWet.prepare(spec);

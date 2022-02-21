@@ -169,7 +169,7 @@ public:
     juce::TextButton* getDeleteWSPointButton()       { return &deleteWSPointButton; };
     OnOffButton*      getDCFilterOnOffButton()       { return &dcFilterOnOffButton; };
     juce::TextButton* getResetWSButton()             { return &resetWSButton; };
-    juce::ComboBox*   getCurveTypeComboBox()         { return &sampleRemapperCurveComboBox; };
+    juce::ComboBox*   getCurveTypeComboBox()         { return &piecewiseFunctionCurveComboBox; };
     MangledSlider*     getPreGainWaveShaperSlider()   { return &preGainWaveShaperSlider; };
     MangledSlider*     getDriveWaveShaperSlider()     { return &driveWaveShaperSlider; };
     MangledSlider*     getWarpWaveShaperSlider()      { return &warpWaveShaperSlider; };
@@ -212,7 +212,7 @@ private:
 
     juce::TextButton resetWSButton;
 
-    juce::ComboBox sampleRemapperCurveComboBox;
+    juce::ComboBox piecewiseFunctionCurveComboBox;
 
     WaveShaperScope waveShaperScope;
 
