@@ -13,7 +13,7 @@
 #include "DataStructure/UnitProcessorAttachmentStructure.h"
 
 #include "PluginProcessor.h"
-#include "Processor/UnitProcessor/EQProcessor.h"
+#include "Processor/UnitProcessor/EQ/EQProcessor.h"
 
 #include "UIComponent/GeneralUIComponent/MainMenuTabComponent.h"
 #include "UIComponent/GeneralUIComponent/MainMenuComponent.h"

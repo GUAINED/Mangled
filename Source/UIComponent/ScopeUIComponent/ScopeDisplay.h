@@ -14,8 +14,8 @@
 //#include "../../DataStructure/hostInformation.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../DataStructure/MangledState.h"
-#include "../../DataStructure/Conversion.h"
-#include "../../Processor/UnitProcessor/EQProcessor.h"
+#include "../../Functions/Conversion.h"
+#include "../../Processor/UnitProcessor/EQ/EQProcessor.h"
 #include "../GeneralUIComponent/SelectablePointDragger.h"
 #include "../LookAndFeel/LookAndFeel_V4_ComboBox.h"
 

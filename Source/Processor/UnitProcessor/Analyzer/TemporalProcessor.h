@@ -11,9 +11,9 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../DataStructure/AudioSampleFifo.h"
-#include "../../DataStructure/NoReadLockAudioSampleFifo.h"
-#include "IIRBiquadFilter.h"
+#include "../../../DataStructure/AudioSampleFifo.h"
+#include "../../../DataStructure/NoReadLockAudioSampleFifo.h"
+#include "../Filters/IIRBiquadFilter.h"
 
 template <typename SampleType>
 class TemporalProcessor

@@ -11,10 +11,10 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../DataStructure/MangledIdentifiers.h"
-#include "../../DataStructure/NoReadLockAudioSampleFifo.h"
-#include "../../DataStructure/AudioSampleFifo.h"
-#include "CurveEquation.h"
+#include "../../../DataStructure/MangledIdentifiers.h"
+#include "../../../DataStructure/NoReadLockAudioSampleFifo.h"
+#include "../../../DataStructure/AudioSampleFifo.h"
+#include "../../../Functions/CurveEquation.h"
 
 template <typename SampleType>
 class PiecewiseFunctionBin

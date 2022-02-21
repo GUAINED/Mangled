@@ -2,14 +2,29 @@
 
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Mangled\Source\Functions">
+      <UniqueIdentifier>{15E09359-E4E3-7C9B-AF03-2C6A8805B377}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Mangled\Source\DataStructure">
       <UniqueIdentifier>{0D520241-3B28-6CE0-4048-5C86F5456155}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mangled\Source\Operation">
-      <UniqueIdentifier>{B033E2A0-38A8-1239-4EFF-445B8DDE4A78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Mangled\Source\Processor\StageProcessor">
       <UniqueIdentifier>{E2602E99-A6AF-F7D7-FD6A-BC3B88A2FF5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\Processor\UnitProcessor\Analyzer">
+      <UniqueIdentifier>{F81E9297-9098-BF86-FE56-BA3729413119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\Processor\UnitProcessor\Phaser">
+      <UniqueIdentifier>{AC8579E1-1DFD-78B9-8C00-95B4C15C733F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\Processor\UnitProcessor\Filters">
+      <UniqueIdentifier>{153D0704-467C-D650-853B-1AE24B1ECA7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\Processor\UnitProcessor\EQ">
+      <UniqueIdentifier>{98DF9B3D-48D9-AFD4-3FC9-2028BE064441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mangled\Source\Processor\UnitProcessor\Distortion">
+      <UniqueIdentifier>{D436D271-EC46-A1E7-D8C6-6EEE4CD52710}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mangled\Source\Processor\UnitProcessor">
       <UniqueIdentifier>{F25CCFD4-FC5D-8D01-9F80-F6211DE361CA}</UniqueIdentifier>
@@ -517,13 +532,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Functions\Conversion.cpp">
+      <Filter>Mangled\Source\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Functions\CurveEquation.cpp">
+      <Filter>Mangled\Source\Functions</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\DataStructure\MangledState.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\DataStructure\NoReadLockAudioSampleFifo.cpp">
-      <Filter>Mangled\Source\DataStructure</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DataStructure\Conversion.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\DataStructure\MangledIdentifiers.cpp">
@@ -538,58 +556,52 @@
     <ClCompile Include="..\..\Source\DataStructure\MainLayerDataStruct.cpp">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Operation\Operation.cpp">
-      <Filter>Mangled\Source\Operation</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.cpp">
       <Filter>Mangled\Source\Processor\StageProcessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQProcessor.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Analyzer\FFTProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Analyzer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\TemporalProcessor.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Analyzer\TemporalProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Analyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Phaser\PhaserProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Phaser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Filters\DCFilter.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Filters\IIRBiquadFilter.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Filters\PhaseShifterFilter.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\EQ\EQProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\EQ</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionCircuit.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionEquation.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionUnitProcessor.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Distortion\PiecewiseFunction.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processor\UnitProcessor\Distortion\PiecewiseFunctionBin.cpp">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\GainProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaseShifterFilter.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\CurveEquation.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\IIRBiquadFilter.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\DCFilter.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionCircuit.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionEquation.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionProcessor.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Processor\UnitProcessor\ProcessorBase.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\PiecewiseFunction.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\FFTProcessor.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\PiecewiseFunctionBin.cpp">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Processor\UnitProcessor\DistortionUnitProcessor.cpp">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processor\LayerProcessor\AllLayerProcessor.cpp">
@@ -2919,13 +2931,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Functions\Conversion.h">
+      <Filter>Mangled\Source\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Functions\CurveEquation.h">
+      <Filter>Mangled\Source\Functions</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\DataStructure\MangledState.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DataStructure\NoReadLockAudioSampleFifo.h">
-      <Filter>Mangled\Source\DataStructure</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DataStructure\Conversion.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DataStructure\MangledIdentifiers.h">
@@ -2943,58 +2958,52 @@
     <ClInclude Include="..\..\Source\DataStructure\MainLayerDataStruct.h">
       <Filter>Mangled\Source\DataStructure</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Operation\Operation.h">
-      <Filter>Mangled\Source\Operation</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Processor\StageProcessor\StageProcessorBase.h">
       <Filter>Mangled\Source\Processor\StageProcessor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQProcessor.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Analyzer\FFTProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Analyzer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\TemporalProcessor.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Analyzer\TemporalProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Analyzer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Phaser\PhaserProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Phaser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Filters\DCFilter.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Filters\IIRBiquadFilter.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Filters\PhaseShifterFilter.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\EQ\EQProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\EQ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionCircuit.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionEquation.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Distortion\DistortionUnitProcessor.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Distortion\PiecewiseFunction.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processor\UnitProcessor\Distortion\PiecewiseFunctionBin.h">
+      <Filter>Mangled\Source\Processor\UnitProcessor\Distortion</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\GainProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaseShifterFilter.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\CurveEquation.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\IIRBiquadFilter.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\DCFilter.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionCircuit.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionEquation.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionProcessor.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\PhaserProcessor.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Processor\UnitProcessor\ProcessorBase.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\PiecewiseFunction.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\FFTProcessor.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\PiecewiseFunctionBin.h">
-      <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Processor\UnitProcessor\DistortionUnitProcessor.h">
       <Filter>Mangled\Source\Processor\UnitProcessor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processor\LayerProcessor\AllLayerProcessor.h">

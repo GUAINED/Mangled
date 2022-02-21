@@ -11,8 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../DataStructure/AudioSampleFifo.h"
-#include "../../DataStructure/MangledIdentifiers.h"
+#include "../../../DataStructure/AudioSampleFifo.h"
+#include "../../../DataStructure/MangledIdentifiers.h"
 
 
 template <typename SampleType>

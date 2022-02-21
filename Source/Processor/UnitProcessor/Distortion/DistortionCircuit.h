@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 #include "DistortionEquation.h"
-#include "DCFilter.h"
+//#include "DCFilter.h"
 
 //==============================================================================
 template <typename SampleType>

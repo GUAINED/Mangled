@@ -22,7 +22,7 @@
 #include "../../UIComponent/Controls/MangledDualStateButton.h"
 
 #include "../../Processor/LayerProcessor/MainLayerProcessor.h"
-#include "../../Processor/UnitProcessor/EQProcessor.h"
+#include "../../Processor/UnitProcessor/EQ/EQProcessor.h"
 
 //==============================================================================
 /*

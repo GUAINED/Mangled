@@ -13,8 +13,8 @@
 #include <JuceHeader.h>
 #include "DistortionCircuit.h"
 #include "PiecewiseFunction.h"
-#include "DCFilter.h"
-#include "GainProcessor.h"
+#include "../Filters/DCFilter.h"
+#include "../GainProcessor.h"
 //==============================================================================
 template <typename SampleType>
 class DistortionUnitProcessor

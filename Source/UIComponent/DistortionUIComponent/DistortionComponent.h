@@ -11,7 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Processor/UnitProcessor/DistortionProcessor.h"
+#include "../../Processor/UnitProcessor/Distortion/DistortionProcessor.h"
 #include "WaveShaperScope.h"
 #include "DistortionUnitMenuTabComponent.h"
 #include "DistortionSliderComponent.h"

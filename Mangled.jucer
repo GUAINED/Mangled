@@ -6,6 +6,13 @@
               pluginVST3Category="Distortion,Fx" pluginAAXCategory="8192" pluginAUIsSandboxSafe="1">
   <MAINGROUP id="d9GTZU" name="Mangled">
     <GROUP id="{7E81A842-43CF-64B6-2F22-ABF8A7D180CA}" name="Source">
+      <GROUP id="{AF5B58D5-72E8-6692-C41B-959E8F5AFC6D}" name="Functions">
+        <FILE id="cLk0Mh" name="Conversion.cpp" compile="1" resource="0" file="Source/Functions/Conversion.cpp"/>
+        <FILE id="wlM51L" name="Conversion.h" compile="0" resource="0" file="Source/Functions/Conversion.h"/>
+        <FILE id="ka1uK1" name="CurveEquation.cpp" compile="1" resource="0"
+              file="Source/Functions/CurveEquation.cpp"/>
+        <FILE id="riOpXV" name="CurveEquation.h" compile="0" resource="0" file="Source/Functions/CurveEquation.h"/>
+      </GROUP>
       <GROUP id="{B4924EAF-7D26-9B9A-7462-C163FC89D9BD}" name="DataStructure">
         <FILE id="Qd90FS" name="MangledState.cpp" compile="1" resource="0"
               file="Source/DataStructure/MangledState.cpp"/>
@@ -14,8 +21,6 @@
               resource="0" file="Source/DataStructure/NoReadLockAudioSampleFifo.cpp"/>
         <FILE id="wAbCq2" name="NoReadLockAudioSampleFifo.h" compile="0" resource="0"
               file="Source/DataStructure/NoReadLockAudioSampleFifo.h"/>
-        <FILE id="NhUpg6" name="Conversion.cpp" compile="1" resource="0" file="Source/DataStructure/Conversion.cpp"/>
-        <FILE id="I0ZjnM" name="Conversion.h" compile="0" resource="0" file="Source/DataStructure/Conversion.h"/>
         <FILE id="ksCw54" name="MangledIdentifiers.cpp" compile="1" resource="0"
               file="Source/DataStructure/MangledIdentifiers.cpp"/>
         <FILE id="yhAu4N" name="MangledIdentifiers.h" compile="0" resource="0"
@@ -35,10 +40,6 @@
         <FILE id="crF3R4" name="MainLayerDataStruct.h" compile="0" resource="0"
               file="Source/DataStructure/MainLayerDataStruct.h"/>
       </GROUP>
-      <GROUP id="{0AF7B7A6-D539-0B39-63A9-4F16C29B94D6}" name="Operation">
-        <FILE id="xhyhrh" name="Operation.cpp" compile="1" resource="0" file="Source/Operation/Operation.cpp"/>
-        <FILE id="pLfvgv" name="Operation.h" compile="0" resource="0" file="Source/Operation/Operation.h"/>
-      </GROUP>
       <GROUP id="{5494102F-577D-5F60-76BD-0C7B36230B63}" name="Processor">
         <GROUP id="{8AE434D8-4407-D855-4AE7-7FD69D228B71}" name="StageProcessor">
           <FILE id="K5IIHK" name="StageProcessorBase.cpp" compile="1" resource="0"
@@ -47,62 +48,69 @@
                 file="Source/Processor/StageProcessor/StageProcessorBase.h"/>
         </GROUP>
         <GROUP id="{AF059E72-1C91-F0CB-5CD2-605CE59628BF}" name="UnitProcessor">
-          <FILE id="MvSaCY" name="EQProcessor.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.cpp"/>
-          <FILE id="I04KFN" name="EQProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/EQProcessor.h"/>
-          <FILE id="xm06mC" name="TemporalProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/TemporalProcessor.cpp"/>
-          <FILE id="xLS7Cr" name="TemporalProcessor.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/TemporalProcessor.h"/>
+          <GROUP id="{F32181BC-B0E8-4DA4-D187-25A895460555}" name="Analyzer">
+            <FILE id="qG8MrR" name="FFTProcessor.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Analyzer/FFTProcessor.cpp"/>
+            <FILE id="XNPA1j" name="FFTProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/Analyzer/FFTProcessor.h"/>
+            <FILE id="Xxbz4a" name="TemporalProcessor.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Analyzer/TemporalProcessor.cpp"/>
+            <FILE id="jxCezC" name="TemporalProcessor.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Analyzer/TemporalProcessor.h"/>
+          </GROUP>
+          <GROUP id="{BF1770E9-5C14-B188-A6BB-5154E07DB6FD}" name="Phaser">
+            <FILE id="tq7Rq1" name="PhaserProcessor.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Phaser/PhaserProcessor.cpp"/>
+            <FILE id="GYVVtT" name="PhaserProcessor.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Phaser/PhaserProcessor.h"/>
+          </GROUP>
+          <GROUP id="{CE17FB85-F430-292F-4520-E74CF24F44B3}" name="Filters">
+            <FILE id="sV0eLJ" name="DCFilter.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/Filters/DCFilter.cpp"/>
+            <FILE id="SmlySJ" name="DCFilter.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/Filters/DCFilter.h"/>
+            <FILE id="ch6Ts2" name="IIRBiquadFilter.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Filters/IIRBiquadFilter.cpp"/>
+            <FILE id="zdPo64" name="IIRBiquadFilter.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Filters/IIRBiquadFilter.h"/>
+            <FILE id="kO3hhZ" name="PhaseShifterFilter.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Filters/PhaseShifterFilter.cpp"/>
+            <FILE id="CdPZMB" name="PhaseShifterFilter.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Filters/PhaseShifterFilter.h"/>
+          </GROUP>
+          <GROUP id="{FB35D29E-3098-B435-B73F-BF9DCB322720}" name="EQ">
+            <FILE id="rGTnNc" name="EQProcessor.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/EQ/EQProcessor.cpp"/>
+            <FILE id="JLfGqD" name="EQProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/EQ/EQProcessor.h"/>
+          </GROUP>
+          <GROUP id="{273A0BD0-5487-1340-F289-F2FA87F021EC}" name="Distortion">
+            <FILE id="avCT6Y" name="DistortionCircuit.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionCircuit.cpp"/>
+            <FILE id="NNkBL7" name="DistortionCircuit.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionCircuit.h"/>
+            <FILE id="pKAtmr" name="DistortionEquation.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionEquation.cpp"/>
+            <FILE id="ehCGeC" name="DistortionEquation.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionEquation.h"/>
+            <FILE id="vhjcJN" name="DistortionProcessor.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionProcessor.cpp"/>
+            <FILE id="ZpnyXT" name="DistortionProcessor.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionProcessor.h"/>
+            <FILE id="gxedWW" name="DistortionUnitProcessor.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionUnitProcessor.cpp"/>
+            <FILE id="rb61be" name="DistortionUnitProcessor.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/DistortionUnitProcessor.h"/>
+            <FILE id="UY9Jly" name="PiecewiseFunction.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/PiecewiseFunction.cpp"/>
+            <FILE id="wjWG86" name="PiecewiseFunction.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/PiecewiseFunction.h"/>
+            <FILE id="p7hJt1" name="PiecewiseFunctionBin.cpp" compile="1" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/PiecewiseFunctionBin.cpp"/>
+            <FILE id="NcVcm6" name="PiecewiseFunctionBin.h" compile="0" resource="0"
+                  file="Source/Processor/UnitProcessor/Distortion/PiecewiseFunctionBin.h"/>
+          </GROUP>
           <FILE id="tsedzw" name="GainProcessor.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/GainProcessor.cpp"/>
           <FILE id="G4sBKt" name="GainProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/GainProcessor.h"/>
-          <FILE id="DSlPWy" name="PhaseShifterFilter.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/PhaseShifterFilter.cpp"/>
-          <FILE id="fZYXdT" name="PhaseShifterFilter.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/PhaseShifterFilter.h"/>
-          <FILE id="rOhxbQ" name="CurveEquation.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/CurveEquation.cpp"/>
-          <FILE id="So48YD" name="CurveEquation.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/CurveEquation.h"/>
-          <FILE id="SCFZNB" name="IIRBiquadFilter.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/IIRBiquadFilter.cpp"/>
-          <FILE id="IxxD5i" name="IIRBiquadFilter.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/IIRBiquadFilter.h"/>
-          <FILE id="pSWOTa" name="DCFilter.cpp" compile="1" resource="0" file="Source/Processor/UnitProcessor/DCFilter.cpp"/>
-          <FILE id="X9J0KX" name="DCFilter.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/DCFilter.h"/>
-          <FILE id="ZBZeWV" name="DistortionCircuit.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionCircuit.cpp"/>
-          <FILE id="mVt4TR" name="DistortionCircuit.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionCircuit.h"/>
-          <FILE id="o99c69" name="DistortionEquation.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionEquation.cpp"/>
-          <FILE id="LVy9k5" name="DistortionEquation.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionEquation.h"/>
-          <FILE id="pwgrkL" name="DistortionProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionProcessor.cpp"/>
-          <FILE id="TK2zLg" name="DistortionProcessor.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionProcessor.h"/>
-          <FILE id="a63Akl" name="PhaserProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/PhaserProcessor.cpp"/>
-          <FILE id="ezNHnx" name="PhaserProcessor.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/PhaserProcessor.h"/>
           <FILE id="e883ET" name="ProcessorBase.cpp" compile="1" resource="0"
                 file="Source/Processor/UnitProcessor/ProcessorBase.cpp"/>
           <FILE id="Z5Uxjr" name="ProcessorBase.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/ProcessorBase.h"/>
-          <FILE id="Og0Qq5" name="PiecewiseFunction.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/PiecewiseFunction.cpp"/>
-          <FILE id="Rhg5nQ" name="PiecewiseFunction.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/PiecewiseFunction.h"/>
-          <FILE id="YPyK57" name="FFTProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/FFTProcessor.cpp"/>
-          <FILE id="blbTxp" name="FFTProcessor.h" compile="0" resource="0" file="Source/Processor/UnitProcessor/FFTProcessor.h"/>
-          <FILE id="JEciGJ" name="PiecewiseFunctionBin.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/PiecewiseFunctionBin.cpp"/>
-          <FILE id="lq34oE" name="PiecewiseFunctionBin.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/PiecewiseFunctionBin.h"/>
-          <FILE id="Ok3dLh" name="DistortionUnitProcessor.cpp" compile="1" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionUnitProcessor.cpp"/>
-          <FILE id="TwBkkp" name="DistortionUnitProcessor.h" compile="0" resource="0"
-                file="Source/Processor/UnitProcessor/DistortionUnitProcessor.h"/>
         </GROUP>
         <GROUP id="{1A7DDF9E-A5E8-CC9A-5689-0DAD87B22533}" name="LayerProcessor">
           <FILE id="FffxyJ" name="AllLayerProcessor.cpp" compile="1" resource="0"

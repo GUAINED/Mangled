@@ -11,11 +11,11 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Processor/UnitProcessor/DistortionProcessor.h"
-#include "../../Processor/UnitProcessor/DistortionCircuit.h"
+#include "../../Processor/UnitProcessor/Distortion/DistortionProcessor.h"
+#include "../../Processor/UnitProcessor/Distortion/DistortionCircuit.h"
 #include "WaveShaperPointDragger.h"
 #include "WaveShaperTensionDragger.h"
-#include "../../Processor/UnitProcessor/PiecewiseFunctionBin.h"
+#include "../../Processor/UnitProcessor/Distortion/PiecewiseFunctionBin.h"
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../DataStructure/MangledState.h"

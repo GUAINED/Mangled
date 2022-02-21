@@ -14,7 +14,7 @@
 #include "EQSliderComponent.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../DataStructure/MangledState.h"
-#include "../../Processor/UnitProcessor/EQProcessor.h"
+#include "../../Processor/UnitProcessor/EQ/EQProcessor.h"
 #include "../Controls/OnOffButton.h"
 #include "../Controls/MangledSlider.h"
 //==============================================================================

@@ -11,12 +11,12 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../UnitProcessor/EQProcessor.h"
-#include "../UnitProcessor/DistortionProcessor.h"
-#include "../UnitProcessor/FFTProcessor.h"
-#include "../UnitProcessor/PhaserProcessor.h"
+#include "../UnitProcessor/EQ/EQProcessor.h"
+#include "../UnitProcessor/Distortion/DistortionProcessor.h"
+#include "../UnitProcessor/Analyzer/FFTProcessor.h"
+#include "../UnitProcessor/Phaser/PhaserProcessor.h"
 #include "../UnitProcessor/GainProcessor.h"
-#include "../UnitProcessor/TemporalProcessor.h"
+#include "../UnitProcessor/Analyzer/TemporalProcessor.h"
 //==============================================================================
 template <typename SampleType>
 class StageProcessorBase //: //public juce::AudioProcessor//public ProcessorBase

@@ -11,8 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../DataStructure/MangledIdentifiers.h"
-#include "PhaseShifterFilter.h"
+#include "../../../DataStructure/MangledIdentifiers.h"
+#include "../Filters/PhaseShifterFilter.h"
 
 template <typename SampleType>
 class CustomPhaser
