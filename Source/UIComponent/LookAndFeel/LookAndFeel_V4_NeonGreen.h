@@ -170,7 +170,7 @@ public:
         g.setColour(AudioEngineConstants::UI::darkestNeonGreen); //box.findColour(juce::ComboBox::backgroundColourId)
         g.fillRoundedRectangle(boxBounds.toFloat(), cornerSize);
 
-        g.setColour(AudioEngineConstants::UI::darkerNeonGreen);//box.findColour(juce::ComboBox::outlineColourId)
+        g.setColour(AudioEngineConstants::UI::neonGreen.withAlpha(0.6f));//box.findColour(juce::ComboBox::outlineColourId)
         g.drawRoundedRectangle(boxBounds.toFloat().reduced(0.5f, 0.5f), cornerSize, 1.0f);
 
         juce::Rectangle<int> arrowZone(width - 30, 0, 20, height);
@@ -252,14 +252,14 @@ public:
 
             g.fillPath(path);
 
-            g.setColour(AudioEngineConstants::UI::darkerNeonGreen); //button.findColour(juce::ComboBox::outlineColourId)
+            g.setColour(AudioEngineConstants::UI::neonGreen.withAlpha(0.6f)); //button.findColour(juce::ComboBox::outlineColourId)
             g.strokePath(path, juce::PathStrokeType(1.0f));
         }
         else
         {
             g.fillRoundedRectangle(bounds, cornerSize);
 
-            g.setColour(AudioEngineConstants::UI::darkerNeonGreen); //button.findColour(juce::ComboBox::outlineColourId)
+            g.setColour(AudioEngineConstants::UI::neonGreen.withAlpha(0.6f)); //button.findColour(juce::ComboBox::outlineColourId)
             g.drawRoundedRectangle(bounds, cornerSize, 1.0f);
         }
     }

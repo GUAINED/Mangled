@@ -267,14 +267,14 @@ public:
 
     /** Compute each filter magnitude to display
     */
-    void computeFiltersMagnitude(int filterID, bool isActive, bool isBypassed)
+    void computeFiltersMagnitude(int filterID, bool isActive, bool filterIsBypassed)
     {
         double freq = 0.0;
         SampleType filterMagnitudedB = static_cast<SampleType>(0.0);
 
         if (isActive)
         {
-            if (isBypassed)
+            if (filterIsBypassed)
             {
                 for (int i = 0; i < EQConstants::UI::filterMagnitudeSize; ++i)
                 {
@@ -382,6 +382,12 @@ public:
         //filterSumMagFifo.pull(pBuffer->getWritePointer(0), 0, pBuffer->getNumSamples());
         filterSumMagFifo.readSamplesFromFifo(buffer);
     };
+
+    void resetFifo()
+    {
+        filterMagFifo.reset();
+        filterSumMagFifo.reset();
+    }
 
     static void createParametersLayout(std::vector<std::unique_ptr<juce::RangedAudioParameter>>* plugInParameters, int stageID, int nbOfFiltersPerEQ)
     {

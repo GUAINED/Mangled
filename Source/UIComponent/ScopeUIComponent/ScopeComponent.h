@@ -14,7 +14,8 @@
 #include "ScopeDisplay.h"
 #include "TemporalScope.h"
 #include "../Controls/OnOffButton.h"
-
+#include "../Controls/MangledSlider.h"
+#include "../Controls/MangledComboBox.h"
 //==============================================================================
 /*
 */
@@ -50,7 +51,7 @@ public:
     OnOffButton* getMonoViewOnOffButton() { return &monoViewButton; };
 
     OnOffButton* getSubViewOnOffButton() { return &subViewButton; };
-    juce::Slider* getSubViewSlider() { return &subViewSlider; };
+    MangledSlider* getSubViewSlider() { return &subViewSlider; };
 private:
     ScopeDisplay scopeDisplay;
     TemporalScope temporalScope;
@@ -59,12 +60,12 @@ private:
     OnOffButton postEQOnOffButton;
     OnOffButton postDistoOnOffButton;
 
-    juce::ComboBox subdivisionComboBox;
+    MangledComboBox subdivisionComboBox;
     OnOffButton normalizeButton;
     OnOffButton monoViewButton;
     OnOffButton subViewButton;
 
-    juce::Slider subViewSlider;
+    MangledSlider subViewSlider;
 
     AudioEngineState<float>& dataStruct;
 

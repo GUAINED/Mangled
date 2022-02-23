@@ -10,7 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
-
+#include "../../DataStructure/MangledIdentifiers.h"
 class LookAndFeel_V4_Gradient : public juce::LookAndFeel_V4
 {
 public:
@@ -51,7 +51,7 @@ public:
             g.setGradientFill(grad);
             g.fillPath(path);
 
-            g.setColour(button.findColour(juce::ComboBox::outlineColourId));
+            g.setColour(AudioEngineConstants::UI::neonGreen.withAlpha(0.6f)); //button.findColour(juce::ComboBox::outlineColourId)
             g.strokePath(path, juce::PathStrokeType(1.0f));
         }
         else
@@ -59,7 +59,7 @@ public:
             g.setGradientFill(grad);
             g.fillRoundedRectangle(bounds, cornerSize);
 
-            g.setColour(button.findColour(juce::ComboBox::outlineColourId));
+            g.setColour(AudioEngineConstants::UI::neonGreen.withAlpha(0.6f)); //button.findColour(juce::ComboBox::outlineColourId)
             g.drawRoundedRectangle(bounds, cornerSize, 1.0f);
         }
     }

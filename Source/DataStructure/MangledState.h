@@ -1679,7 +1679,7 @@ public:
     }
     void addActiveFilterCount(int stageID)
     {
-        int yolo = getNbOfActiveFilters(stageID);
+        //int yolo = getNbOfActiveFilters(stageID);
         int nbOfActiveFilters = juce::jlimit(0, EQConstants::Processor<float>::nbOfFilterMax - 1, getNbOfActiveFilters(stageID) + 1);
         getEQVT(stageID).setPropertyExcludingListener(this, EQConstants::ParamStringID::nbOfActiveFilters, nbOfActiveFilters, &undoManager);
     }
@@ -2135,7 +2135,7 @@ public:
         int nbOfPoints = getNbOfPoints(stageID, distortionUnitID);
         //int halfNbOfPoints = nbOfPoints / 2;
 
-        if (nbOfPoints == DistortionConstants::WaveShaper<float>::nbOfPointMax)
+        if (nbOfPoints == PiecewiseFunctionConstants::Processor<float>::nbOfPointMax)
             return;
 
         float scopeMinLin = DistortionConstants::UI::scopeMinLin_f;
@@ -2147,6 +2147,7 @@ public:
 
         addPoint(stageID, distortionUnitID, pointX, pointY);
     }
+
     void setMouseDragEventWS(juce::MouseEvent& e, float scopeWidth, float scopeHeight)
     {
         int stageID = getSelectedStageID();
@@ -2201,7 +2202,7 @@ public:
         juce::ValueTree vtWS = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
 
         int nbOfChild = vtWS.getNumChildren();
-        if (nbOfChild == DistortionConstants::WaveShaper<float>::nbOfPointMax)
+        if (nbOfChild == PiecewiseFunctionConstants::Processor<float>::nbOfPointMax)
             return;
 
         int childID = 0;
@@ -2364,8 +2365,8 @@ public:
     }
     void setPointY(int stageID, int distortionUnitID, int pointID, float newPointY)
     {
-        newPointY = juce::jlimit(DistortionConstants::WaveShaper<float>::pointYMinLin,
-            DistortionConstants::WaveShaper<float>::pointYMaxLin,
+        newPointY = juce::jlimit(PiecewiseFunctionConstants::Processor<float>::pointYMinLin,
+            PiecewiseFunctionConstants::Processor<float>::pointYMaxLin,
             newPointY
         );
 
@@ -2382,8 +2383,8 @@ public:
     }
     void setPointYNoListener(int stageID, int distortionUnitID, int pointID, float newPointY)
     {
-        newPointY = juce::jlimit(DistortionConstants::WaveShaper<float>::pointYMinLin,
-            DistortionConstants::WaveShaper<float>::pointYMaxLin,
+        newPointY = juce::jlimit(PiecewiseFunctionConstants::Processor<float>::pointYMinLin,
+            PiecewiseFunctionConstants::Processor<float>::pointYMaxLin,
             newPointY
         );
 
@@ -2407,8 +2408,8 @@ public:
             int curveType = getPointCurveType(stageID, distortionUnitID, pointID);
             float tension = 1.0f;
 
-            if (curveType == DistortionConstants::WaveShaper<float>::CurveTypes::polynomial
-                || curveType == DistortionConstants::WaveShaper<float>::CurveTypes::asinh)
+            if (curveType == PiecewiseFunctionConstants::Processor<float>::CurveTypes::polynomial
+                || curveType == PiecewiseFunctionConstants::Processor<float>::CurveTypes::asinh)
             {
                 tension = -newTension;
             }
@@ -2477,7 +2478,7 @@ public:
                 setTensionNoListener(stageID, distortionUnitID, mirrorID, tension);
             }
 
-            if (curveType == DistortionConstants::WaveShaper<float>::CurveTypes::polynomial)
+            if (curveType == PiecewiseFunctionConstants::Processor<float>::CurveTypes::polynomial)
             {
                 float tension = getTension(stageID, distortionUnitID, pointID);
                 setTensionNoListener(stageID, distortionUnitID, pointID, -tension);

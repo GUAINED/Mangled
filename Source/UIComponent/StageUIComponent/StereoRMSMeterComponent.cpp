@@ -25,7 +25,7 @@ StereoRMSMeterComponent::StereoRMSMeterComponent(juce::String initString)
     addAndMakeVisible(gainSlider);
 
     gainLabel.setText(initString, juce::dontSendNotification);
-    gainLabel.setJustificationType(juce::Justification::centred);
+    //gainLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(gainLabel);
 
     leftPeakLabel.setJustificationType(juce::Justification::centred);

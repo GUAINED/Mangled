@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    WaveShaperPointDragger.h
+    PiecewiseFunctionPointDragger.h
     Created: 16 Sep 2021 5:17:37pm
     Author:  CookiMonstor
 
@@ -15,13 +15,13 @@
 //==============================================================================
 /*
 */
-class WaveShaperPointDragger  : public juce::Component
+class PiecewiseFunctionPointDragger  : public juce::Component
 {
 public:
-    WaveShaperPointDragger();
-    WaveShaperPointDragger(juce::Colour circleColour);
-    //WaveShaperPointDragger(const WaveShaperPointDragger& obj);
-    ~WaveShaperPointDragger() override;
+    PiecewiseFunctionPointDragger();
+    PiecewiseFunctionPointDragger(juce::Colour circleColour);
+    //PiecewiseFunctionPointDragger(const PiecewiseFunctionPointDragger& obj);
+    ~PiecewiseFunctionPointDragger() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -35,5 +35,5 @@ public:
 private:
     juce::Colour colour;
     bool isSelected = false;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveShaperPointDragger)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PiecewiseFunctionPointDragger)
 };

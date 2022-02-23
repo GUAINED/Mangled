@@ -20,7 +20,9 @@
 #include "UIComponent/ScopeUIComponent/ScopeComponent.h"
 #include "UIComponent/EQUIComponent/EQComponent.h"
 #include "UIComponent/DistortionUIComponent/DistortionComponent.h"
+#include "UIComponent/Controls/MangledLabel.h"
 #include "UIComponent/Controls/MangledSlider.h"
+#include "UIComponent/Controls/MangledButton.h"
 #include "UIComponent/Controls/MangledDualStateButton.h"
 //==============================================================================
 /**
@@ -70,6 +72,7 @@ public:
     void updateScope(int stageID);
     void updateDistortion(int stageID, int distortionUnitID);
     void updateRMSMeter(int stageID);
+
 private:
     void linkParametersAttachment(juce::AudioProcessorValueTreeState& apvts);
     void linkStageParametersAttachment(juce::AudioProcessorValueTreeState& apvts, int stageID);
@@ -81,22 +84,20 @@ private:
     void switchToSelectedID();
     void switchUI(int stageID, int processorID, int distortionUnitID);
 
-
-
     MainMenuTabComponent mainMenuTab;
 
-    juce::TextButton undoButton;
-    juce::TextButton redoButton;
+    MangledButton undoButton;
+    MangledButton redoButton;
 
     juce::OwnedArray<juce::TextButton> stateButton;
     //juce::TextButton stateAButton;
     //juce::TextButton stateBButton;
-    juce::Label masterGainLabel;
+    MangledLabel masterGainLabel;
     //juce::Slider masterGainSlider;
     MangledSlider masterGainSlider;
     OnOffButton masterLimiterOnOffButton;
 
-    juce::TextButton masterResetButton;
+    MangledButton masterResetButton;
 
     juce::Label mangledLabel;
 
@@ -117,6 +118,6 @@ private:
     MangledAudioProcessor& audioProcessor;
 
     bool shouldDrag = false;
-    bool editorLoadingDone = false;
+    //bool editorLoadingDone = false;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MangledAudioProcessorEditor)
 };

@@ -20,9 +20,11 @@ public:
         : TextButton(buttonName)
     {
         setClickingTogglesState(true);
-        setLookAndFeel(&laf);
         setColour(juce::TextButton::ColourIds::buttonOnColourId, AudioEngineConstants::UI::darkNeonGreen);// AudioEngineConstants::UI::darkestNeonGreen);
         setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::black);//.brighter(0.1f)
+        //setColour(juce::TextButton::ColourIds::textColourOnId, AudioEngineConstants::UI::neonGreen);
+        //setColour(juce::TextButton::ColourIds::textColourOffId, AudioEngineConstants::UI::neonGreen);
+        setLookAndFeel(&laf);
         //setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::black);
         //setColour(juce::TextButton::ColourIds::textColourOffId, AudioEngineConstants::UI::neonGreen);
     };

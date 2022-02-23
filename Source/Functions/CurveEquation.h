@@ -53,7 +53,7 @@ public:
     }
     static inline SampleType arcsinhOverOne(SampleType x, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY)
     {
-        SampleType cste = DistortionConstants::WaveShaper<SampleType>::aSinHCurveCste;
+        SampleType cste = PiecewiseFunctionConstants::Processor<SampleType>::aSinHCurveCste;
 
         x = juce::jmap(x, leftX, rightX, static_cast<SampleType>(0.0), static_cast<SampleType>(1.0));
 
@@ -66,7 +66,7 @@ public:
 
     static inline SampleType arcsinhBelowOne(SampleType x, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY)
     {
-        SampleType cste = DistortionConstants::WaveShaper<SampleType>::aSinHCurveCste;
+        SampleType cste = PiecewiseFunctionConstants::Processor<SampleType>::aSinHCurveCste;
 
         x = juce::jmap(x, leftX, rightX, static_cast<SampleType>(0.0), static_cast<SampleType>(1.0));
 
@@ -79,8 +79,8 @@ public:
 
     static inline SampleType doubleCurveOverZero(SampleType x, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY)
     {
-        SampleType tensionMin = DistortionConstants::WaveShaper<SampleType>::tensionMin;
-        SampleType tensionMax = DistortionConstants::WaveShaper<SampleType>::tensionMax;
+        SampleType tensionMin = PiecewiseFunctionConstants::Processor<SampleType>::tensionMin;
+        SampleType tensionMax = PiecewiseFunctionConstants::Processor<SampleType>::tensionMax;
         SampleType midX = (rightX + leftX) * static_cast<SampleType>(0.5);
         SampleType midY = (rightY + leftY) * static_cast<SampleType>(0.5);
         SampleType tensionRemap = juce::jmap(tension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(0.0), static_cast<SampleType>(1.0));
@@ -108,8 +108,8 @@ public:
 
     static inline SampleType doubleCurveBelowZero(SampleType x, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY)
     {
-        SampleType tensionMin = DistortionConstants::WaveShaper<SampleType>::tensionMin;
-        SampleType tensionMax = DistortionConstants::WaveShaper<SampleType>::tensionMax;
+        SampleType tensionMin = PiecewiseFunctionConstants::Processor<SampleType>::tensionMin;
+        SampleType tensionMax = PiecewiseFunctionConstants::Processor<SampleType>::tensionMax;
         SampleType midX = (rightX + leftX) * static_cast<SampleType>(0.5);
         SampleType midY = (rightY + leftY) * static_cast<SampleType>(0.5);
         SampleType tensionRemap = juce::jmap(tension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(0.0), static_cast<SampleType>(1.0));

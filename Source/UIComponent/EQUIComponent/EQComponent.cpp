@@ -15,9 +15,12 @@
 EQComponent::EQComponent(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
     , onOffButton("", "On", true)
+    , resetButton("Reset")
+    , filterIdUpEQButton("Up")
+    , filterIdDownEQButton("Down")
 {
     //Reset Button
-    resetButton.setButtonText("Reset");
+    //resetButton.setButtonText("Reset");
     resetButton.addListener(this);
     addAndMakeVisible(resetButton);
 
@@ -32,7 +35,7 @@ EQComponent::EQComponent(AudioEngineState<float>& mlDataStruct)
 
     addAndMakeVisible(filterIdEQLabel);
 
-    filterIdDownEQButton.setButtonText("Down");
+    //filterIdDownEQButton.setButtonText("Down");
     filterIdDownEQButton.addListener(this);
     addChildComponent(filterIdDownEQButton);
     //filterIdDownEQButton.setEnabled(false);
@@ -44,7 +47,7 @@ EQComponent::EQComponent(AudioEngineState<float>& mlDataStruct)
 
     //addAndMakeVisible(filterOnOffEQButton);
 
-    filterIdUpEQButton.setButtonText("Up");
+    //filterIdUpEQButton.setButtonText("Up");
     filterIdUpEQButton.addListener(this);
     addChildComponent(filterIdUpEQButton);
 
@@ -102,7 +105,7 @@ void EQComponent::resized()
     filterIdDownEQButton.setBounds(filterIdEQLabel.getX() - (labelWidth - 20), 0, labelWidth - 20, labelHeight);
     filterIdUpEQButton.setBounds(filterIdEQLabel.getRight(), filterIdDownEQButton.getY(), labelWidth - 20, labelHeight);
 
-    mixSlider.setBounds(getWidth() - 2 * labelWidth, 0, 2 * labelWidth, labelHeight);
+    mixSlider.setBounds(getWidth() - 2 * labelWidth - pixelSpace, 0, 2 * labelWidth, labelHeight);
 
     onOffButton.setBounds(mixSlider.getX() - pixelSpace - labelWidth, filterIdUpEQButton.getY(), labelWidth, labelHeight);
 

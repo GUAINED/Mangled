@@ -1284,32 +1284,7 @@ namespace DistortionConstants
         static constexpr int nbOfDUMax = 2;
     };
 
-    template <typename SampleType>
-    class WaveShaper
-    {
-    public:
-        static constexpr int nbOfPointMax = 100;
-        static constexpr SampleType sampleLimitValue = static_cast<SampleType>(63095.734448); // juce::Decibels::decibelsToGain(96.0);
-        static constexpr SampleType tensionMin = static_cast<SampleType>(0.1);
-        static constexpr SampleType tensionMax = static_cast<SampleType>(10.0);
-        static constexpr SampleType pointXMaxLin = static_cast<SampleType>(1.0);
-        static constexpr SampleType pointXMinLin = static_cast<SampleType>(-1.0);
-        static constexpr SampleType pointYMaxLin = static_cast<SampleType>(1.0);
-        static constexpr SampleType pointYMinLin = static_cast<SampleType>(-1.0);
-        static constexpr SampleType aSinHCurveCste = static_cast<SampleType>(2.61249613887); //static_cast<SampleType>(1.0 / std::log(1.0 + juce::MathConstants<double>::sqrt2));
-        
-        enum CurveTypes
-        {
-            polynomial,
-            asinh,
-            doubleCurve,
-            square,
-            triangle,
-            stair,
-            sin,
-            maxCureType
-        };
-    };
+
 
     class UI
     {
@@ -1934,6 +1909,32 @@ namespace DistoUnitConstants
 
 namespace PiecewiseFunctionConstants
 {
+    template <typename SampleType>
+    class Processor
+    {
+    public:
+        static constexpr int nbOfPointMax = 100;
+        static constexpr SampleType sampleLimitValue = static_cast<SampleType>(63095.734448); // juce::Decibels::decibelsToGain(96.0);
+        static constexpr SampleType tensionMin = static_cast<SampleType>(0.1);
+        static constexpr SampleType tensionMax = static_cast<SampleType>(10.0);
+        static constexpr SampleType pointXMaxLin = static_cast<SampleType>(1.0);
+        static constexpr SampleType pointXMinLin = static_cast<SampleType>(-1.0);
+        static constexpr SampleType pointYMaxLin = static_cast<SampleType>(1.0);
+        static constexpr SampleType pointYMinLin = static_cast<SampleType>(-1.0);
+        static constexpr SampleType aSinHCurveCste = static_cast<SampleType>(2.61249613887); //static_cast<SampleType>(1.0 / std::log(1.0 + juce::MathConstants<double>::sqrt2));
+
+        enum CurveTypes
+        {
+            polynomial,
+            asinh,
+            doubleCurve,
+            square,
+            triangle,
+            stair,
+            sin,
+            maxCureType
+        };
+    };
     namespace ParamStringID
     {
         static const juce::String piecewiseFunction{ "SR" };

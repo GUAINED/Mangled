@@ -79,7 +79,7 @@ EQSliderComponent::EQSliderComponent(AudioEngineState<float>& mlDataStruct, juce
 
     //Filter is Active===========================================================================================
     filterIsActiveEQButton.setButtonText(EQConstants::AutomationString::deleteFilter);
-    filterIsActiveEQButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::black);
+    //filterIsActiveEQButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::black);
     filterIsActiveEQButton.setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::yellow);
     filterIsActiveEQButton.setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::yellow);
     filterIsActiveEQButton.setClickingTogglesState(true);
@@ -102,8 +102,8 @@ void EQSliderComponent::paint (juce::Graphics& g)
     //g.setOpacity(0.3f);
     g.setGradientFill(colourGradient);
     g.fillRect(getLocalBounds());
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    //g.setColour (juce::Colours::grey);
+    //g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
     //g.setColour (juce::Colours::white);
     //g.setFont (14.0f);
@@ -125,7 +125,7 @@ void EQSliderComponent::resized()
     filterOrderEQLabel.setBounds(filterOnOffEQButton.getRight() + pixelSpace, filterTypeEQComboBox.getY(), labelWidth + 5, labelHeight);
     filterOrderEQComboBox.setBounds(filterOrderEQLabel.getRight(), filterOrderEQLabel.getY(), labelWidth + 30, labelHeight);
 
-    filterIsActiveEQButton.setBounds(getRight() - labelWidth - pixelSpace, filterTypeEQComboBox.getY(), labelWidth, labelHeight);
+    filterIsActiveEQButton.setBounds(getRight() - 100 - pixelSpace, filterTypeEQComboBox.getY(), 100, labelHeight);
 
     filterCutoffEQLabel.setBounds(filterTypeEQLabel.getX(),  filterTypeEQLabel.getBottom() + pixelSpace, labelWidth, labelHeight);
     filterCutoffEQSlider.setBounds(filterCutoffEQLabel.getRight(),  filterCutoffEQLabel.getY(),  getWidth() - labelWidth - 2*pixelSpace, labelHeight);

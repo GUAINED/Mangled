@@ -64,8 +64,8 @@ void MainLayerMenuComponent::paint (juce::Graphics& g)
 
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
     g.fillAll(juce::Colours::transparentBlack);
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    //g.setColour (juce::Colours::grey);
+    //g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
     //g.setColour (juce::Colours::white);
     //g.setFont (14.0f);
@@ -93,13 +93,13 @@ void MainLayerMenuComponent::resized()
     for (int stageID = 0; stageID < stageOnOffButtonVector.size(); ++stageID)
     {
         stageOnOffButtonVector[stageID]->setBounds(stageID * (buttonIDWidth + buttonOnOffWidth + offset), 0, buttonOnOffWidth, height);
-        stageIDButtonVector[stageID]->setBounds(stageID * (buttonIDWidth + buttonOnOffWidth + offset) + buttonOnOffWidth, 0, buttonIDWidth, height);
+        stageIDButtonVector[stageID]->setBounds(stageID * (buttonIDWidth + buttonOnOffWidth + offset) + buttonOnOffWidth + 1, 0, buttonIDWidth, height);
     }
 
     for (int stageID = 0; stageID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stageID)
     {
-        auto yolo = getHeight() - labelHeight;
-        stageComponentVector[stageID]->setBounds(stageOnOffButtonVector[0]->getX(), stageOnOffButtonVector[0]->getBottom(), getWidth(), yolo);
+        auto stageHeight = getHeight() - labelHeight;
+        stageComponentVector[stageID]->setBounds(stageOnOffButtonVector[0]->getX(), stageOnOffButtonVector[0]->getBottom(), getWidth(), stageHeight);
     }
 
 

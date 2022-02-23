@@ -17,6 +17,7 @@
 #include "../../Processor/UnitProcessor/EQ/EQProcessor.h"
 #include "../Controls/OnOffButton.h"
 #include "../Controls/MangledSlider.h"
+#include "../Controls/MangledButton.h"
 //==============================================================================
 /*
 */
@@ -45,19 +46,19 @@ public:
     //void setNbOfActiveFilter(int newNbOfActiveFilter) { nbOfActiveFilter = newNbOfActiveFilter; };
     
     //Get Function
-    juce::Button*      getResetButton()                     { return &resetButton; };
+    MangledButton*      getResetButton()                     { return &resetButton; };
     juce::Label*       getFilterIdEQLabel()                 { return &filterIdEQLabel; };
     OnOffButton*       getOnOffButton()                     { return &onOffButton; };
-    juce::TextButton*  getFilterIdDownEQTextButton()        { return &filterIdDownEQButton; };
-    juce::TextButton*  getFilterIdUpEQTextButton()          { return &filterIdUpEQButton; };
+    MangledButton*  getFilterIdDownEQTextButton()        { return &filterIdDownEQButton; };
+    MangledButton*  getFilterIdUpEQTextButton()          { return &filterIdUpEQButton; };
     MangledSlider*      getMixEQSlider()                     { return &mixSlider; };
     EQSliderComponent* getEQSliderComponent(int eqSliderID) { return eqSlider[eqSliderID]; };
 
 private:
-    juce::TextButton resetButton;
-    juce::TextButton filterIdDownEQButton;
+    MangledButton resetButton;
+    MangledButton filterIdDownEQButton;
     juce::Label filterIdEQLabel;
-    juce::TextButton filterIdUpEQButton;
+    MangledButton filterIdUpEQButton;
 
     //juce::Label isBypassedEQLabel;
     OnOffButton onOffButton;

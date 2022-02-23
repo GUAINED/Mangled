@@ -12,9 +12,12 @@
 
 #include <JuceHeader.h>
 
-#include "WaveShaperScope.h"
+#include "DistortionScope.h"
 #include "../Controls/OnOffButton.h"
+#include "../Controls/MangledLabel.h"
+#include "../Controls/MangledButton.h"
 #include "../Controls/MangledSlider.h"
+#include "../Controls/MangledComboBox.h"
 //class DistoList : public juce::ListBoxModel
 //{
 //public:
@@ -33,7 +36,7 @@
 */
 class DistortionSliderComponent  
     : public juce::Component
-    , public juce::ComboBox::Listener
+    , public MangledComboBox::Listener
     , public juce::Button::Listener
 {
 public:
@@ -54,8 +57,8 @@ public:
         //juce::MouseEvent mouseEventRelativeWS = e.getEventRelativeTo(ent()->getDistortionSlider(distortionUnitID));
 
         //mousePos = mouseEventRelativeWS.getPosition();
-        WaveShaperScope* pWaveShaperScope = getScope();
-        juce::Rectangle<int> wsScopeBounds = pWaveShaperScope->getBounds();
+        DistortionScope* pDistortionScope = getScope();
+        juce::Rectangle<int> wsScopeBounds = pDistortionScope->getBounds();
 
         bool isBipolar = dataStruct.getIsBipolar(stageID, distortionUnitID);
 
@@ -74,8 +77,8 @@ public:
 
             if (e.getNumberOfClicks() == 1)
             {
-                int pointID = pWaveShaperScope->findPoint(c);
-                int tensionID = pWaveShaperScope->findTension(c);
+                int pointID = pDistortionScope->findPoint(c);
+                int tensionID = pDistortionScope->findTension(c);
 
                 dataStruct.setPointAndTensionID(stageID, distortionUnitID, pointID, tensionID);
 
@@ -94,12 +97,12 @@ public:
             }
             else if (e.getNumberOfClicks() == 2)
             {
-                int pointID = pWaveShaperScope->findPoint(c);
+                int pointID = pDistortionScope->findPoint(c);
 
                 if (pointID == -1)
                 {
-                    float scopeHeight = (float)pWaveShaperScope->getHeight();
-                    float scopeWidth = (float)pWaveShaperScope->getWidth();
+                    float scopeHeight = (float)pDistortionScope->getHeight();
+                    float scopeWidth = (float)pDistortionScope->getWidth();
 
                     dataStruct.setMouseAddPointWS(c, scopeWidth, scopeHeight);
                     shouldDrag = true;
@@ -113,8 +116,8 @@ public:
     {
         juce::Point<int> mousePos = e.getPosition();
 
-        WaveShaperScope* pWaveShaperScope = getScope();
-        juce::Rectangle<int> wsScopeBounds = pWaveShaperScope->getBounds();
+        DistortionScope* pDistortionScope = getScope();
+        juce::Rectangle<int> wsScopeBounds = pDistortionScope->getBounds();
 
         bool isMouseOnWs = wsScopeBounds.contains(mousePos);
 
@@ -122,10 +125,10 @@ public:
         {
             if (shouldDrag)
             {
-                juce::MouseEvent c = e.getEventRelativeTo(pWaveShaperScope);
+                juce::MouseEvent c = e.getEventRelativeTo(pDistortionScope);
 
-                float scopeHeight = (float)pWaveShaperScope->getHeight();
-                float scopeWidth = (float)pWaveShaperScope->getWidth();
+                float scopeHeight = (float)pDistortionScope->getHeight();
+                float scopeWidth = (float)pDistortionScope->getWidth();
 
                 dataStruct.setMouseDragEventWS(c, scopeWidth, scopeHeight);
             }
@@ -136,8 +139,8 @@ public:
     {
         juce::Point<int> mousePos = e.getPosition();
 
-        WaveShaperScope* pWaveShaperScope = getScope();
-        juce::Rectangle<int> wsScopeBounds = pWaveShaperScope->getBounds();
+        DistortionScope* pDistortionScope = getScope();
+        juce::Rectangle<int> wsScopeBounds = pDistortionScope->getBounds();
 
         bool isMouseOnWs = wsScopeBounds.contains(mousePos);
 
@@ -155,49 +158,49 @@ public:
 
     void switchComboBox();
 
-    void setUI(int circuitID, int circuitType, bool isBipolar);
+    void setUI(bool isBipolar);
 
     //Get Function
-    juce::ComboBox*   getEquationTypeComboBox()      { return &eqaTypeComboBox; };
-    juce::ComboBox*   getSigmoidEquationComboBox()   { return &sigmoidEquationComboBox; };
-    juce::ComboBox*   getSymetricEquationComboBox()  { return &symEquationComboBox; };
-    juce::ComboBox*   getAsymetricEquationComboBox() { return &asymEquationComboBox; };
-    juce::ComboBox*   getSpecialEquationComboBox()   { return &specialEquationComboBox; };
-    OnOffButton*      getBipolarOnOffButton()        { return &bipolarOnOffButton; };
+    MangledComboBox* getEquationTypeComboBox()      { return &eqaTypeComboBox; };
+    MangledComboBox* getSigmoidEquationComboBox()   { return &sigmoidEquationComboBox; };
+    MangledComboBox* getSymetricEquationComboBox()  { return &symEquationComboBox; };
+    MangledComboBox* getAsymetricEquationComboBox() { return &asymEquationComboBox; };
+    MangledComboBox* getSpecialEquationComboBox()   { return &specialEquationComboBox; };
+    OnOffButton*     getBipolarOnOffButton()        { return &bipolarOnOffButton; };
     //juce::TextButton* getHybridModeOnOffButton()   { return &hybridModeOnOffButton; };
-    OnOffButton*      getDistoProcFirstButton()      { return &distoProcFirstButton; };
-    juce::TextButton* getDeleteWSPointButton()       { return &deleteWSPointButton; };
-    OnOffButton*      getDCFilterOnOffButton()       { return &dcFilterOnOffButton; };
-    juce::TextButton* getResetWSButton()             { return &resetWSButton; };
-    juce::ComboBox*   getCurveTypeComboBox()         { return &piecewiseFunctionCurveComboBox; };
-    MangledSlider*     getPreGainWaveShaperSlider()   { return &preGainWaveShaperSlider; };
-    MangledSlider*     getDriveWaveShaperSlider()     { return &driveWaveShaperSlider; };
-    MangledSlider*     getWarpWaveShaperSlider()      { return &warpWaveShaperSlider; };
-    MangledSlider*     getPostGainWaveShaperSlider()  { return &postGainWaveShaperSlider; };
-    MangledSlider*     getMixWaveShaperSlider()       { return &mixWaveShaperSlider; };
-    juce::TextButton* getResetAllButton() { return &resetAllButton; };
-    WaveShaperScope* getScope() { return &waveShaperScope; };
+    OnOffButton*     getDistoProcFirstButton()      { return &distoProcFirstButton; };
+    MangledButton*   getDeleteWSPointButton()       { return &deleteWSPointButton; };
+    OnOffButton*     getDCFilterOnOffButton()       { return &dcFilterOnOffButton; };
+    MangledButton*   getResetWSButton()             { return &resetWSButton; };
+    MangledComboBox* getCurveTypeComboBox()         { return &piecewiseFunctionCurveComboBox; };
+    MangledSlider*   getPreGainWaveShaperSlider()   { return &preGainWaveShaperSlider; };
+    MangledSlider*   getDriveWaveShaperSlider()     { return &driveWaveShaperSlider; };
+    MangledSlider*   getWarpWaveShaperSlider()      { return &warpWaveShaperSlider; };
+    MangledSlider*   getPostGainWaveShaperSlider()  { return &postGainWaveShaperSlider; };
+    MangledSlider*   getMixWaveShaperSlider()       { return &mixWaveShaperSlider; };
+    MangledButton*   getResetAllButton()            { return &resetAllButton; };
+    DistortionScope* getScope()                     { return &distortionScope; };
 
 private:
     juce::Label eqaTypeLabel;
-    juce::ComboBox eqaTypeComboBox;
+    MangledComboBox eqaTypeComboBox;
 
     juce::Label sigmoidEquationLabel;
-    juce::ComboBox sigmoidEquationComboBox;
+    MangledComboBox sigmoidEquationComboBox;
 
     juce::Label symEquationLabel;
-    juce::ComboBox symEquationComboBox;
+    MangledComboBox symEquationComboBox;
 
     juce::Label asymEquationLabel;
-    juce::ComboBox asymEquationComboBox;
+    MangledComboBox asymEquationComboBox;
 
     juce::Label specialEquationLabel;
-    juce::ComboBox specialEquationComboBox;
+    MangledComboBox specialEquationComboBox;
     
     //juce::ListBox listBox;
     //DistoList distoList;
     //juce::Label distortionEquationForNegativeValueWaveShaperLabel;
-    //juce::ComboBox distortionEquationForNegativeValueWaveShaperComboBox;
+    //MangledComboBox distortionEquationForNegativeValueWaveShaperComboBox;
 
     OnOffButton bipolarOnOffButton;
     //juce::TextButton bipolarOnOffButton;
@@ -206,32 +209,32 @@ private:
 
     OnOffButton distoProcFirstButton;
 
-    juce::TextButton deleteWSPointButton;
+    MangledButton deleteWSPointButton;
 
     OnOffButton dcFilterOnOffButton;
 
-    juce::TextButton resetWSButton;
+    MangledButton resetWSButton;
 
-    juce::ComboBox piecewiseFunctionCurveComboBox;
+    MangledComboBox piecewiseFunctionCurveComboBox;
 
-    WaveShaperScope waveShaperScope;
+    DistortionScope distortionScope;
 
     MangledSlider preGainWaveShaperSlider;
-    juce::Label preGainWaveShaperLabel;
+    MangledLabel preGainWaveShaperLabel;
 
     MangledSlider driveWaveShaperSlider;
-    juce::Label driveWaveShaperLabel;
+    MangledLabel driveWaveShaperLabel;
 
     MangledSlider warpWaveShaperSlider;
-    juce::Label warpWaveShaperLabel;
+    MangledLabel warpWaveShaperLabel;
 
     MangledSlider postGainWaveShaperSlider;
-    juce::Label postGainWaveShaperLabel;
+    MangledLabel postGainWaveShaperLabel;
 
     MangledSlider mixWaveShaperSlider;
-    juce::Label mixWaveShaperLabel;
+    MangledLabel mixWaveShaperLabel;
 
-    juce::TextButton resetAllButton;
+    MangledButton resetAllButton;
 
     AudioEngineState<float>& dataStruct;
 

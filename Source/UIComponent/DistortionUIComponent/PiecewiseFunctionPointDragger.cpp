@@ -1,41 +1,40 @@
 /*
   ==============================================================================
 
-    WaveShaperPointDragger.cpp
+    PiecewiseFunctionPointDragger.cpp
     Created: 16 Sep 2021 5:17:37pm
     Author:  CookiMonstor
 
   ==============================================================================
 */
 
-#include <JuceHeader.h>
-#include "WaveShaperPointDragger.h"
+#include "PiecewiseFunctionPointDragger.h"
 
 //==============================================================================
-WaveShaperPointDragger::WaveShaperPointDragger()
+PiecewiseFunctionPointDragger::PiecewiseFunctionPointDragger()
 {
     isSelected = false;
     colour = juce::Colours::blue;
     setInterceptsMouseClicks(false, false);
 }
 
-WaveShaperPointDragger::WaveShaperPointDragger(juce::Colour circleColour)
+PiecewiseFunctionPointDragger::PiecewiseFunctionPointDragger(juce::Colour circleColour)
     : colour(circleColour)
 {
     setInterceptsMouseClicks(false, false);
 }
 
-//WaveShaperPointDragger::WaveShaperPointDragger(const WaveShaperPointDragger& obj)
+//PiecewiseFunctionPointDragger::PiecewiseFunctionPointDragger(const PiecewiseFunctionPointDragger& obj)
 //{
 //    colour = obj.colour;
 //    isSelected = obj.isSelected;
 //}
 
-WaveShaperPointDragger::~WaveShaperPointDragger()
+PiecewiseFunctionPointDragger::~PiecewiseFunctionPointDragger()
 {
 }
 
-void WaveShaperPointDragger::paint (juce::Graphics& g)
+void PiecewiseFunctionPointDragger::paint (juce::Graphics& g)
 {
     /* This demo code just fills the component's background and
        draws some placeholder text to get you started.
@@ -54,7 +53,7 @@ void WaveShaperPointDragger::paint (juce::Graphics& g)
     }
 }
 
-void WaveShaperPointDragger::resized()
+void PiecewiseFunctionPointDragger::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..

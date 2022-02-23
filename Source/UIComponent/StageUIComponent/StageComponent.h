@@ -20,6 +20,7 @@
 #include "RMSMeter.h"
 #include "StereoRMSMeterComponent.h"
 #include "../../Processor/LayerProcessor/MainLayerProcessor.h"
+#include "../Controls/MangledComboBox.h"
 
 //==============================================================================
 /*
@@ -89,10 +90,6 @@ public:
         float scopeHeight = (float)scope.getScopeDisplay()->getHeight();
         float scopeWidth = (float)scope.getScopeDisplay()->getWidth();
 
-        float scopeHeight2 = (float)scope.getHeight();
-        float scopeWidth2 = (float)scope.getWidth();
-        float scopeHeight3 = (float)getHeight();
-        float scopeWidth3 = (float)getWidth();
         if (shouldDrag)
         {
             dataStruct.setMouseDragEventEQ(e.getEventRelativeTo(scope.getScopeDisplay()), scopeWidth, scopeHeight);
@@ -135,7 +132,7 @@ public:
     void switchEQToWaveShaper();
     void switchWaveShaperToEQ();
 
-    juce::ComboBox* getDataToDisplayComboBox() { return &dataToDisplayComboBox; };
+    MangledComboBox* getDataToDisplayComboBox() { return &dataToDisplayComboBox; };
     MangledDualStateButton* getDisplayEQButton() { return &displayEQButton; };
     MangledDualStateButton* getDisplayDistoButton() { return &displayDistoButton; };
     MangledDualStateButton* getEnvButton() { return &displayEnvButton; };
@@ -149,7 +146,7 @@ public:
     StereoRMSMeterComponent* getOutputRMSMeter() { return &outputRMSMeter; };
 private:
     juce::Label dataLabel;
-    juce::ComboBox dataToDisplayComboBox;
+    MangledComboBox dataToDisplayComboBox;
     MangledDualStateButton displayEQButton;
     MangledDualStateButton displayDistoButton;
     MangledDualStateButton displayEnvButton;

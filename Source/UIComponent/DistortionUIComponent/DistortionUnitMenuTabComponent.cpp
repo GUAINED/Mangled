@@ -83,8 +83,8 @@ void DistortionUnitMenuTabComponent::paint (juce::Graphics& g)
 
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
     g.fillAll(juce::Colours::transparentBlack);
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    //g.setColour (juce::Colours::grey);
+    //g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
 }
 

@@ -15,6 +15,8 @@
 #include "../../DataStructure/MangledState.h"
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../Controls/OnOffButton.h"
+#include "../Controls/MangledLabel.h"
+#include "../Controls/MangledButton.h"
 #include "../Controls/MangledSlider.h"
 #include "../Controls/MangledComboBox.h"
 
@@ -35,38 +37,38 @@ public:
     void buttonClicked(juce::Button* button) override;
 
     //Get function
-    MangledSlider*  getCentreFrequencyPhaserSlider() { return &centreFrequencyPhaserSlider; };
-    MangledSlider*  getFeedbackPhaserSlider()        { return &feedbackPhaserSlider; };
-    MangledSlider*  getRatePhaserSlider()            { return &ratePhaserSlider; };
-    MangledSlider*  getDepthPhaserSlider()           { return &depthPhaserSlider; };
-    MangledSlider*  getMixPhaserSlider()             { return &mixPhaserSlider; };
+    MangledSlider*   getCentreFrequencyPhaserSlider() { return &centreFrequencyPhaserSlider; };
+    MangledSlider*   getFeedbackPhaserSlider()        { return &feedbackPhaserSlider; };
+    MangledSlider*   getRatePhaserSlider()            { return &ratePhaserSlider; };
+    MangledSlider*   getDepthPhaserSlider()           { return &depthPhaserSlider; };
+    MangledSlider*   getMixPhaserSlider()             { return &mixPhaserSlider; };
     MangledComboBox* getNumStagesPhaserComboBox()     { return &numStagesPhaserComboBox; };
-    OnOffButton*    getPhaserOnOffButton()           { return &phaserOnOffButton; };
-    juce::TextButton* getResetButton() { return &resetButton; };
+    OnOffButton*     getPhaserOnOffButton()           { return &phaserOnOffButton; };
+    MangledButton*   getResetButton()                 { return &resetButton; };
 
 private:
 
     MangledSlider centreFrequencyPhaserSlider;
-    juce::Label centreFrequencyPhaserLabel;
+    MangledLabel centreFrequencyPhaserLabel;
 
     MangledSlider feedbackPhaserSlider;
-    juce::Label feedbackPhaserLabel;
+    MangledLabel feedbackPhaserLabel;
 
     MangledSlider ratePhaserSlider;
-    juce::Label ratePhaserLabel;
+    MangledLabel ratePhaserLabel;
 
     MangledSlider depthPhaserSlider;
-    juce::Label depthPhaserLabel;
+    MangledLabel depthPhaserLabel;
 
     MangledSlider mixPhaserSlider;
-    juce::Label mixPhaserLabel;
+    MangledLabel mixPhaserLabel;
 
     MangledComboBox numStagesPhaserComboBox;
     juce::Label numStagesPhaserLabel;
 
     OnOffButton phaserOnOffButton;
 
-    juce::TextButton resetButton;
+    MangledButton resetButton;
 
     AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PhaserComponent)

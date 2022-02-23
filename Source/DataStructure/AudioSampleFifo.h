@@ -68,9 +68,6 @@ public:
 
         jassert(inputBlock.getNumChannels() == nbOfChannels);
 
-        int yolo = inputBlock.getNumSamples();
-        int yolo2 = abstractFifo.getFreeSpace();
-
         if (inputBlock.getNumSamples() > abstractFifo.getFreeSpace())
         {
             returnValue = 0;

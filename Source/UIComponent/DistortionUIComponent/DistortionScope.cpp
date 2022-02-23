@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    WaveShaperScope.cpp
+    DistortionScope.cpp
     Created: 9 Apr 2021 2:09:04pm
     Author:  CookiMonstor
 
@@ -9,34 +9,34 @@
 */
 
 #include <JuceHeader.h>
-#include "WaveShaperScope.h"
+#include "DistortionScope.h"
 
 //==============================================================================
-WaveShaperScope::WaveShaperScope(AudioEngineState<float>& mlDataStruct)
+DistortionScope::DistortionScope(AudioEngineState<float>& mlDataStruct)
     : dataStruct(mlDataStruct)
 {   
     setInterceptsMouseClicks(false, false);
 
-    for (int pointID = 0; pointID < DistortionConstants::WaveShaper<float>::nbOfPointMax; ++pointID)
+    for (int pointID = 0; pointID < PiecewiseFunctionConstants::Processor<float>::nbOfPointMax; ++pointID)
     {
         pointDraggerVector.add(new SelectablePointDragger(DistortionConstants::UI::Colour::pointDragger, DistortionConstants::UI::Colour::selectedPointDragger));
         addChildComponent(pointDraggerVector[pointID]);
     }
 
-    for (int tensionID = 0; tensionID < DistortionConstants::WaveShaper<float>::nbOfPointMax - 1; ++tensionID)
+    for (int tensionID = 0; tensionID < PiecewiseFunctionConstants::Processor<float>::nbOfPointMax - 1; ++tensionID)
     {
-        tensionDraggerVector.add(new WaveShaperTensionDragger(juce::Colours::red));
+        tensionDraggerVector.add(new PiecewiseFunctionTensionDragger(juce::Colours::red));
         addChildComponent(tensionDraggerVector[tensionID]);
 
         binPathData.add(new juce::AudioBuffer<float>(3, DistortionConstants::UI::nbOfPointsPerBin + 1));
     }
 }
 
-WaveShaperScope::~WaveShaperScope()
+DistortionScope::~DistortionScope()
 {
 }
 
-void WaveShaperScope::paint(juce::Graphics& g)
+void DistortionScope::paint(juce::Graphics& g)
 {
     g.fillAll(DistortionConstants::UI::Colour::background);
 
@@ -64,7 +64,7 @@ void WaveShaperScope::paint(juce::Graphics& g)
 
 }
 
-void WaveShaperScope::resized()
+void DistortionScope::resized()
 {
     drawInnerGrid();
 
@@ -73,7 +73,7 @@ void WaveShaperScope::resized()
     drawIsBipolarRectangle();
 }
 
-void WaveShaperScope::drawInnerGrid()
+void DistortionScope::drawInnerGrid()
 {
     int numberOfLine = 9;
     //float diameter = 10.0f;
@@ -98,7 +98,7 @@ void WaveShaperScope::drawInnerGrid()
     }
 }
 
-void WaveShaperScope::drawOuterGrid()
+void DistortionScope::drawOuterGrid()
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -125,7 +125,7 @@ void WaveShaperScope::drawOuterGrid()
     outerGridPath.addRectangle(recX, recY, recWidth, recHeight);
 }
 
-void WaveShaperScope::drawIsBipolarRectangle()
+void DistortionScope::drawIsBipolarRectangle()
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -143,7 +143,7 @@ void WaveShaperScope::drawIsBipolarRectangle()
     isBipolarPath.addRectangle(recX, recY, recWidth, recHeight);
 }
 
-void WaveShaperScope::drawPiecewiseFunctionPath(juce::Path* path, const float* binXData, const float* binYData)//, float* eqBinYData)
+void DistortionScope::drawPiecewiseFunctionPath(juce::Path* path, const float* binXData, const float* binYData)//, float* eqBinYData)
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -168,18 +168,18 @@ void WaveShaperScope::drawPiecewiseFunctionPath(juce::Path* path, const float* b
     }
 }
 
-void WaveShaperScope::drawUnipolarPath(const float* binXData, const float* binYData)
+void DistortionScope::drawUnipolarPath(const float* binXData, const float* binYData)
 {
     drawPiecewiseFunctionPath(&unipolarSampleRemapPath, binXData, binYData);
 
 }
 
-void WaveShaperScope::drawBipolarPath(const float* binXData, const float* binYData)
+void DistortionScope::drawBipolarPath(const float* binXData, const float* binYData)
 {
     drawPiecewiseFunctionPath(&bipolarSampleRemapPath, binXData, binYData);
 }
 
-void WaveShaperScope::drawSelectedCurvePath(const float* binXData, const float* binYData)
+void DistortionScope::drawSelectedCurvePath(const float* binXData, const float* binYData)
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -200,7 +200,7 @@ void WaveShaperScope::drawSelectedCurvePath(const float* binXData, const float* 
     }
 }
 
-void WaveShaperScope::setPointAndTension(int binID, bool pointVisible, float pointX, float pointY, bool tensionVisible, float tensionX, float tensionY)
+void DistortionScope::setPointAndTension(int binID, bool pointVisible, float pointX, float pointY, bool tensionVisible, float tensionX, float tensionY)
 {
     float scopeWidth = (float)getWidth();
     float scopeHeight = (float)getHeight();
@@ -229,7 +229,7 @@ void WaveShaperScope::setPointAndTension(int binID, bool pointVisible, float poi
     tensionDraggerVector[binID]->setVisible(tensionVisible);
 }
 
-void WaveShaperScope::setWaveShaperPointIsSelected(int selectedPointID)
+void DistortionScope::setPiecewiseFunctionPointIsSelected(int selectedPointID)
 {
     for (int pointID = 0; pointID < pointDraggerVector.size(); ++pointID)
     {
@@ -242,7 +242,7 @@ void WaveShaperScope::setWaveShaperPointIsSelected(int selectedPointID)
     pointDraggerVector[selectedPointID]->setIsSelected(true);
 }
 
-void WaveShaperScope::setWaveShaperTensionIsSelected(int selectedCurveID)
+void DistortionScope::setPiecewiseFunctionTensionIsSelected(int selectedCurveID)
 {
     for (int pointID = 0; pointID < tensionDraggerVector.size(); ++pointID)
     {
@@ -258,7 +258,7 @@ void WaveShaperScope::setWaveShaperTensionIsSelected(int selectedCurveID)
     tensionDraggerVector[selectedCurveID]->setColour(DistortionConstants::UI::Colour::selectedTension);
 }
 
-void WaveShaperScope::updateUI(int distortionUnitID, PiecewiseFunction<float>* pSM)
+void DistortionScope::updateUI(int distortionUnitID, PiecewiseFunction<float>* pSM)
 {
     int selectedStageID = dataStruct.getSelectedStageID();
     //int selectedDistoUnitID = dataStruct.getSelectedDistoUnitID();
@@ -286,7 +286,7 @@ void WaveShaperScope::updateUI(int distortionUnitID, PiecewiseFunction<float>* p
 
     pointDraggerVector.getLast()->setVisible(false);
 
-    setWaveShaperPointIsSelected(selectedPointID);
+    setPiecewiseFunctionPointIsSelected(selectedPointID);
 
     bool isBipolar = dataStruct.getIsBipolar(selectedStageID, selectedDistoUnitID);
 
@@ -399,7 +399,7 @@ void WaveShaperScope::updateUI(int distortionUnitID, PiecewiseFunction<float>* p
     //drawSelectedCurvePath(pSM->getBin(selectedCurveID)->getBinPathData().getReadPointer(0), pSM->getBin(selectedCurveID)->getBinPathData().getReadPointer(1));
     pSM->getBin(selectedCurveID)->pullSampleFromFifo(binPathData[selectedCurveID]);
     drawSelectedCurvePath(binPathData[selectedCurveID]->getReadPointer(0), binPathData[selectedCurveID]->getReadPointer(1));
-    setWaveShaperTensionIsSelected(selectedCurveID);
+    setPiecewiseFunctionTensionIsSelected(selectedCurveID);
 
     for (int i = 0; i < (nbOfPoints - 1); ++i)
     {
@@ -425,7 +425,7 @@ void WaveShaperScope::updateUI(int distortionUnitID, PiecewiseFunction<float>* p
         binPathData[nbOfPoints - 2]->getReadPointer(1)[101]);
 }
 
-int WaveShaperScope::findPoint(juce::MouseEvent& e)
+int DistortionScope::findPoint(juce::MouseEvent& e)
 {
     juce::Point<int> mousePos = e.getMouseDownPosition();
     int size = pointDraggerVector.size();
@@ -449,7 +449,7 @@ int WaveShaperScope::findPoint(juce::MouseEvent& e)
     return pointID;
 }
 
-int WaveShaperScope::findTension(juce::MouseEvent& e)
+int DistortionScope::findTension(juce::MouseEvent& e)
 {
     juce::Point<int> mousePos = e.getPosition();
 
@@ -474,7 +474,7 @@ int WaveShaperScope::findTension(juce::MouseEvent& e)
     return tensionID;
 }
 
-bool WaveShaperScope::isMouseOnWSScope(const juce::MouseEvent& e)
+bool DistortionScope::isMouseOnWSScope(const juce::MouseEvent& e)
 {
     return getBounds().contains(e.getPosition());
 }

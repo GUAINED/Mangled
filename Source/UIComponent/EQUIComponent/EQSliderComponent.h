@@ -15,13 +15,16 @@
 #include "../../DataStructure/MainLayerDataStruct.h"
 #include "../../DataStructure/MangledState.h"
 #include "../Controls/OnOffButton.h"
+#include "../Controls/MangledLabel.h"
+#include "../Controls/MangledButton.h"
 #include "../Controls/MangledSlider.h"
+#include "../Controls/MangledComboBox.h"
 //==============================================================================
 /*
 */
 class EQSliderComponent : public juce::Component
                         , public juce::Button::Listener
-                        , public juce::ComboBox::Listener
+                        , public MangledComboBox::Listener
 {
 public:
     EQSliderComponent(AudioEngineState<float>& mlDataStruct, juce::Colour initBackgroundColour);
@@ -39,32 +42,32 @@ public:
     MangledSlider*     getFilterCutoffEQSlider()       { return &filterCutoffEQSlider; };
     MangledSlider*     getFilterQEQSlider()            { return &filterQEQSlider; };
     MangledSlider*     getFilterGainEQSlider()         { return &filterGainEQSlider; };
-    juce::ComboBox*   getFilterTypeEQComboBox()       { return &filterTypeEQComboBox; };
-    juce::ComboBox*   getFilterOrderEQComboBox()      { return &filterOrderEQComboBox; };
+    MangledComboBox*   getFilterTypeEQComboBox()       { return &filterTypeEQComboBox; };
+    MangledComboBox*   getFilterOrderEQComboBox()      { return &filterOrderEQComboBox; };
     OnOffButton*      getFilterOnOffEQTextButton()    { return &filterOnOffEQButton; };
     juce::TextButton* getFilterIsActiveEQTextButton() { return &filterIsActiveEQButton; };
 private:
     juce::Colour backgroundColour;
     juce::ColourGradient colourGradient;
 
-    juce::Label filterCutoffEQLabel;
+    MangledLabel filterCutoffEQLabel;
     MangledSlider filterCutoffEQSlider;
 
-    juce::Label filterQEQLabel;
+    MangledLabel filterQEQLabel;
     MangledSlider filterQEQSlider;
 
-    juce::Label filterGainEQLabel;
+    MangledLabel filterGainEQLabel;
     MangledSlider filterGainEQSlider;
 
     juce::Label filterTypeEQLabel;
-    juce::ComboBox filterTypeEQComboBox;
+    MangledComboBox filterTypeEQComboBox;
 
     juce::Label filterOrderEQLabel;
-    juce::ComboBox filterOrderEQComboBox;
+    MangledComboBox filterOrderEQComboBox;
 
     OnOffButton filterOnOffEQButton;
 
-    juce::TextButton filterIsActiveEQButton;
+    MangledButton filterIsActiveEQButton;
 
     AudioEngineState<float>& dataStruct;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQSliderComponent)

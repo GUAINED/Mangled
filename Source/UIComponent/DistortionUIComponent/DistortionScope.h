@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    WaveShaperScope.h
+    DistortionScope.h
     Created: 9 Apr 2021 2:09:04pm
     Author:  CookiMonstor
 
@@ -13,8 +13,8 @@
 #include <JuceHeader.h>
 #include "../../Processor/UnitProcessor/Distortion/DistortionProcessor.h"
 #include "../../Processor/UnitProcessor/Distortion/DistortionCircuit.h"
-#include "WaveShaperPointDragger.h"
-#include "WaveShaperTensionDragger.h"
+#include "PiecewiseFunctionPointDragger.h"
+#include "PiecewiseFunctionTensionDragger.h"
 #include "../../Processor/UnitProcessor/Distortion/PiecewiseFunctionBin.h"
 #include "../../DataStructure/MangledIdentifiers.h"
 #include "../../DataStructure/MainLayerDataStruct.h"
@@ -25,11 +25,11 @@
 //==============================================================================
 /*
 */
-class WaveShaperScope  : public juce::Component
+class DistortionScope  : public juce::Component
 {
 public:
-    WaveShaperScope(AudioEngineState<float>& mlDataStruct);
-    ~WaveShaperScope() override;
+    DistortionScope(AudioEngineState<float>& mlDataStruct);
+    ~DistortionScope() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -37,8 +37,8 @@ public:
     void updateUI(int distortionUnitID, PiecewiseFunction<float>* pSM);
 
     //Set function================================================================================================================================================================
-    void setWaveShaperPointIsSelected(int selectedPointID);
-    void setWaveShaperTensionIsSelected(int selectedCurveID);
+    void setPiecewiseFunctionPointIsSelected(int selectedPointID);
+    void setPiecewiseFunctionTensionIsSelected(int selectedCurveID);
     void drawPiecewiseFunctionPath(juce::Path* path, const float* binXData, const float* binYData);// , float* eqBinYData);
     void drawUnipolarPath(const float* binXData, const float* binYData);
     void drawBipolarPath(const float* binXData, const float* binYData);
@@ -55,7 +55,7 @@ public:
 
 private:
     juce::OwnedArray<SelectablePointDragger> pointDraggerVector;
-    juce::OwnedArray<WaveShaperTensionDragger> tensionDraggerVector;
+    juce::OwnedArray<PiecewiseFunctionTensionDragger> tensionDraggerVector;
 
     juce::OwnedArray<juce::AudioBuffer<float>> binPathData;
     
@@ -71,5 +71,5 @@ private:
     juce::Colour bipolarColour = juce::Colours::darkgrey;
 
     AudioEngineState<float>& dataStruct;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveShaperScope)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionScope)
 };

@@ -473,7 +473,7 @@ int MainLayerDataStruct::findNextActiveFilterUp(int stageID)
 
 void MainLayerDataStruct::addActiveFilterCount(int stageID)
 {
-    int yolo = getNbOfActiveFilters(stageID);
+    //int yolo = getNbOfActiveFilters(stageID);
     int nbOfActiveFilters = juce::jlimit(0, EQConstants::Processor<float>::nbOfFilterMax - 1, getNbOfActiveFilters(stageID) + 1);
     getEQVT(stageID).setPropertyExcludingListener(this, EQConstants::ParamStringID::nbOfActiveFilters, nbOfActiveFilters, &undoManager);
 }
@@ -839,7 +839,7 @@ void MainLayerDataStruct::setMouseAddPointWS(juce::MouseEvent& e, float scopeWid
     int nbOfPoints = getNbOfPoints(stageID, distortionUnitID);
     //int halfNbOfPoints = nbOfPoints / 2;
 
-    if (nbOfPoints == DistortionConstants::WaveShaper<float>::nbOfPointMax)
+    if (nbOfPoints == PiecewiseFunctionConstants::Processor<float>::nbOfPointMax)
         return;
 
     float scopeMinLin = DistortionConstants::UI::scopeMinLin_f;
@@ -908,7 +908,7 @@ void MainLayerDataStruct::addPoint(int stageID, int distortionUnitID, float poin
     juce::ValueTree vtWS = getPiecewiseFunctionPointsVT(stageID, distortionUnitID);
 
     int nbOfChild = vtWS.getNumChildren();
-    if (nbOfChild == DistortionConstants::WaveShaper<float>::nbOfPointMax)
+    if (nbOfChild == PiecewiseFunctionConstants::Processor<float>::nbOfPointMax)
         return;
 
     int childID = 0;
@@ -1078,8 +1078,8 @@ void MainLayerDataStruct::setPointX(int stageID, int distortionUnitID, int point
 
 void MainLayerDataStruct::setPointY(int stageID, int distortionUnitID, int pointID, float newPointY)
 {
-    newPointY = juce::jlimit(DistortionConstants::WaveShaper<float>::pointYMinLin,
-                             DistortionConstants::WaveShaper<float>::pointYMaxLin,
+    newPointY = juce::jlimit(PiecewiseFunctionConstants::Processor<float>::pointYMinLin,
+                             PiecewiseFunctionConstants::Processor<float>::pointYMaxLin,
                              newPointY
                             );
 
@@ -1098,8 +1098,8 @@ void MainLayerDataStruct::setPointXNoListener(int stageID, int distortionUnitID,
 
 void MainLayerDataStruct::setPointYNoListener(int stageID, int distortionUnitID, int pointID, float newPointY)
 {
-    newPointY = juce::jlimit(DistortionConstants::WaveShaper<float>::pointYMinLin,
-        DistortionConstants::WaveShaper<float>::pointYMaxLin,
+    newPointY = juce::jlimit(PiecewiseFunctionConstants::Processor<float>::pointYMinLin,
+        PiecewiseFunctionConstants::Processor<float>::pointYMaxLin,
         newPointY
     );
 
@@ -1125,8 +1125,8 @@ void MainLayerDataStruct::setTension(int stageID, int distortionUnitID, int poin
         int curveType = getPointCurveType(stageID, distortionUnitID, pointID);
         float tension = 1.0f;
 
-        if (curveType == DistortionConstants::WaveShaper<float>::CurveTypes::polynomial
-            || curveType == DistortionConstants::WaveShaper<float>::CurveTypes::asinh)
+        if (curveType == PiecewiseFunctionConstants::Processor<float>::CurveTypes::polynomial
+            || curveType == PiecewiseFunctionConstants::Processor<float>::CurveTypes::asinh)
         {
             tension = -newTension;
         }
@@ -1199,7 +1199,7 @@ void MainLayerDataStruct::setPointCurveType(int stageID, int distortionUnitID, i
             setTensionNoListener(stageID, distortionUnitID, mirrorID, tension);
         }
 
-        if (curveType == DistortionConstants::WaveShaper<float>::CurveTypes::polynomial)
+        if (curveType == PiecewiseFunctionConstants::Processor<float>::CurveTypes::polynomial)
         {
             float tension = getTension(stageID, distortionUnitID, pointID);
             setTensionNoListener(stageID, distortionUnitID, pointID, -tension);

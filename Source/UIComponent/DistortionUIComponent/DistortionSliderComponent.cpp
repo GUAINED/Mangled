@@ -8,7 +8,6 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
 #include "DistortionSliderComponent.h"
 
 //==============================================================================
@@ -17,14 +16,14 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     , bipolarOnOffButton("Bipolar", "Off", false)
     , dcFilterOnOffButton("DC Filter", "On", true)
     , resetAllButton("Reset Unit")
-    , waveShaperScope(mlDataStruct)
+    , distortionScope(mlDataStruct)
     , dataStruct(mlDataStruct)
     //: listBox("Test", &distoList)
 {
     //setInterceptsMouseClicks(false, true);
 
     eqaTypeLabel.setText("Equation Type", juce::dontSendNotification);
-    eqaTypeLabel.setJustificationType(juce::Justification::centred);
+    //eqaTypeLabel.setJustificationType(juce::Justification::centred);
     eqaTypeComboBox.addItemList(DistortionConstants::UI::equationTypeStringArray, 1);
     eqaTypeComboBox.setSelectedId(1, juce::dontSendNotification);
     eqaTypeComboBox.addListener(this);
@@ -33,7 +32,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
 
     //Distortion Equation
     sigmoidEquationLabel.setText("Sigmoid Equation", juce::dontSendNotification);
-    sigmoidEquationLabel.setJustificationType(juce::Justification::centred);
+    //sigmoidEquationLabel.setJustificationType(juce::Justification::centred);
     sigmoidEquationComboBox.addItemList(DistortionConstants::UI::sigmoidEQAStringArray, 1);
     sigmoidEquationComboBox.setSelectedId(1, juce::dontSendNotification);
     //sigmoidEquationComboBox.addListener(this);
@@ -41,7 +40,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     addAndMakeVisible(sigmoidEquationComboBox);
 
     symEquationLabel.setText("Symetric Equation", juce::dontSendNotification);
-    symEquationLabel.setJustificationType(juce::Justification::centred);
+    //symEquationLabel.setJustificationType(juce::Justification::centred);
     symEquationComboBox.addItemList(DistortionConstants::UI::symetricEQAStringArray, 1);
     symEquationComboBox.setSelectedId(1, juce::dontSendNotification);
     //symEquationComboBox.addListener(this);
@@ -49,7 +48,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     addChildComponent(symEquationComboBox);
 
     asymEquationLabel.setText("Asymetric Equation", juce::dontSendNotification);
-    asymEquationLabel.setJustificationType(juce::Justification::centred);
+    //asymEquationLabel.setJustificationType(juce::Justification::centred);
     asymEquationComboBox.addItemList(DistortionConstants::UI::asymetricEQAStringArray, 1);
     asymEquationComboBox.setSelectedId(1, juce::dontSendNotification);
     //asymEquationComboBox.addListener(this);
@@ -57,7 +56,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     addChildComponent(asymEquationComboBox);
 
     specialEquationLabel.setText("Special Equation", juce::dontSendNotification);
-    specialEquationLabel.setJustificationType(juce::Justification::centred);
+    //specialEquationLabel.setJustificationType(juce::Justification::centred);
     specialEquationComboBox.addItemList(DistortionConstants::UI::specialEQAStringArray, 1);
     specialEquationComboBox.setSelectedId(1, juce::dontSendNotification);
     //specialEquationComboBox.addListener(this);
@@ -123,7 +122,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     addAndMakeVisible(piecewiseFunctionCurveComboBox);
 
     //WaveShaper Scope
-    addAndMakeVisible(waveShaperScope);
+    addAndMakeVisible(distortionScope);
 
     //PreGain
     //preGainWaveShaperSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
@@ -132,7 +131,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     //preGainWaveShaperSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 50, 20);
     preGainWaveShaperSlider.setTextBoxIsEditable(true);
     preGainWaveShaperLabel.setText("Pre", juce::dontSendNotification);
-    preGainWaveShaperLabel.setJustificationType(juce::Justification::centred);
+    //preGainWaveShaperLabel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(preGainWaveShaperSlider);
     addAndMakeVisible(preGainWaveShaperLabel);
@@ -142,7 +141,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     driveWaveShaperSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
     driveWaveShaperSlider.setTextBoxIsEditable(true);
     driveWaveShaperLabel.setText("Drive", juce::dontSendNotification);
-    driveWaveShaperLabel.setJustificationType(juce::Justification::centred);
+    //driveWaveShaperLabel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(driveWaveShaperSlider);
     addAndMakeVisible(driveWaveShaperLabel);
@@ -152,7 +151,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     warpWaveShaperSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
     warpWaveShaperSlider.setTextBoxIsEditable(true);
     warpWaveShaperLabel.setText("Warp", juce::dontSendNotification);
-    warpWaveShaperLabel.setJustificationType(juce::Justification::centred);
+    //warpWaveShaperLabel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(warpWaveShaperSlider);
     addAndMakeVisible(warpWaveShaperLabel);
@@ -162,7 +161,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     postGainWaveShaperSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
     postGainWaveShaperSlider.setTextBoxIsEditable(true);
     postGainWaveShaperLabel.setText("Post", juce::dontSendNotification);
-    postGainWaveShaperLabel.setJustificationType(juce::Justification::centred);
+    //postGainWaveShaperLabel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(postGainWaveShaperSlider);
     addAndMakeVisible(postGainWaveShaperLabel);
@@ -172,7 +171,7 @@ DistortionSliderComponent::DistortionSliderComponent(AudioEngineState<float>& ml
     mixWaveShaperSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
     //mixWaveShaperSlider.setTextBoxIsEditable(true);
     mixWaveShaperLabel.setText("Mix WS", juce::dontSendNotification);
-    mixWaveShaperLabel.setJustificationType(juce::Justification::centred);
+    //mixWaveShaperLabel.setJustificationType(juce::Justification::centred);
 
     addAndMakeVisible(mixWaveShaperSlider);
     addAndMakeVisible(mixWaveShaperLabel);
@@ -243,11 +242,11 @@ void DistortionSliderComponent::resized()
     //specialEquationLabel.setBounds(0, asymEquationComboBox.getBottom() + 5, cbWidth, labelHeight);
     //specialEquationComboBox.setBounds(specialEquationLabel.getX() + pixelSpace, specialEquationLabel.getBottom(), cbWidth - 5, labelHeight);
 
-    waveShaperScope.setBounds(sigmoidEquationComboBox.getRight() + pixelSpace, pixelSpace, getHeight() - 2 * pixelSpace, getHeight() - 2 * pixelSpace);
+    distortionScope.setBounds(sigmoidEquationComboBox.getRight() + pixelSpace, pixelSpace, getHeight() - 2 * pixelSpace, getHeight() - 2 * pixelSpace);
 
 
 
-    bipolarOnOffButton.setBounds(waveShaperScope.getRight() + pixelSpace, waveShaperScope.getY(), labelWidth, labelHeight);
+    bipolarOnOffButton.setBounds(distortionScope.getRight() + pixelSpace, distortionScope.getY(), labelWidth, labelHeight);
 
     //hybridModeOnOffButton.setBounds(bipolarOnOffButton.getX(), bipolarOnOffButton.getBottom(), labelWidth, labelHeight);
 
@@ -259,11 +258,11 @@ void DistortionSliderComponent::resized()
 
 
 
-    //waveShaperScope.setCentrePosition(waveShaperScope.getRight() / 2, waveShaperScope.getBottom() / 2);
+    //distortionScope.setCentrePosition(distortionScope.getRight() / 2, distortionScope.getBottom() / 2);
 
     labelWidth -= 20;
     auto sliderHeight = getLocalBounds().getHeight() - 2 * pixelSpace - labelHeight;
-    preGainWaveShaperLabel.setBounds(bipolarOnOffButton.getRight(), waveShaperScope.getY(), labelWidth, labelHeight);
+    preGainWaveShaperLabel.setBounds(bipolarOnOffButton.getRight(), distortionScope.getY(), labelWidth, labelHeight);
     preGainWaveShaperSlider.setBounds(preGainWaveShaperLabel.getX(), preGainWaveShaperLabel.getBottom(), labelWidth, sliderHeight);
 
     driveWaveShaperLabel.setBounds(preGainWaveShaperLabel.getRight(), preGainWaveShaperLabel.getY(), labelWidth, labelHeight);
@@ -436,7 +435,7 @@ void DistortionSliderComponent::switchComboBox()
     }
 }
 
-void DistortionSliderComponent::setUI(int circuitID, int circuitType, bool isBipolar)
+void DistortionSliderComponent::setUI(bool isBipolar)
 {
     switchComboBox();
     getBipolarOnOffButton()->setToggleState(! isBipolar, juce::dontSendNotification);

@@ -45,10 +45,10 @@ void TemporalScope::paint (juce::Graphics& g)
 
 void TemporalScope::resized()
 {
-    int rotaryPixelSize = ScopeConstants::UI::sliderHeight;
-    int labelWidth = ScopeConstants::UI::labelWidth;
-    int labelHeight = ScopeConstants::UI::labelHeight;
-    int pixelSpace = ScopeConstants::UI::pixelSpace;
+    //int rotaryPixelSize = ScopeConstants::UI::sliderHeight;
+    //int labelWidth = ScopeConstants::UI::labelWidth;
+    //int labelHeight = ScopeConstants::UI::labelHeight;
+    //int pixelSpace = ScopeConstants::UI::pixelSpace;
 
     int width = getWidth();
     int height = getHeight() ;

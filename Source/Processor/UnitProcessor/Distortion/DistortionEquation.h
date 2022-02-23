@@ -122,7 +122,7 @@ public:
                 static_cast<SampleType>(1.0),
                 static_cast<SampleType>(10.0));
 
-            SampleType absX = std::abs(x);
+            //SampleType absX = std::abs(x);
             SampleType output = static_cast<SampleType>(0.0);
             //SampleType xOverAbsX = x / absX;
 

@@ -21,7 +21,7 @@ class DistortionProcessor
 public:
     //==============================================================================
     DistortionProcessor(int initNbOfChannels = 2)
-        :nbOfChannels(2)
+        :nbOfChannels(initNbOfChannels)
     {
         processorChain.resize(DistortionConstants::Processor<SampleType>::nbOfDUMax);
         dryWet.setMixingRule(juce::dsp::DryWetMixingRule::linear);

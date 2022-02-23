@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 #include "../../Processor/UnitProcessor/Distortion/DistortionProcessor.h"
-#include "WaveShaperScope.h"
+#include "DistortionScope.h"
 #include "DistortionUnitMenuTabComponent.h"
 #include "DistortionSliderComponent.h"
 

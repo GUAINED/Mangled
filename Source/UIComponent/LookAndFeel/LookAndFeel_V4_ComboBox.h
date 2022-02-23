@@ -10,7 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
-
+#include "../../DataStructure/MangledIdentifiers.h"
 class LookAndFeel_V4_ComboBox : public juce::LookAndFeel_V4
 {
 public:
@@ -20,10 +20,12 @@ public:
         auto cornerSize = box.findParentComponentOfClass<juce::ChoicePropertyComponent>() != nullptr ? 0.0f : 3.0f;
         juce::Rectangle<int> boxBounds(0, 0, width, height);
 
-        g.setColour(box.findColour(juce::ComboBox::backgroundColourId));
+        //g.setColour(box.findColour(juce::ComboBox::backgroundColourId));
+        g.setColour(AudioEngineConstants::UI::darkestNeonGreen); //box.findColour(juce::ComboBox::backgroundColourId)
         g.fillRoundedRectangle(boxBounds.toFloat(), cornerSize);
 
-        g.setColour(box.findColour(juce::ComboBox::outlineColourId));
+        //g.setColour(box.findColour(juce::ComboBox::outlineColourId));
+        g.setColour(AudioEngineConstants::UI::neonGreen.withAlpha(0.6f));//box.findColour(juce::ComboBox::outlineColourId)
         g.drawRoundedRectangle(boxBounds.toFloat(), cornerSize, 1.0f);//.reduced(0.5f, 0.5f)
 
         //Rectangle<int> arrowZone(width - 30, 0, 20, height);

@@ -98,8 +98,8 @@ void PhaserComponent::paint (juce::Graphics& g)
 
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
     g.fillAll(juce::Colours::transparentBlack);
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    //g.setColour (juce::Colours::grey);
+    //g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
     //g.setColour (juce::Colours::white);
     //g.setFont (14.0f);
@@ -133,7 +133,7 @@ void PhaserComponent::resized()
 
     phaserOnOffButton.setBounds(mixPhaserSlider.getX() - 1 - buttonOnOffWidth, depthPhaserLabel.getY(), buttonOnOffWidth, labelHeight);
 
-    resetButton.setBounds(phaserOnOffButton.getX(), phaserOnOffButton.getBottom(), labelWidth,labelHeight);
+    resetButton.setBounds(phaserOnOffButton.getX(), phaserOnOffButton.getBottom() + 1, labelWidth,labelHeight);
 }
 
 void PhaserComponent::buttonClicked(juce::Button* button)

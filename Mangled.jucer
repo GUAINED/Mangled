@@ -139,18 +139,18 @@
                 resource="0" file="Source/UIComponent/DistortionUIComponent/DistortionUnitMenuTabComponent.cpp"/>
           <FILE id="cRmIzN" name="DistortionUnitMenuTabComponent.h" compile="0"
                 resource="0" file="Source/UIComponent/DistortionUIComponent/DistortionUnitMenuTabComponent.h"/>
-          <FILE id="vydfk4" name="WaveShaperPointDragger.cpp" compile="1" resource="0"
-                file="Source/UIComponent/DistortionUIComponent/WaveShaperPointDragger.cpp"/>
-          <FILE id="MVJPJM" name="WaveShaperPointDragger.h" compile="0" resource="0"
-                file="Source/UIComponent/DistortionUIComponent/WaveShaperPointDragger.h"/>
-          <FILE id="CvAv6d" name="WaveShaperScope.cpp" compile="1" resource="0"
-                file="Source/UIComponent/DistortionUIComponent/WaveShaperScope.cpp"/>
-          <FILE id="CB2AyV" name="WaveShaperScope.h" compile="0" resource="0"
-                file="Source/UIComponent/DistortionUIComponent/WaveShaperScope.h"/>
-          <FILE id="rVNl9r" name="WaveShaperTensionDragger.cpp" compile="1" resource="0"
-                file="Source/UIComponent/DistortionUIComponent/WaveShaperTensionDragger.cpp"/>
-          <FILE id="KusfkH" name="WaveShaperTensionDragger.h" compile="0" resource="0"
-                file="Source/UIComponent/DistortionUIComponent/WaveShaperTensionDragger.h"/>
+          <FILE id="vydfk4" name="PiecewiseFunctionPointDragger.cpp" compile="1"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/PiecewiseFunctionPointDragger.cpp"/>
+          <FILE id="MVJPJM" name="PiecewiseFunctionPointDragger.h" compile="0"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/PiecewiseFunctionPointDragger.h"/>
+          <FILE id="CvAv6d" name="DistortionScope.cpp" compile="1" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/DistortionScope.cpp"/>
+          <FILE id="CB2AyV" name="DistortionScope.h" compile="0" resource="0"
+                file="Source/UIComponent/DistortionUIComponent/DistortionScope.h"/>
+          <FILE id="rVNl9r" name="PiecewiseFunctionTensionDragger.cpp" compile="1"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/PiecewiseFunctionTensionDragger.cpp"/>
+          <FILE id="KusfkH" name="PiecewiseFunctionTensionDragger.h" compile="0"
+                resource="0" file="Source/UIComponent/DistortionUIComponent/PiecewiseFunctionTensionDragger.h"/>
         </GROUP>
         <GROUP id="{A7591438-523B-5D63-B2EB-D5794502E5C8}" name="StageUIComponent">
           <FILE id="NCwm2F" name="RMSMeter.cpp" compile="1" resource="0" file="Source/UIComponent/StageUIComponent/RMSMeter.cpp"/>
@@ -175,6 +175,9 @@
             <FILE id="DCDlb5" name="DiStateButton.cpp" compile="1" resource="0"
                   file="Source/UIComponent/Controls/DiStateButton.cpp"/>
             <FILE id="iH2XSs" name="DiStateButton.h" compile="0" resource="0" file="Source/UIComponent/Controls/DiStateButton.h"/>
+            <FILE id="zEOoRm" name="MangledButton.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/Controls/MangledButton.cpp"/>
+            <FILE id="I3FLvZ" name="MangledButton.h" compile="0" resource="0" file="Source/UIComponent/Controls/MangledButton.h"/>
             <FILE id="GWWJBE" name="MangledComboBox.cpp" compile="1" resource="0"
                   file="Source/UIComponent/Controls/MangledComboBox.cpp"/>
             <FILE id="uf5ETi" name="MangledComboBox.h" compile="0" resource="0"
@@ -183,6 +186,9 @@
                   file="Source/UIComponent/Controls/MangledDualStateButton.cpp"/>
             <FILE id="YMJPvs" name="MangledDualStateButton.h" compile="0" resource="0"
                   file="Source/UIComponent/Controls/MangledDualStateButton.h"/>
+            <FILE id="aFmkHy" name="MangledLabel.cpp" compile="1" resource="0"
+                  file="Source/UIComponent/Controls/MangledLabel.cpp"/>
+            <FILE id="xePwnt" name="MangledLabel.h" compile="0" resource="0" file="Source/UIComponent/Controls/MangledLabel.h"/>
             <FILE id="kHeO1c" name="MangledSlider.cpp" compile="1" resource="0"
                   file="Source/UIComponent/Controls/MangledSlider.cpp"/>
             <FILE id="HbaSdQ" name="MangledSlider.h" compile="0" resource="0" file="Source/UIComponent/Controls/MangledSlider.h"/>

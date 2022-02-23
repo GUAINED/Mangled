@@ -23,9 +23,9 @@ public:
         SampleType one = static_cast<SampleType>(1.0);
         SampleType minusOne = -one;
 
-        //pwfBins.resize(DistortionConstants::WaveShaper<SampleType>::nbOfPointMax);
+        //pwfBins.resize(PiecewiseFunctionConstants::Processor<SampleType>::nbOfPointMax);
         
-        for (int binID = 0; binID < DistortionConstants::WaveShaper<SampleType>::nbOfPointMax; ++binID)
+        for (int binID = 0; binID < PiecewiseFunctionConstants::Processor<SampleType>::nbOfPointMax; ++binID)
         {
             pwfBins.add(new PiecewiseFunctionBin<SampleType>());
         }
@@ -285,7 +285,7 @@ public:
         SampleType one = static_cast<SampleType>(1.0);
         SampleType minusOne = -one;
 
-        //pwfBins.resize(DistortionConstants::WaveShaper<SampleType>::nbOfPointMax);
+        //pwfBins.resize(PiecewiseFunctionConstants::Processor<SampleType>::nbOfPointMax);
         
         pwfBins[0]->setLeftPoint(juce::Point<SampleType>(zero, zero));
         pwfBins[0]->setRightPoint(juce::Point<SampleType>(one, one));
@@ -411,7 +411,7 @@ private:
     juce::OwnedArray< PiecewiseFunctionBin<SampleType> > pwfBins;
     //PiecewiseFunction<SampleType> binLimMinusOne;
 
-    SampleType xLimMax = static_cast<SampleType>(DistortionConstants::WaveShaper<SampleType>::sampleLimitValue);
+    SampleType xLimMax = static_cast<SampleType>(PiecewiseFunctionConstants::Processor<SampleType>::sampleLimitValue);
     
     int nbOfActiveBins;
 

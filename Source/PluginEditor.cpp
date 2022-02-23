@@ -34,6 +34,7 @@ MangledAudioProcessorEditor::MangledAudioProcessorEditor (MangledAudioProcessor&
     redoButton.onClick = [this] {audioProcessor.getMainLayerDataStruct().getUndoManager().redo();
                                  audioProcessor.getMainLayerDataStruct().trigListener(); 
     };
+    //undoButton.setColour(juce::TextButton::ColourIds::buttonColourId, AudioEngineConstants::UI::darkerNeonGreen);
     addAndMakeVisible(undoButton);
     addAndMakeVisible(redoButton);
 
@@ -144,21 +145,25 @@ void MangledAudioProcessorEditor::resized()
     mainMenuTab.setBounds(0, 0, labelWidth + 30, labelHeight);
     mainMenu.setBounds(mainMenuTab.getX(), mainMenuTab.getBottom(), getLocalBounds().getWidth(), getLocalBounds().getHeight() - labelHeight);
 
-    undoButton.setBounds(mainMenuTab.getRight(), 0, labelWidth - 20, labelHeight);
-    redoButton.setBounds(undoButton.getRight(), 0, labelWidth - 20, labelHeight);
+    undoButton.setBounds(mainMenuTab.getRight() + 1, 0, labelWidth - 20, labelHeight);
+    redoButton.setBounds(undoButton.getRight() + 1, 0, labelWidth - 20, labelHeight);
 
     //Test Label================================================================================================================================
     mangledLabel.setBounds(redoButton.getRight() + offset, mainMenuTab.getY(), labelWidth, labelHeight);
     stateButton[0]->setBounds(mangledLabel.getRight() + offset, mangledLabel.getY(), labelHeight, labelHeight);
-    stateButton[1]->setBounds(stateButton[0]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
-    stateButton[2]->setBounds(stateButton[1]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
-    stateButton[3]->setBounds(stateButton[2]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
+    for (int stateID = 1; stateID < stateButton.size(); ++stateID)
+    {
+        stateButton[stateID]->setBounds(stateButton[stateID - 1]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
+    }
+    //stateButton[1]->setBounds(stateButton[0]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
+    //stateButton[2]->setBounds(stateButton[1]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
+    //stateButton[3]->setBounds(stateButton[2]->getRight() + 1, mangledLabel.getY(), labelHeight, labelHeight);
     
     masterGainLabel.setBounds(stateButton.getLast()->getRight() + offset, mangledLabel.getY(), labelWidth, labelHeight);
     auto length = (getWidth() - masterGainLabel.getRight() - 2*labelWidth - 3);
     masterGainSlider.setBounds(masterGainLabel.getRight(), 0, length, labelHeight);
-    masterLimiterOnOffButton.setBounds(masterGainSlider.getRight(), mainMenuTab.getY(), labelWidth, labelHeight);
-    masterResetButton.setBounds(masterLimiterOnOffButton.getRight(), 0, labelWidth, labelHeight);
+    masterLimiterOnOffButton.setBounds(masterGainSlider.getRight() + 1, mainMenuTab.getY(), labelWidth, labelHeight);
+    masterResetButton.setBounds(masterLimiterOnOffButton.getRight() + 1, 0, labelWidth, labelHeight);
 
 }
 
@@ -177,6 +182,7 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
         {
             int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
+            audioProcessor.resetFifo();
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::A);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::A);
 
@@ -197,6 +203,7 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
         {
             int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
+            audioProcessor.resetFifo();
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::B);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::B);
 
@@ -216,6 +223,7 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
         {
             int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
+            audioProcessor.resetFifo();
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::C);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::C);
 
@@ -235,6 +243,7 @@ void MangledAudioProcessorEditor::buttonClicked(juce::Button* button)
         {
             int selectedState = audioProcessor.getMainLayerDataStruct().getSelectedStateID();
             audioProcessor.saveState(selectedState);
+            audioProcessor.resetFifo();
             audioProcessor.loadState(AudioEngineConstants::Processor<float>::D);
             audioProcessor.getMainLayerDataStruct().setSelectedState(AudioEngineConstants::Processor<float>::D);
 
@@ -639,7 +648,7 @@ void MangledAudioProcessorEditor::updateUI(int stageID, int distortionUnitID)
 
     updateRMSMeter(stageID);
 
-    editorLoadingDone = true;
+    //editorLoadingDone = true;
 }
 
 void MangledAudioProcessorEditor::updateScope(int stageID)
@@ -752,15 +761,15 @@ void MangledAudioProcessorEditor::updateDistortion(int stageID, int distortionUn
     StageComponent* pStageComponent = mainMenu.getMainLayerMenu()->getStageComponent(stageID);
 
     PiecewiseFunction<float>* pPWF = pStageProcessor->getDistortionProcessor()->getDistortionUnitProcessor(distortionUnitID)->getPiecewiseFunction();
-    WaveShaperScope* pWaveShaperScope = pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getScope();
-    pWaveShaperScope->updateUI(distortionUnitID, pPWF);
+    DistortionScope* pDistortionScope = pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getScope();
+    pDistortionScope->updateUI(distortionUnitID, pPWF);
 
     int pointID = audioProcessor.getMainLayerDataStruct().getSelectedCurveID(stageID, distortionUnitID);
     bool deleteEnable = audioProcessor.getMainLayerDataStruct().getHorizontalDragOn(stageID, distortionUnitID, pointID);
 
     pStageComponent->getDistortionComponent()->getDistortionSlider(distortionUnitID)->getDeleteWSPointButton()->setEnabled(deleteEnable);
 
-    pWaveShaperScope->repaint();
+    pDistortionScope->repaint();
 }
 
 void MangledAudioProcessorEditor::updateRMSMeter(int stageID)
@@ -797,8 +806,8 @@ void MangledAudioProcessorEditor::setUI()
     int curveID = 0;
     int processorID = 0;
 
-    int circuitType = 0;
-    int circuitID = 0;
+    //int circuitType = 0;
+    //int circuitID = 0;
 
     for (int stateID = 0; stateID < AudioEngineConstants::Processor<float>::StateID::maxStateID; ++stateID)
     {
@@ -867,7 +876,7 @@ void MangledAudioProcessorEditor::setUI()
            //circuitID = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationID(stageID, distoUID);
            bool isBipolar = audioProcessor.getMainLayerDataStruct().getIsBipolar(stageID, distoUID);
 
-           pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(0,0, isBipolar);// circuitID, circuitType);
+           pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(isBipolar);// circuitID, circuitType);
            //bool isBipolar = audioProcessor.getMainLayerDataStruct().getIsBipolar(stageID, distoUID);
 
        }
@@ -927,10 +936,10 @@ void MangledAudioProcessorEditor::switchUI(int stageID, int processorID,int dist
         //int circuitType = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationType(stageID, distoUID);
         //int circuitID = audioProcessor.getMainLayerDataStruct().getDistortionCircuitEquationID(stageID, distoUID);
 
-        juce::AudioProcessorValueTreeState& apvts = audioProcessor.getMainLayerDataStruct().getAPVTSMainLayer();
-        juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distoUID);
-        int circuitType = *apvts.getRawParameterValue(paramString);
-        int circuitID = 0;
+        //juce::AudioProcessorValueTreeState& apvts = audioProcessor.getMainLayerDataStruct().getAPVTSMainLayer();
+        //juce::String paramString = DistoUnitConstants::ParamStringID::GetParamStringID::equationType(stageID, distoUID);
+        //int circuitType = *apvts.getRawParameterValue(paramString);
+        //int circuitID = 0;
         //switch (circuitType)
         //{
         //case static_cast<int>(DistortionCircuitConstants::Processor<float>::EquationType::sigmoid):
@@ -956,7 +965,7 @@ void MangledAudioProcessorEditor::switchUI(int stageID, int processorID,int dist
         //}
         bool isBipolar = audioProcessor.getMainLayerDataStruct().getIsBipolar(stageID, distoUID);
 
-        pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(circuitID, circuitType, isBipolar);
+        pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->setUI(isBipolar);
         //pStageComponent->getDistortionComponent()->getDistortionSlider(distoUID)->
     }
 

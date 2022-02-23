@@ -109,7 +109,7 @@ public:
     {
         const auto& inputBlock = context.getInputBlock();
 
-        const int numberOfItems = inputBlock.getNumSamples();
+        const int numberOfItems = static_cast<int>(inputBlock.getNumSamples());
         jassert(numberOfItems < buffer.getNumSamples());
         jassert(inputBlock.getNumChannels() == buffer.getNumChannels());
 

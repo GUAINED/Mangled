@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "RMSMeter.h"
+#include "../Controls/MangledLabel.h"
 #include "../Controls/MangledSlider.h"
 //==============================================================================
 /*
@@ -82,7 +83,7 @@ public:
     MangledSlider* getGainSlider() { return &gainSlider; };
 
 private:
-    juce::Label gainLabel;
+    MangledLabel gainLabel;
 
     juce::Label leftPeakLabel;
     juce::Label rightPeakLabel;

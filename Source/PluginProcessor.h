@@ -101,6 +101,14 @@ public:
             //setParams();
         }
     }
+
+    void resetFifo()
+    {
+        for (int stageID = 0; stageID < MainLayerConstants::Processor<float>::nbOfStageMax; ++stageID)
+        {
+            audioEngine.getMainLayerProcessor()->getStageProcessor(stageID)->getEQProcessor()->resetFifo();
+        }
+    }
 private:
     //int count = 0;
     //==============================================================================

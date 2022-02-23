@@ -233,17 +233,17 @@ public:
 
         switch (curveID)
         {
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::polynomial :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::polynomial :
             xValue = binPathData.getReadPointer(0)[50];
             yValue = binPathData.getReadPointer(1)[50];
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::asinh :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::asinh :
             xValue = binPathData.getReadPointer(0)[50];
             yValue = binPathData.getReadPointer(1)[50];
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::doubleCurve :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::doubleCurve :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(-0.5),
@@ -252,7 +252,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::triangle :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::triangle :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -261,7 +261,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::square :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::square :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -270,7 +270,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::stair :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::stair :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -279,7 +279,7 @@ public:
                 smoothedRightY.getTargetValue());
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::sin :
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::sin :
             xValue = (smoothedRightX.getTargetValue() + smoothedLeftX.getTargetValue()) * static_cast<SampleType>(0.5);
             yValue = juce::jmap(smoothedTension.getTargetValue(),
                 static_cast<SampleType>(1.0),
@@ -328,13 +328,13 @@ public:
 
     void setTension(SampleType newTension)
     {
-        SampleType tensionMin = DistortionConstants::WaveShaper<SampleType>::tensionMin;
-        SampleType tensionMax = DistortionConstants::WaveShaper<SampleType>::tensionMax;
+        SampleType tensionMin = PiecewiseFunctionConstants::Processor<SampleType>::tensionMin;
+        SampleType tensionMax = PiecewiseFunctionConstants::Processor<SampleType>::tensionMax;
         SampleType tensionMapped = static_cast<SampleType>(0.5);
 
         switch (curveID)
         {
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::polynomial:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::polynomial:
             if (smoothedLeftY.getTargetValue() > smoothedRightY.getTargetValue())
                 newTension = -newTension;
 
@@ -342,7 +342,7 @@ public:
             tensionMapped = juce::mapToLog10(tensionMapped, tensionMin, tensionMax);
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::asinh:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::asinh:
             if (smoothedLeftY.getTargetValue() > smoothedRightY.getTargetValue())
                 newTension = -newTension;
 
@@ -350,7 +350,7 @@ public:
             tensionMapped = juce::mapToLog10(tensionMapped, tensionMin, tensionMax);
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::doubleCurve:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::doubleCurve:
             if (smoothedLeftY.getTargetValue() < smoothedRightY.getTargetValue())
                 newTension = -newTension;
             //tension = juce::jmap(newTension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(0.0), static_cast<SampleType>(1.0));
@@ -358,28 +358,28 @@ public:
             tensionMapped = newTension;
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::triangle:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::triangle:
             if (smoothedLeftY.getTargetValue() < smoothedRightY.getTargetValue())
                 newTension = -newTension;
             tensionMapped = juce::jmap(newTension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(1.0), static_cast<SampleType>(15.0));
             tensionMapped = std::floor(tensionMapped);
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::square:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::square:
             if (smoothedLeftY.getTargetValue() < smoothedRightY.getTargetValue())
                 newTension = -newTension;
             tensionMapped = juce::jmap(newTension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(1.0), static_cast<SampleType>(15.0));
             tensionMapped = std::floor(tensionMapped);
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::stair:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::stair:
             if (smoothedLeftY.getTargetValue() < smoothedRightY.getTargetValue())
                 newTension = -newTension;
             tensionMapped = juce::jmap(newTension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(1.0), static_cast<SampleType>(15.0));
             tensionMapped = std::floor(tensionMapped);
             break;
 
-        case DistortionConstants::WaveShaper<SampleType>::CurveTypes::sin:
+        case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::sin:
             if (smoothedLeftY.getTargetValue() < smoothedRightY.getTargetValue())
                 newTension = -newTension;
             tensionMapped = juce::jmap(newTension, static_cast<SampleType>(-0.5), static_cast<SampleType>(0.5), static_cast<SampleType>(1.0), static_cast<SampleType>(15.0));
@@ -408,7 +408,7 @@ public:
         {
             switch (curveID)
             {
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::polynomial:
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::polynomial:
                 if (smoothedTension.getTargetValue() >= (SampleType) 1.0)
                 {
                     curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::polynomialOverOne(sample, tension, leftX, leftY, rightX, rightY); };
@@ -419,7 +419,7 @@ public:
                 }
                 break;
 
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::asinh:
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::asinh:
                 if (smoothedTension.getTargetValue() >= (SampleType) 1.0)
                 {
                     curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::arcsinhOverOne(sample, tension, leftX, leftY, rightX, rightY); };
@@ -430,7 +430,7 @@ public:
                 }
                 break;
 
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::doubleCurve: //Sin
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::doubleCurve: //Sin
                 if (smoothedTension.getTargetValue() >= (SampleType) 0.0)
                 {
                     curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::doubleCurveOverZero(sample, tension, leftX, leftY, rightX, rightY); };
@@ -441,19 +441,19 @@ public:
                 }
                 break;
 
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::triangle:
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::triangle:
                 curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::triangle(sample, tension, leftX, leftY, rightX, rightY); };
                 break;
 
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::square:
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::square:
                 curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::square(sample, tension, leftX, leftY, rightX, rightY); };
                 break;
 
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::stair:
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::stair:
                 curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::stair(sample, tension, leftX, leftY, rightX, rightY); };
                 break;
 
-            case DistortionConstants::WaveShaper<SampleType>::CurveTypes::sin:
+            case PiecewiseFunctionConstants::Processor<SampleType>::CurveTypes::sin:
                 curveEquation = [](SampleType sample, SampleType tension, SampleType leftX, SampleType leftY, SampleType rightX, SampleType rightY) {return CurveEquation<SampleType>::sin(sample, tension, leftX, leftY, rightX, rightY); };
                 break;
 

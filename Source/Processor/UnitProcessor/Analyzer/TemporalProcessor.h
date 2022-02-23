@@ -125,19 +125,17 @@ public:
         
         //rmsFifo.readSamplesFromFifo(rmsCalculationBuffer.getWritePointer(channel), channel, rmsWindowSize);
 
-        for (int i = 0; i < rmsCalculationBuffer.getNumSamples(); ++i)
-        {
-            SampleType yolo = rmsCalculationBuffer.getSample(0, i);
-        }
+        //for (int i = 0; i < rmsCalculationBuffer.getNumSamples(); ++i)
+        //{
+        //    SampleType yolo = rmsCalculationBuffer.getSample(0, i);
+        //}
         processLevelValue(rmsLevels[channel], juce::Decibels::gainToDecibels(rmsCalculationBuffer.getRMSLevel(channel, 0, rmsWindowSize)));
         
         juce::Range<SampleType> range = rmsCalculationBuffer.findMinMax(channel, 0, rmsWindowSize);
 
         peakLevels[channel].setCurrentAndTargetValue(juce::jmax(std::abs(range.getStart()), std::abs(range.getEnd())));
 
-        SampleType yolo = rmsLevels[channel].getCurrentValue();
-
-        return yolo;
+        return rmsLevels[channel].getCurrentValue();
     }
 
     SampleType getPeakLevel(const int channel)

@@ -224,9 +224,9 @@ juce::AudioProcessorEditor* MangledAudioProcessor::createEditor()
     //editor->timerCallback2(2);
     //editor->timerCallback2(1);
 
-    int selectedStateID = mainLayerDataStruct.getSelectedStateID();
-    int selectedStageID = mainLayerDataStruct.getSelectedStageID();
-    int distortionUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
+    //int selectedStateID = mainLayerDataStruct.getSelectedStateID();
+    //int selectedStageID = mainLayerDataStruct.getSelectedStageID();
+    //int distortionUnitID = mainLayerDataStruct.getSelectedDistoUnitID();
 
     //editor->updateUI(0, 0);
 

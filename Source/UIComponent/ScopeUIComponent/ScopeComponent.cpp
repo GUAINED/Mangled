@@ -83,10 +83,10 @@ void ScopeComponent::paint (juce::Graphics& g)
     */
 
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-    //g.fillAll(juce::Colours::black); 
+    g.fillAll(juce::Colours::transparentBlack); 
     
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    //g.setColour (juce::Colours::grey);
+    //g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
     //g.setColour (juce::Colours::white);
     //g.setFont (14.0f);
@@ -102,7 +102,7 @@ void ScopeComponent::resized()
     int pixelSpace = 10;
     int offset = 5;
 
-    preEQOnOffButton.setBounds(offset, 0, labelWidth, labelHeight);
+    preEQOnOffButton.setBounds(offset, 1, labelWidth, labelHeight);
     postEQOnOffButton.setBounds(preEQOnOffButton.getRight() + pixelSpace, preEQOnOffButton.getY(), labelWidth, labelHeight);
     postDistoOnOffButton.setBounds(postEQOnOffButton.getRight() + pixelSpace, preEQOnOffButton.getY(), labelWidth, labelHeight);
 
@@ -112,7 +112,7 @@ void ScopeComponent::resized()
     subViewButton.setBounds(monoViewButton.getRight() + pixelSpace, monoViewButton.getY(), labelWidth, labelHeight);
     subViewSlider.setBounds(subViewButton.getRight() + pixelSpace, subViewButton.getY(), 2 * labelWidth, labelHeight);
 
-    temporalScope.setBounds(preEQOnOffButton.getX(), preEQOnOffButton.getBottom() + 3, getLocalBounds().getWidth() - pixelSpace, getLocalBounds().getHeight() - labelHeight - 9);
+    temporalScope.setBounds(preEQOnOffButton.getX(), preEQOnOffButton.getBottom() + 1, getLocalBounds().getWidth() - pixelSpace, getLocalBounds().getHeight() - labelHeight - 3);
 
     scopeDisplay.setBounds(temporalScope.getBounds());
 }

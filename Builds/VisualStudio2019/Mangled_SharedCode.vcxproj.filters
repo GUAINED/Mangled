@@ -622,13 +622,13 @@
     <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\DistortionUnitMenuTabComponent.cpp">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\WaveShaperPointDragger.cpp">
+    <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\PiecewiseFunctionPointDragger.cpp">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\WaveShaperScope.cpp">
+    <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\DistortionScope.cpp">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\WaveShaperTensionDragger.cpp">
+    <ClCompile Include="..\..\Source\UIComponent\DistortionUIComponent\PiecewiseFunctionTensionDragger.cpp">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\UIComponent\StageUIComponent\RMSMeter.cpp">
@@ -646,10 +646,16 @@
     <ClCompile Include="..\..\Source\UIComponent\Controls\DiStateButton.cpp">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledButton.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\UIComponent\Controls\MangledComboBox.cpp">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\UIComponent\Controls\MangledDualStateButton.cpp">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UIComponent\Controls\MangledLabel.cpp">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\UIComponent\Controls\MangledSlider.cpp">
@@ -3024,13 +3030,13 @@
     <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\DistortionUnitMenuTabComponent.h">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\WaveShaperPointDragger.h">
+    <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\PiecewiseFunctionPointDragger.h">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\WaveShaperScope.h">
+    <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\DistortionScope.h">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\WaveShaperTensionDragger.h">
+    <ClInclude Include="..\..\Source\UIComponent\DistortionUIComponent\PiecewiseFunctionTensionDragger.h">
       <Filter>Mangled\Source\UIComponent\DistortionUIComponent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\UIComponent\StageUIComponent\RMSMeter.h">
@@ -3048,10 +3054,16 @@
     <ClInclude Include="..\..\Source\UIComponent\Controls\DiStateButton.h">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledButton.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\UIComponent\Controls\MangledComboBox.h">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\UIComponent\Controls\MangledDualStateButton.h">
+      <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UIComponent\Controls\MangledLabel.h">
       <Filter>Mangled\Source\UIComponent\GeneralUIComponent\Controls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\UIComponent\Controls\MangledSlider.h">
